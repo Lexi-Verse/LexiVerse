@@ -2067,16 +2067,16 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         speakButtonSimilarWords.disabled = false;
 
         return synonymsText.split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0)
-            .map(s => {
-                // Use 'inline-block' to ensure correct box modeling for wrapping
-                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
-                                 ${s}
-                             </span>`;
-            })
-            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
-    }
+            .map(s => s.trim())
+            .filter(s => s.length > 0)
+            .map(s => {
+                // Use 'inline-block' to ensure correct box modeling for wrapping
+                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
+                             ${s}
+                         </span>`;
+            })
+            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
+    }
 
     function formatDefinition(text) {
     if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
@@ -2091,6 +2091,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     formattedText = formattedText.replace(/\*(.*?)\:/g, '<strong>$1:</strong>');
     
     // 4. NEW STEP: Remove any remaining single leading asterisks that are NOT followed by a colon.
+    // This is often needed if the API output includes asterisks as bullet points or simple markers.
     // We target only the asterisk character itself and replace it with nothing.
     formattedText = formattedText.replace(/\*/g, '');
     
