@@ -13,7 +13,7 @@
         /* Base styles */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #e0e0e0;
+            background-color: #e0e0e0; 
             color: #1f2937; /* gray-800 */
             transition: background-color 0.3s, color 0.3s;
         }
@@ -401,7 +401,7 @@ textarea:focus {
     /* Re-apply transition rules for normal focus/hover states */
     transition: all 300ms ease-in-out; 
 }
- /* --- CUSTOM LOGO STYLING (Existing + Centering) --- */
+   /* --- CUSTOM LOGO STYLING (Existing + Centering) --- */
 .lexiverse-logo-container {
     display: flex;
     align-items: center;
@@ -410,7 +410,7 @@ textarea:focus {
     text-decoration: none;
     color: inherit;
     /* Removed fixed width: 100px as flex-grow: 1 implies dynamic width. 
-       If you need a specific size for the logo area, adjust as needed. */
+        If you need a specific size for the logo area, adjust as needed. */
 }
 
 /* 1. Image Styles and Animation Application */
@@ -458,80 +458,61 @@ textarea:focus {
     }
 }
 
-/* --- Speak Button Base Styles (Fix Centering) --- */
+/* --- Speak Button Base Styles (Dynamic Blue/Indigo) --- */
 .speak-btn {
-    color: #3730a3;
+    color: #3730a3; /* Indigo-700 for the icon */
     background-color: transparent; 
     border: none;
     cursor: pointer;
-    
     padding: 0; 
-    
     position: relative; 
     z-index: 10; 
-    
-    /* ADDED/REVISED CENTERING PROPERTIES */
     display: flex;
-    align-items: center;      /* Center vertically */
-    justify-content: center;  /* Center horizontally */
-    width: 38px;              /* Set button width equal to circle size */
-    height: 38px;             /* Set button height equal to circle size */
-    
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
     transition: color 0.2s ease-in-out, transform 0.1s ease-in-out; 
     margin-left: 5px; 
 }
 
-/* --- Dynamic Background Circle (::after) --- */
-/* This creates the solid, permanent circle visible behind the icon */
+/* Solid Blue Background Circle */
 .speak-btn::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    
-    /* Defines the size of the visible background circle */
     width: 38px; 
     height: 38px; 
-    
     border-radius: 50%;
     background-color: #c3dafe; /* Light Blue solid background */
-    
-    /* Center it behind the icon */
     transform: translate(-50%, -50%); 
-    z-index: -1; /* Place it behind the icon */
-    
-    /* Smooth scaling on hover */
+    z-index: -1; 
     transition: background-color 0.2s, transform 0.2s;
 }
 
-/* --- Sonar Pulse Effect (::before) --- */
-/* This creates the expanding wave that runs only when active */
+/* Blue Sonar Pulse Effect */
 .speak-btn::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 38px; /* Same size as the solid circle */
+    width: 38px; 
     height: 38px;
     border-radius: 50%;
-    
-    /* Color of the pulse effect (slightly darker than the background) */
-    background-color: #6366f1; 
-    
-    z-index: -2; /* Place behind the solid circle */
+    background-color: #6366f1; /* Indigo color for pulse */
+    z-index: -2; 
     opacity: 0;
 }
 
 /* Pulse trigger: When the Speak button is active or loading */
 .speak-btn:hover::after,
 .speak-btn.loading::after {
-    /* Slightly scale the solid background circle on hover/active */
     transform: translate(-50%, -50%) scale(1.05);
 }
 
 .speak-btn:not([disabled]):hover::before,
 .speak-btn.loading::before {
-    /* Trigger the smooth pulse animation */
     animation: sonar-pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -547,26 +528,20 @@ body.dark .speak-btn::before {
 }
 
 
-/* --- Stop Button Styles (Fix Centering - Must match Speak button) --- */
+/* --- Stop Button Styles (Dynamic Red/Pink) --- */
 .stop-btn {
-    color: #ef4444;
+    color: #ef4444; /* Red-500 for the icon */
     background-color: transparent;
     border: none;
     cursor: pointer;
-    
     padding: 0;
-    
     position: relative; 
     z-index: 10; 
-    
-    /* ADDED/REVISED CENTERING PROPERTIES */
     display: flex;
-    align-items: center;      /* Center vertically */
-    justify-content: center;  /* Center horizontally */
-    width: 38px;              /* Match Speak button dimensions */
-    height: 38px;             /* Match Speak button dimensions */
-
-    /* CRITICAL: Applies smooth transition to opacity and visibility toggle */
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, color 0.2s ease-in-out; 
     
     opacity: 0;
@@ -574,6 +549,7 @@ body.dark .speak-btn::before {
     pointer-events: none;
 }
 
+/* Solid Red Background Circle */
 .stop-btn::after {
     content: '';
     position: absolute;
@@ -588,6 +564,7 @@ body.dark .speak-btn::before {
     transition: background-color 0.2s, transform 0.2s;
 }
 
+/* Red Sonar Pulse Effect */
 .stop-btn::before {
     content: '';
     position: absolute;
@@ -646,7 +623,7 @@ body.dark .stop-btn::before {
                                 <svg class="w-5 h-5 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 <span id="accountStatus">Account</span>
                              </button>
-                            
+                           
                              <button onclick="openHistoryModal()" class="header-btn text-sm font-medium text-gray-700 hover:text-indigo-600">
                                  <svg class="w-5 h-5 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                  <span>History</span>
@@ -656,8 +633,8 @@ body.dark .stop-btn::before {
                                  <svg class="w-5 h-5 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                  <span>Settings</span>
                                </button>
-                            
-                            
+                           
+                           
                         </div>
                     
                         <h1 class="text-3xl font-extrabold text-gray-900 mx-auto w-full pt-16 md:pt-11">
@@ -689,56 +666,70 @@ body.dark .stop-btn::before {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div id="columnA" class="space-y-2 order-1">
-        <div class="flex items-center justify-between">
-            <label id="labelA" for="inputTextA" class="block text-xl font-bold text-gray-800">Language A</label>
-            <button id="speakButtonA" onclick="speakResult('A')" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.121-7.072a7 7 0 010 9.9M1.757 9.219L6 13.462V18h4.538l4.243 4.243a1 1 0 001.414 0 1 1 0 000-1.414L11.414 16H8V8.586l5.243-5.243a1 1 0 000-1.414 1 1 0 00-1.414 0L6 7.586V3.757a1 1 0 00-1.414 0 1 1 0 000 1.414L3.086 7H1.757a1 1 0 00-1 1V16a1 1 0 001 1h.757l-.378.378a1 1 0 000 1.414 1 1 0 001.414 0L6 18.414V20a1 1 0 001.707.707L12 16.414l5.293 5.293a1 1 0 001.414 0 1 1 0 000-1.414L13.414 16H16a1 1 0 001-1V9a1 1 0 00-1-1H1.757z"></path></svg>
-            </button>
-        </div>
-        <div class="relative">
-            <textarea id="inputTextA" 
-    rows="5" 
-    placeholder="Type here..." 
-    class="w-full p-4 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y transition-all duration-300">
+                <div id="columnA" class="space-y-2 order-1">
+                    <div class="flex items-center justify-between">
+                        <label id="labelA" for="inputTextA" class="block text-xl font-bold text-gray-800">Language A</label>
+                        <!-- START: Language A Speak/Stop Buttons -->
+                        <div class="flex items-center">
+                            <button id="speakButtonA" onclick="speakResult('A')" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Source Text">
+                                <i class="fas fa-volume-up w-5 h-5"></i>
+                            </button>
+                            <button id="stopButtonA" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                <i class="fas fa-stop w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <!-- END: Language A Speak/Stop Buttons -->
+                    </div>
+                    <div class="relative">
+                        <textarea id="inputTextA" 
+rows="5" 
+placeholder="Type here..." 
+class="w-full p-4 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y transition-all duration-300">
 </textarea>
-<button onclick="clearText('A')" class="clear-btn" title="Clear text">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-    </div>
+                        <button onclick="clearText('A')" class="clear-btn" title="Clear text">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
 
-   <div id="translateButtonContainer" 
-             class="flex justify-center 
-                 col-span-full                  
-                 order-2 md:order-3              
-                 -my-4 md:-my-5 md:-mt-4">         
-        <button id="translateButton" onclick="handleTranslateButtonClick()" disabled class="py-3 px-8 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-            <svg class="w-6 h-6 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-            Translate
-        </button>
-    </div>
-    
-    <div id="columnB" class="space-y-2 order-3 md:order-2">
-        <div class="flex items-center justify-between">
-            <label id="labelB" for="inputTextB" class="block text-xl font-bold text-gray-800">Language B</label>
-            <button id="speakButtonB" onclick="speakResult('B')" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.121-7.072a7 7 0 010 9.9M1.757 9.219L6 13.462V18h4.538l4.243 4.243a1 1 0 001.414 0 1 1 0 000-1.414L11.414 16H8V8.586l5.243-5.243a1 1 0 000-1.414 1 1 0 00-1.414 0L6 7.586V3.757a1 1 0 00-1.414 0 1 1 0 000 1.414L3.086 7H1.757a1 1 0 00-1 1V16a1 1 0 001 1h.757l-.378.378a1 1 0 000 1.414 1 1 0 001.414 0L6 18.414V20a1 1 0 001.707.707L12 16.414l5.293 5.293a1 1 0 001.414 0 1 1 0 000-1.414L13.414 16H16a1 1 0 001-1V9a1 1 0 00-1-1H1.757z"></path></svg>
-            </button>
-        </div>
-        
-        <div class="relative">
-            <textarea id="inputTextB" 
-    rows="5" 
-    placeholder="Translation appears here..." 
-    class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y transition-all duration-300">
+                <div id="translateButtonContainer" 
+                   class="flex justify-center 
+                        col-span-full          
+                        order-2 md:order-3      
+                        -my-4 md:-my-5 md:-mt-4">       
+                    <button id="translateButton" onclick="handleTranslateButtonClick()" disabled class="py-3 px-8 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-6 h-6 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        Translate
+                    </button>
+                </div>
+                
+                <div id="columnB" class="space-y-2 order-3 md:order-2">
+                    <div class="flex items-center justify-between">
+                        <label id="labelB" for="inputTextB" class="block text-xl font-bold text-gray-800">Language B</label>
+                        <!-- START: Language B Speak/Stop Buttons -->
+                        <div class="flex items-center">
+                            <button id="speakButtonB" onclick="speakResult('B')" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Translation">
+                                <i class="fas fa-volume-up w-5 h-5"></i>
+                            </button>
+                            <button id="stopButtonB" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                <i class="fas fa-stop w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <!-- END: Language B Speak/Stop Buttons -->
+                    </div>
+                    
+                    <div class="relative">
+                        <textarea id="inputTextB" 
+rows="5" 
+placeholder="Translation appears here..." 
+class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y transition-all duration-300">
 </textarea>
-  <button onclick="clearText('B')" class="clear-btn" title="Clear text">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-    </div>
-</div>
+                  <button onclick="clearText('B')" class="clear-btn" title="Clear text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    </div>
+                </div>
+            </div>
 
 
             <div class="mt-8 pt-6 border-t border-gray-200">
@@ -746,32 +737,42 @@ body.dark .stop-btn::before {
                     
                     <div id="definitionSection" class="space-y-4">
                         <div class="flex items-center justify-between">
-                             <label class="block text-xl font-bold text-gray-800">
-                                 <svg class="inline w-6 h-6 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.208 5 7.5 5A6.495 6.495 0 003 11.5c0 1.638.583 3.167 1.581 4.391C5.69 17.51 7.243 18 9 18a6.5 6.5 0 006.5-6.5c0-1.638-.583-3.167-1.581-4.391C13.832 6.477 12.208 6 10.5 6A6.495 6.495 0 006 11.5c0 1.638.583 3.167 1.581 4.391C8.69 17.51 10.243 18 12 18z"></path></svg>
-                                 Dictionary Definition
-                             </label>
-                             <button id="speakButtonDef" onclick="speakDefinition()" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Definition">
-                 <i class="fas fa-volume-up w-5 h-5"></i>
-            </button>
-
-            <button id="stopButtonDef" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
-                <i class="fas fa-stop w-5 h-5"></i>
-            </button>
+                            <label class="block text-xl font-bold text-gray-800">
+                                <svg class="inline w-6 h-6 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.208 5 7.5 5A6.495 6.495 0 003 11.5c0 1.638.583 3.167 1.581 4.391C5.69 17.51 7.243 18 9 18a6.5 6.5 0 006.5-6.5c0-1.638-.583-3.167-1.581-4.391C13.832 6.477 12.208 6 10.5 6A6.495 6.495 0 006 11.5c0 1.638.583 3.167 1.581 4.391C8.69 17.51 10.243 18 12 18z"></path></svg>
+                                Dictionary Definition
+                            </label>
+                            <!-- START: Definition Speak/Stop Buttons -->
+                            <div class="flex items-center">
+                                <button id="speakButtonDef" onclick="speakDefinition()" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Definition">
+                                    <i class="fas fa-volume-up w-5 h-5"></i>
+                                </button>
+                                <button id="stopButtonDef" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                    <i class="fas fa-stop w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <!-- END: Definition Speak/Stop Buttons -->
                         </div>
                         <div id="definitionContent" class="w-full min-h-[100px] p-4 bg-blue-50 border border-blue-200 rounded-lg text-gray-700 leading-relaxed transition-all duration-300 relative">
                             Definition for your source text will appear here.
                         </div>
                     </div>
 
-                     <div id="similarWordsSection" class="space-y-4">
+                    <div id="similarWordsSection" class="space-y-4">
                         <div class="flex items-center justify-between">
                             <label class="block text-xl font-bold text-gray-800">
                                 <svg class="inline w-6 h-6 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                 Similar Words
                             </label>
-                             <button id="speakButtonSimilarWords" onclick="speakAllSimilarWords()" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200">
-                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.121-7.072a7 7 0 010 9.9M1.757 9.219L6 13.462V18h4.538l4.243 4.243a1 1 0 001.414 0 1 1 0 000-1.414L11.414 16H8V8.586l5.243-5.243a1 1 0 000-1.414 1 1 0 00-1.414 0L6 7.586V3.757a1 1 0 00-1.414 0 1 1 0 000 1.414L3.086 7H1.757a1 1 0 00-1 1V16a1 1 0 001 1h.757l-.378.378a1 1 0 000 1.414 1 1 0 001.414 0L6 18.414V20a1 1 0 001.707.707L12 16.414l5.293 5.293a1 1 0 001.414 0 1 1 0 000-1.414L13.414 16H16a1 1 0 001-1V9a1 1 0 00-1-1H1.757z"></path></svg>
-                             </button>
+                            <!-- START: Similar Words Speak/Stop Buttons -->
+                            <div class="flex items-center">
+                                <button id="speakButtonSimilarWords" onclick="speakAllSimilarWords()" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Similar Words">
+                                    <i class="fas fa-volume-up w-5 h-5"></i>
+                                </button>
+                                <button id="stopButtonSimilarWords" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                    <i class="fas fa-stop w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <!-- END: Similar Words Speak/Stop Buttons -->
                         </div>
                         <div id="similarWordsContent" class="w-full min-h-[100px] p-4 bg-green-50 border border-green-200 rounded-lg text-gray-700 leading-relaxed transition-all duration-300 flex flex-wrap gap-2 items-start content-start relative">
                             Synonyms for your source text will appear here.
@@ -781,17 +782,17 @@ body.dark .stop-btn::before {
             </div>
 
             <div class="mt-8 pt-6 border-t border-gray-200">
-    <div id="imageSearchSection" class="space-y-4">
-        <label class="block text-xl font-bold text-gray-800 dark:text-gray-100">
-            <svg class="inline w-6 h-6 mr-1 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            Related Images
-        </label>
-        
-        <div id="imageResults" class="w-full min-h-[150px] p-4 bg-gray-50 border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 flex flex-wrap gap-3 items-center content-start">
-            Images related to your source text will appear here after translation.
-        </div>
-    </div>
-</div>
+                <div id="imageSearchSection" class="space-y-4">
+                    <label class="block text-xl font-bold text-gray-800 dark:text-gray-100">
+                        <svg class="inline w-6 h-6 mr-1 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Related Images
+                    </label>
+                    
+                    <div id="imageResults" class="w-full min-h-[150px] p-4 bg-gray-50 border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 flex flex-wrap gap-3 items-center content-start">
+                        Images related to your source text will appear here after translation.
+                    </div>
+                </div>
+            </div>
 
             <div id="sources" class="mt-8 pt-6 border-t border-gray-200 hidden">
                 <p class="font-semibold text-sm text-gray-500 mb-1">Sources:</p>
@@ -822,7 +823,7 @@ body.dark .stop-btn::before {
             </div>
             
             <div class="form-group">
-                <input type="tel" id="contactPhone" name="phone" placeholder="Phone Number (Optional, 10 digits)" required
+                <input type="tel" id="contactPhone" name="phone" placeholder="Phone Number" required
                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300">
                 <span class="error-message text-xs text-red-500 hidden mt-1"></span>
             </div>
@@ -870,8 +871,8 @@ body.dark .stop-btn::before {
             </button>
              <button onclick="openSettingsModal(); toggleSidebar()" class="w-full text-left p-3 rounded-lg text-base font-medium text-gray-700 hover:bg-indigo-50 dark:text-gray-300 dark:hover:bg-indigo-900 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                Settings
-            </button>
+                 Settings
+             </button>
         </div>
     </div>
     
@@ -947,7 +948,7 @@ body.dark .stop-btn::before {
         </div>
     </div>
 
-  <div id="statusToast" 
+ <div id="statusToast" 
      class="fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none"
      role="alert">
     <div class="flex items-center justify-center space-x-2">
@@ -964,8 +965,8 @@ body.dark .stop-btn::before {
     // Removed const TTS_API_URL = `...`;
     
     // !!! IMPORTANT: REPLACED URLS TO MATCH LOGIC (AUTH/HISTORY is the main one) !!!
-    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbx8Idp9uW1Wfiryr8M8lbAgj__ezOUKSj5VbW7HTSIJslGN402BmL5KGCm0P88UXn39JQ/exec";    
-    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuXWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";    
+    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbx8Idp9uW1Wfiryr8M8lbAgj__ezOUKSj5VbW7HTSIJslGN402BmL5KGCm0P88UXn39JQ/exec";   
+    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuXWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";   
 
     // 🌟 PEXELS API CONFIGURATION 🌟
     // 🛑 ACTION REQUIRED: REPLACE 'YOUR_PEXELS_API_KEY_HERE' WITH YOUR ACTUAL KEY 🛑
@@ -1136,206 +1137,206 @@ body.dark .stop-btn::before {
 ];
 
 
-    // DOM elements
-    const body = document.body;
-    const inputTextA = document.getElementById('inputTextA');
-    const inputTextB = document.getElementById('inputTextB');
-    const langA = document.getElementById('langA');
-    const langB = document.getElementById('langB');
-    const labelA = document.getElementById('labelA');
-    const labelB = document.getElementById('labelB');
-    const definitionContent = document.getElementById('definitionContent');
-    const similarWordsContent = document.getElementById('similarWordsContent');
-    // 🌟 ADDED: New DOM element for image results
-    const imageResults = document.getElementById('imageResults');    
-    const authContainer = document.getElementById('authContainer');
-    const authMessage = document.getElementById('authMessage');
-    const accountStatus = document.getElementById('accountStatus');
-    const historyListContainer = document.getElementById('historyListContainer');
-    const historyStatus = document.getElementById('historyStatus');
-    const clearHistoryButton = document.getElementById('clearHistoryButton');
-    const sourcesDiv = document.getElementById('sources');
-    const sourceList = document.getElementById('sourceList');
-    const speakButtonA = document.getElementById('speakButtonA');
-    const speakButtonB = document.getElementById('speakButtonB');
-    const speakButtonDef = document.getElementById('speakButtonDef');
-    const speakButtonSimilarWords = document.getElementById('speakButtonSimilarWords');
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const voiceSelect = document.getElementById('voiceSelect');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-    const translateButton = document.getElementById('translateButton');
+    // DOM elements
+    const body = document.body;
+    const inputTextA = document.getElementById('inputTextA');
+    const inputTextB = document.getElementById('inputTextB');
+    const langA = document.getElementById('langA');
+    const langB = document.getElementById('langB');
+    const labelA = document.getElementById('labelA');
+    const labelB = document.getElementById('labelB');
+    const definitionContent = document.getElementById('definitionContent');
+    const similarWordsContent = document.getElementById('similarWordsContent');
+    // 🌟 ADDED: New DOM element for image results
+    const imageResults = document.getElementById('imageResults');    
+    const authContainer = document.getElementById('authContainer');
+    const authMessage = document.getElementById('authMessage');
+    const accountStatus = document.getElementById('accountStatus');
+    const historyListContainer = document.getElementById('historyListContainer');
+    const historyStatus = document.getElementById('historyStatus');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+    const sourcesDiv = document.getElementById('sources');
+    const sourceList = document.getElementById('sourceList');
+    const speakButtonA = document.getElementById('speakButtonA');
+    const speakButtonB = document.getElementById('speakButtonB');
+    const speakButtonDef = document.getElementById('speakButtonDef');
+    const speakButtonSimilarWords = document.getElementById('speakButtonSimilarWords');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    const translateButton = document.getElementById('translateButton');
 
 
-    // State variables
-    let audioPlayer = null;    
-    let isTranslating = false;    
-    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;    
-    let ttsVoice = localStorage.getItem('ttsVoice') || 'Orus';    
-    // Global history tracking
-    let currentHistoryData = [];
-    let originalHistoryData = [];
-    
-    // Global variable for the Web Speech API synth object
-    const nativeSynth = window.speechSynthesis;
+    // State variables
+    let audioPlayer = null;    
+    let isTranslating = false;    
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;    
+    let ttsVoice = localStorage.getItem('ttsVoice') || 'Orus';    
+    // Global history tracking
+    let currentHistoryData = [];
+    let originalHistoryData = [];
+    
+    // Global variable for the Web Speech API synth object
+    const nativeSynth = window.speechSynthesis;
 
 
-    // --- Settings & UI Management ---
+    // --- Settings & UI Management ---
 
-    window.toggleSidebar = function() {
-        sidebar.classList.toggle('open');
-        sidebarBackdrop.classList.toggle('open');
-    }
+    window.toggleSidebar = function() {
+        sidebar.classList.toggle('open');
+        sidebarBackdrop.classList.toggle('open');
+    }
 
-    window.openSettingsModal = function() {
-        // Load current settings into the modal
-        darkModeToggle.checked = body.classList.contains('dark');
-        voiceSelect.value = ttsVoice;
-        document.getElementById('settingsModal').classList.remove('hidden');
-    }
+    window.openSettingsModal = function() {
+        // Load current settings into the modal
+        darkModeToggle.checked = body.classList.contains('dark');
+        voiceSelect.value = ttsVoice;
+        document.getElementById('settingsModal').classList.remove('hidden');
+    }
 
-    function toggleDarkMode(isDark) {
-        if (isDark) {
-            body.classList.add('dark');
-            body.classList.remove('light');
-            localStorage.setItem('darkMode', 'true');
-        } else {
-            body.classList.remove('dark');
-            body.classList.add('light');
-            localStorage.setItem('darkMode', 'false');
-        }
-    }
+    function toggleDarkMode(isDark) {
+        if (isDark) {
+            body.classList.add('dark');
+            body.classList.remove('light');
+            localStorage.setItem('darkMode', 'true');
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            localStorage.setItem('darkMode', 'false');
+        }
+    }
 
-    function setTTSVoice(voice) {
-        ttsVoice = voice;
-        localStorage.setItem('ttsVoice', voice);
-    }
+    function setTTSVoice(voice) {
+        ttsVoice = voice;
+        localStorage.setItem('ttsVoice', voice);
+    }
 
-    // Fix for sidebar menu links that need to close the sidebar
-    window.closeSidebarAndScroll = function(targetId) {
-        toggleSidebar();
-        // Wait for transition, then scroll
-        setTimeout(() => {
-            document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
-        }, 300);
-    }
-    
-    // --- NEW: Function to load all available browser voices into the select menu ---
-    function loadAvailableVoices() {
-        const voiceSelect = document.getElementById('voiceSelect');
-        
-        // Save current selection before clearing
-        const savedVoice = voiceSelect.value;
-        voiceSelect.innerHTML = ''; 
+    // Fix for sidebar menu links that need to close the sidebar
+    window.closeSidebarAndScroll = function(targetId) {
+        toggleSidebar();
+        // Wait for transition, then scroll
+        setTimeout(() => {
+            document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
+    
+    // --- NEW: Function to load all available browser voices into the select menu ---
+    function loadAvailableVoices() {
+        const voiceSelect = document.getElementById('voiceSelect');
+        
+        // Save current selection before clearing
+        const savedVoice = voiceSelect.value;
+        voiceSelect.innerHTML = ''; 
 
-        // Get voices from the browser's native API
-        const voices = nativeSynth.getVoices();
+        // Get voices from the browser's native API
+        const voices = nativeSynth.getVoices();
 
-        voices.forEach(voice => {
-            const option = document.createElement('option');
-            // Display a user-friendly name and language/dialect
-            option.textContent = `${voice.name} (${voice.lang})`; 
-            option.value = voice.name; // Use the voice name as the value
-            
-            // Mark the default voice (if applicable)
-            if (voice.default) {
-                option.textContent += ' — DEFAULT';
-            }
+        voices.forEach(voice => {
+            const option = document.createElement('option');
+            // Display a user-friendly name and language/dialect
+            option.textContent = `${voice.name} (${voice.lang})`; 
+            option.value = voice.name; // Use the voice name as the value
+            
+            // Mark the default voice (if applicable)
+            if (voice.default) {
+                option.textContent += ' — DEFAULT';
+            }
 
-            voiceSelect.appendChild(option);
-        });
+            voiceSelect.appendChild(option);
+        });
 
-        // Re-select the saved preference if it still exists in the new list
-        if (savedVoice && voices.some(v => v.name === savedVoice)) {
-            voiceSelect.value = savedVoice;
-            setTTSVoice(savedVoice);
-        } else if (voiceSelect.options.length > 0) {
-            // Fallback: Use the first voice and save it as the new default preference
-            setTTSVoice(voiceSelect.value);
-        }
-    }
-    // CRITICAL STEP: Since getVoices() is loaded asynchronously, we listen for the voiceschanged event
-    if (nativeSynth.onvoiceschanged !== undefined) {
-        nativeSynth.onvoiceschanged = loadAvailableVoices;
-    }
-    // Call once immediately in case voices are already loaded
-    loadAvailableVoices();
-    // --- END: loadAvailableVoices ---
-
-
-    // --- Core Fix: Language Selector Population and Update ---
-    function populateLanguageSelectors() {
-        langA.innerHTML = '';
-        languages.forEach(lang => {
-            const option = document.createElement('option');
-            option.value = lang.value;
-            option.textContent = lang.name;
-            langA.appendChild(option);
-        });
-        langA.value = 'English';    
-
-        langB.innerHTML = '';
-        languages.forEach(lang => {
-            const option = document.createElement('option');
-            option.value = lang.value;
-            option.textContent = lang.name;
-            langB.appendChild(option);
-        });
-        langB.value = 'Tamil';    
-
-        updateLabels();
-    }
-    
-    function updateLabels() {
-        if (langA.options[langA.selectedIndex]) {
-            labelA.textContent = langA.options[langA.selectedIndex].text;
-        }
-        if (langB.options[langB.selectedIndex]) {
-            labelB.textContent = langB.options[langB.selectedIndex].text;
-        }
-    }
-
-    // NEW: Function to toggle password visibility
-    window.togglePasswordVisibility = function(inputId, iconId) {
-        const passwordInput = document.getElementById(inputId);
-        const toggleIcon = document.getElementById(iconId);
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleIcon.classList.remove('fa-eye');
-            toggleIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
-        }
-    }
+        // Re-select the saved preference if it still exists in the new list
+        if (savedVoice && voices.some(v => v.name === savedVoice)) {
+            voiceSelect.value = savedVoice;
+            setTTSVoice(savedVoice);
+        } else if (voiceSelect.options.length > 0) {
+            // Fallback: Use the first voice and save it as the new default preference
+            setTTSVoice(voiceSelect.value);
+        }
+    }
+    // CRITICAL STEP: Since getVoices() is loaded asynchronously, we listen for the voiceschanged event
+    if (nativeSynth.onvoiceschanged !== undefined) {
+        nativeSynth.onvoiceschanged = loadAvailableVoices;
+    }
+    // Call once immediately in case voices are already loaded
+    loadAvailableVoices();
+    // --- END: loadAvailableVoices ---
 
 
-    // --- Auth & Modal Functions (FIXED GLOBAL ACCESS) ---
-    
-    // NEW: Function to close modal if backdrop (but not content) is clicked
-    window.closeModalOnBackdrop = function(event, modalId) {
-        if (event.target.classList.contains('modal-backdrop')) {
-            closeModal(modalId);
-        }
-    }
+    // --- Core Fix: Language Selector Population and Update ---
+    function populateLanguageSelectors() {
+        langA.innerHTML = '';
+        languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang.value;
+            option.textContent = lang.name;
+            langA.appendChild(option);
+        });
+        langA.value = 'English';   
 
-    // FIX 1: Made globally accessible via window
-    window.renderAuthView = function(view) {
-        authMessage.textContent = '';
-        
-        if (currentUser) {
-            view = 'status';
-        }
+        langB.innerHTML = '';
+        languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang.value;
+            option.textContent = lang.name;
+            langB.appendChild(option);
+        });
+        langB.value = 'Tamil';   
 
-        let html = '';
-        let title = '';
+        updateLabels();
+    }
+    
+    function updateLabels() {
+        if (langA.options[langA.selectedIndex]) {
+            labelA.textContent = langA.options[langA.selectedIndex].text;
+        }
+        if (langB.options[langB.selectedIndex]) {
+            labelB.textContent = langB.options[langB.selectedIndex].text;
+        }
+    }
 
-        const inputClasses = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300";
-        const buttonPrimaryClasses = "w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md";
-        const buttonSecondaryClasses = "text-indigo-600 font-medium hover:underline transition duration-150";
+    // NEW: Function to toggle password visibility
+    window.togglePasswordVisibility = function(inputId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleIcon = document.getElementById(iconId);
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
 
-       switch (view) {
+
+    // --- Auth & Modal Functions (FIXED GLOBAL ACCESS) ---
+    
+    // NEW: Function to close modal if backdrop (but not content) is clicked
+    window.closeModalOnBackdrop = function(event, modalId) {
+        if (event.target.classList.contains('modal-backdrop')) {
+            closeModal(modalId);
+        }
+    }
+
+    // FIX 1: Made globally accessible via window
+    window.renderAuthView = function(view) {
+        authMessage.textContent = '';
+        
+        if (currentUser) {
+            view = 'status';
+        }
+
+        let html = '';
+        let title = '';
+
+        const inputClasses = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300";
+        const buttonPrimaryClasses = "w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md";
+        const buttonSecondaryClasses = "text-indigo-600 font-medium hover:underline transition duration-150";
+
+       switch (view) {
             case 'login':
                 title = 'Log In to LexiVerse';
                 html = `
@@ -1400,192 +1401,192 @@ body.dark .stop-btn::before {
                 break;
         }
 
-        authContainer.innerHTML = html;
-    }
+        authContainer.innerHTML = html;
+    }
 
-    window.openAccountModal = function() {
-        // Render the view *before* opening the modal
-        window.renderAuthView(currentUser ? 'status' : 'login');    
-        document.getElementById('accountModal').classList.remove('hidden');
-    }
+    window.openAccountModal = function() {
+        // Render the view *before* opening the modal
+        window.renderAuthView(currentUser ? 'status' : 'login');    
+        document.getElementById('accountModal').classList.remove('hidden');
+    }
 
-    // FIX 3: Ensures closeModal is always available for inline HTML buttons
-    window.closeModal = function(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-        // Re-render auth view in case user just signed up/in/out, preparing for next open
-        window.renderAuthView(currentUser ? 'status' : 'login');    
-    }
-    
-    function updateAccountStatus() {
-      if (currentUser) {
-          // 1. Determine the display name: Use the full name if available,  
-          //    otherwise fall back to the part of the email before '@'.
-          const displayName = currentUser.name  
-                               ? currentUser.name.split(' ')[0] // Display only the first name (optional)
-                               : currentUser.email.split('@')[0];
-          
-          // 2. Update the account status element
-          accountStatus.textContent = `Logged in (${displayName})`;
-          
-          // 3. Apply success styling
-          accountStatus.classList.add('text-green-600');
-          accountStatus.classList.remove('text-gray-600');
-          
-      } else {
-          // User is logged out (Original logic)
-          accountStatus.textContent = 'Account';
-          accountStatus.classList.remove('text-green-600');
-          accountStatus.classList.add('text-gray-600');
-      }
-    }
-    
-    // --- Auth Logic (Updated to use server-side endpoints for logging) ---
+    // FIX 3: Ensures closeModal is always available for inline HTML buttons
+    window.closeModal = function(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        // Re-render auth view in case user just signed up/in/out, preparing for next open
+        window.renderAuthView(currentUser ? 'status' : 'login');    
+    }
+    
+    function updateAccountStatus() {
+      if (currentUser) {
+          // 1. Determine the display name: Use the full name if available,  
+          //    otherwise fall back to the part of the email before '@'.
+          const displayName = currentUser.name  
+                                 ? currentUser.name.split(' ')[0] // Display only the first name (optional)
+                                 : currentUser.email.split('@')[0];
+          
+          // 2. Update the account status element
+          accountStatus.textContent = `Logged in (${displayName})`;
+          
+          // 3. Apply success styling
+          accountStatus.classList.add('text-green-600');
+          accountStatus.classList.remove('text-gray-600');
+          
+      } else {
+          // User is logged out (Original logic)
+          accountStatus.textContent = 'Account';
+          accountStatus.classList.remove('text-green-600');
+          accountStatus.classList.add('text-gray-600');
+      }
+    }
+    
+    // --- Auth Logic (Updated to use server-side endpoints for logging) ---
 
-    async function sendAuthRequest(action, data) {
-        // The AUTH_HISTORY_URL handles login, signup, and getHistory actions
-        if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_AUTH_HISTORY_APPSCRIPT_URL_HERE")) {
-            authMessage.textContent = "Error: AUTH_HISTORY_URL is not configured.";
-            return { success: false };
-        }
+    async function sendAuthRequest(action, data) {
+        // The AUTH_HISTORY_URL handles login, signup, and getHistory actions
+        if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_AUTH_HISTORY_APPSCRIPT_URL_HERE")) {
+            authMessage.textContent = "Error: AUTH_HISTORY_URL is not configured.";
+            return { success: false };
+        }
 
-        authMessage.textContent = 'Processing...';
+        authMessage.textContent = 'Processing...';
 
-        const formData = new FormData();
-        formData.append("action", action);
-        for (const key in data) {
-            formData.append(key, data[key]);
-        }
+        const formData = new FormData();
+        formData.append("action", action);
+        for (const key in data) {
+            formData.append(key, data[key]);
+        }
 
-        try {
-            const response = await fetch(AUTH_HISTORY_URL, {
-                method: 'POST',
-                body: formData
-            });
+        try {
+            const response = await fetch(AUTH_HISTORY_URL, {
+                method: 'POST',
+                body: formData
+            });
 
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-            
-            const result = await response.json();
-            return result;
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+            
+            const result = await response.json();
+            return result;
 
-        } catch (error) {
-            authMessage.textContent = `Network Error: ${error.message}`;
-            return { success: false };
-        }
-    }
+        } catch (error) {
+            authMessage.textContent = `Network Error: ${error.message}`;
+            return { success: false };
+        }
+    }
 
 
-    window.handleSignup = async function(event) {
-        event.preventDefault();
-        
-        const name = document.getElementById('signupName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const password = document.getElementById('signupPassword').value;
-        
-        if (!email.endsWith('@gmail.com')) {
-            authMessage.textContent = "Please use a valid Gmail address for sign up.";
-            showCustomToast("Invalid Email Format", 'error', 4000);
-            return;
-        }
-        if (password.length < 6) {
-            authMessage.textContent = "Password must be at least 6 characters.";
-            showCustomToast("Password too short", 'error', 4000);
-            return;
-        }
-        
-        const result = await sendAuthRequest('signup', { name, email, password });
+    window.handleSignup = async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        
+        if (!email.endsWith('@gmail.com')) {
+            authMessage.textContent = "Please use a valid Gmail address for sign up.";
+            showCustomToast("Invalid Email Format", 'error', 4000);
+            return;
+        }
+        if (password.length < 6) {
+            authMessage.textContent = "Password must be at least 6 characters.";
+            showCustomToast("Password too short", 'error', 4000);
+            return;
+        }
+        
+        const result = await sendAuthRequest('signup', { name, email, password });
 
-        if (result.success) {
-            currentUser = { email: email, name: name };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateAccountStatus();
-            closeModal('accountModal');
-            // Use custom toast on success
-            showCustomToast(`Welcome, ${name}! You are now logged in.`, 'success');    
-            
-        } else {
-            const errorMessage = result.message || "Sign up failed.";
-            authMessage.textContent = errorMessage; // Keep error in modal
-            showCustomToast("Signup Failed: " + errorMessage, 'error', 5000);    
-        }
-    }
+        if (result.success) {
+            currentUser = { email: email, name: name };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAccountStatus();
+            closeModal('accountModal');
+            // Use custom toast on success
+            showCustomToast(`Welcome, ${name}! You are now logged in.`, 'success');    
+            
+        } else {
+            const errorMessage = result.message || "Sign up failed.";
+            authMessage.textContent = errorMessage; // Keep error in modal
+            showCustomToast("Signup Failed: " + errorMessage, 'error', 5000);    
+        }
+    }
 
-    window.handleLogin = async function(event) {
-        event.preventDefault();
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value;
+    window.handleLogin = async function(event) {
+        event.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
 
-        const result = await sendAuthRequest('login', { email, password });
+        const result = await sendAuthRequest('login', { email, password });
 
-        if (result.success) {
-            currentUser = result.user;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateAccountStatus();
-            closeModal('accountModal');
-            // Use custom toast on success
-            showCustomToast(`Welcome back, ${result.user.name || 'User'}!`, 'success');
+        if (result.success) {
+            currentUser = result.user;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAccountStatus();
+            closeModal('accountModal');
+            // Use custom toast on success
+            showCustomToast(`Welcome back, ${result.user.name || 'User'}!`, 'success');
 
-        } else {
-            const errorMessage = result.message || "Login failed. Check your email and password.";
-            authMessage.textContent = errorMessage; // Keep error in modal
-            showCustomToast("Login Failed. Check credentials.", 'error', 5000);
-        }
-    }
+        } else {
+            const errorMessage = result.message || "Login failed. Check your email and password.";
+            authMessage.textContent = errorMessage; // Keep error in modal
+            showCustomToast("Login Failed. Check credentials.", 'error', 5000);
+        }
+    }
 
-    window.handleLogout = function() {
-        currentUser = null;
-        localStorage.removeItem('currentUser');
-        updateAccountStatus();
-        closeModal('accountModal');
-        // Use custom toast on success
-        showCustomToast("You have been logged out.", 'logout');
-    }
-    // --- Custom Toast Notification Handler ---
+    window.handleLogout = function() {
+        currentUser = null;
+        localStorage.removeItem('currentUser');
+        updateAccountStatus();
+        closeModal('accountModal');
+        // Use custom toast on success
+        showCustomToast("You have been logged out.", 'logout');
+    }
+    // --- Custom Toast Notification Handler ---
 
-    function showCustomToast(message, type, duration = 4000) {
-        const toast = document.getElementById('statusToast');
-        const toastMessage = document.getElementById('toastMessage');
-        const toastIcon = document.getElementById('toastIcon');
-        if (!toast || !toastMessage || !toastIcon) return; // Safety check
+    function showCustomToast(message, type, duration = 4000) {
+        const toast = document.getElementById('statusToast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+        if (!toast || !toastMessage || !toastIcon) return; // Safety check
 
-        // 1. Reset all animation/type classes
-        toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none';
-        toastIcon.innerHTML = '';
-        
-        let iconHtml = '';
-        let typeClass = '';
+        // 1. Reset all animation/type classes
+        toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none';
+        toastIcon.innerHTML = '';
+        
+        let iconHtml = '';
+        let typeClass = '';
 
-        if (type === 'success') {
-            typeClass = 'toast-success';
-            iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; // Checkmark
-        } else if (type === 'logout') {
-            typeClass = 'toast-logout';
-            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>'; // Door Exit
-        } else if (type === 'error') {
-            typeClass = 'toast-error';
-            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
+        if (type === 'success') {
+            typeClass = 'toast-success';
+            iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; // Checkmark
+        } else if (type === 'logout') {
+            typeClass = 'toast-logout';
+            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>'; // Door Exit
+        } else if (type === 'error') {
+            typeClass = 'toast-error';
+            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        }
 
-        toastMessage.textContent = message;
-        toastIcon.innerHTML = iconHtml;
-        
-        // 2. Apply new type classes and trigger the visible animation
-        toast.classList.add(typeClass, 'toast-visible');
+        toastMessage.textContent = message;
+        toastIcon.innerHTML = iconHtml;
+        
+        // 2. Apply new type classes and trigger the visible animation
+        toast.classList.add(typeClass, 'toast-visible');
 
-        // 3. Hide after duration
-        setTimeout(() => {
-            // Reverse the animation (by removing the visible class)
-            toast.classList.remove('toast-visible');    
-            toast.classList.add('opacity-0');
-            
-            // Ensure it's fully off-screen/non-interactive after transition
-            setTimeout(() => {
-                toast.classList.remove(typeClass);
-                toast.classList.add('pointer-events-none');
-            }, 500); // Wait for the transition duration
-        }, duration);
-    }
+        // 3. Hide after duration
+        setTimeout(() => {
+            // Reverse the animation (by removing the visible class)
+            toast.classList.remove('toast-visible');    
+            toast.classList.add('opacity-0');
+            
+            // Ensure it's fully off-screen/non-interactive after transition
+            setTimeout(() => {
+                toast.classList.remove(typeClass);
+                toast.classList.add('pointer-events-none');
+            }, 500); // Wait for the transition duration
+        }, duration);
+    }
 
-    
+    
     // --- History Functions ---
 
     function getHistory() {
@@ -1606,7 +1607,7 @@ body.dark .stop-btn::before {
         }
     }
 
-    // Old saveToHistory kept for local history 
+    // Old saveToHistory kept for local history  
     function saveToHistory(sourceText, targetText, translation) {
         if (sourceText.length === 0 || translation.length === 0) return;
 
@@ -1616,7 +1617,7 @@ body.dark .stop-btn::before {
 
         // Fetch existing history and map timestamps back to local string for storage compatibility
         const history = getHistory().map(item => ({
-            ...item, 
+            ...item,    
             timestamp: new Date(item.timestamp).toLocaleString()
         })); 
 
@@ -1649,7 +1650,7 @@ body.dark .stop-btn::before {
         document.getElementById('clearHistoryConfirmModal')?.classList.remove('hidden');
     }
 
-    // ✅ FIXED: Function executed after user confirms deletion (Clears Local Storage only) 
+    // ✅ FIXED: Function executed after user confirms deletion (Clears Local Storage only)  
     window.clearHistoryConfirmed = function() {
         // 1. Close the confirmation modal (Assuming closeModal function is globally available)
         if (typeof closeModal === 'function') {
@@ -1709,7 +1710,7 @@ body.dark .stop-btn::before {
         const entryDate = new Date(isoTimestamp);
         const now = new Date();
         
-        // Convert 2 days to milliseconds 
+        // Convert 2 days to milliseconds  
         const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
         
         // Calculate difference (entryDate will be smaller/older, so diff is positive)
@@ -1841,7 +1842,7 @@ body.dark .stop-btn::before {
         const historyStatus = document.getElementById('historyStatus');
         if (historyStatus) {
             historyStatus.parentNode.insertBefore(buttonContainer, historyStatus);
-        } 
+        }  
     }
 
 
@@ -1951,122 +1952,133 @@ body.dark .stop-btn::before {
         window.sortHistory('all'); 
     }
 
-    // --- Utility Functions (TTS, Formatting, etc.) ---
-    
-    function debounce(func, delay) {
-        let timeoutId;
-        return function(value) {
-            const context = this;
+    // --- Utility Functions (TTS, Formatting, etc.) ---
+    
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(value) {
+            const context = this;
 
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                func.apply(context, [value]);
-            }, delay);
-        };
-    }
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(context, [value]);
+            }, delay);
+        };
+    }
 
-    window.swapLanguages = function() {
-        const tempLang = langA.value;
-        langA.value = langB.value;
-        langB.value = tempLang;
+    window.swapLanguages = function() {
+        const tempLang = langA.value;
+        langA.value = langB.value;
+        langB.value = tempLang;
 
-        const tempText = inputTextA.value;
-        inputTextA.value = inputTextB.value;
-        inputTextB.value = tempText;
-        
-        updateLabels();
+        const tempText = inputTextA.value;
+        inputTextA.value = inputTextB.value;
+        inputTextB.value = tempText;
+        
+        updateLabels();
 
-        // Re-run translation only if a manual button press is required
-        updateTranslateButtonState();    
-    }
+        // Re-run translation only if a manual button press is required
+        updateTranslateButtonState();   
+    }
 
-    window.clearText = function(boxId) {
-        isTranslating = true;
-        if (boxId === 'A') {
-            inputTextA.value = '';
-            inputTextB.value = '';
-            inputTextA.focus();
-        } else if (boxId === 'B') {
-            inputTextB.value = '';
-            inputTextA.value = '';
-            inputTextB.focus();
-        }
+    window.clearText = function(boxId) {
+        isTranslating = true;
+        if (boxId === 'A') {
+            inputTextA.value = '';
+            inputTextB.value = '';
+            inputTextA.focus();
+        } else if (boxId === 'B') {
+            inputTextB.value = '';
+            inputTextA.value = '';
+            inputTextB.focus();
+        }
 
-        definitionContent.innerHTML = 'Definition for your source text will appear here.';
-        similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-        // 🌟 ADDED: Clear image results on clear 🌟
-        imageResults.innerHTML = 'Images related to your source text will appear here after translation.';    
-        speakButtonA.disabled = true;
-        speakButtonB.disabled = true;
-        speakButtonDef.disabled = true;
-        speakButtonSimilarWords.disabled = true;
-        clearSources();
-        updateTranslateButtonState();    
-        isTranslating = false;
-    }
+        definitionContent.innerHTML = 'Definition for your source text will appear here.';
+        similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+        // 🌟 ADDED: Clear image results on clear 🌟
+        imageResults.innerHTML = 'Images related to your source text will appear here after translation.';    
+        speakButtonA.disabled = true;
+        speakButtonB.disabled = true;
+        speakButtonDef.disabled = true;
+        speakButtonSimilarWords.disabled = true;
+        
+        // Hide all stop buttons when clearing text
+        document.getElementById('stopButtonA').disabled = true;
+        document.getElementById('stopButtonA').classList.add('opacity-0');
+        document.getElementById('stopButtonB').disabled = true;
+        document.getElementById('stopButtonB').classList.add('opacity-0');
+        document.getElementById('stopButtonDef').disabled = true;
+        document.getElementById('stopButtonDef').classList.add('opacity-0');
+        document.getElementById('stopButtonSimilarWords').disabled = true;
+        document.getElementById('stopButtonSimilarWords').classList.add('opacity-0');
 
-    function clearSources() {
-        sourceList.innerHTML = '';
-        sourcesDiv.classList.add('hidden');
-    }
-    
-    function setLoading(isLoading, targetBox) {
-        // NEW: Added translateButton to loading state check
-        translateButton.disabled = isLoading || (inputTextA.value.trim().length === 0 && inputTextB.value.trim().length === 0);
+        clearSources();
+        updateTranslateButtonState();   
+        isTranslating = false;
+    }
 
-        const loadingHTML = `
-            <div class="loading-container">
-                <svg class="svg-spinner w-8 h-8 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
-        `;
-        
-        if (targetBox === 'A') {
-            inputTextA.classList.toggle('loading', isLoading);
-        } else if (targetBox === 'B') {
-            inputTextB.classList.toggle('loading', isLoading);
-        } else if (targetBox === 'DEF') {
-            if (isLoading) {
-                definitionContent.innerHTML = loadingHTML;
-                similarWordsContent.innerHTML = loadingHTML;
-                // 🌟 ADDED: Image results loading state
-                imageResults.innerHTML = loadingHTML;
-            } else if (definitionContent.querySelector('.loading-container')) {
-                definitionContent.innerHTML = 'Definition for your source text will appear here.';
-                similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-                // 🌟 ADDED: Image results initial state
-                imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
-            }
-            definitionContent.classList.toggle('opacity-50', isLoading);
-            similarWordsContent.classList.toggle('opacity-50', isLoading);
-            // 🌟 ADDED: Image results opacity control
-            imageResults.classList.toggle('opacity-50', isLoading);
-        }
-    }
+    function clearSources() {
+        sourceList.innerHTML = '';
+        sourcesDiv.classList.add('hidden');
+    }
+    
+    function setLoading(isLoading, targetBox) {
+        // NEW: Added translateButton to loading state check
+        translateButton.disabled = isLoading || (inputTextA.value.trim().length === 0 && inputTextB.value.trim().length === 0);
 
-   // --- Updated formatSynonyms function for robustness ---
-    function formatSynonyms(synonymsText) {
-        if (!synonymsText || synonymsText.toLowerCase() === 'n/a' || synonymsText.trim() === '') {
-            speakButtonSimilarWords.disabled = true;
-            return '<span class="text-gray-500">No synonyms found.</span>';
-        }
-        speakButtonSimilarWords.disabled = false;
+        const loadingHTML = `
+            <div class="loading-container">
+                <svg class="svg-spinner w-8 h-8 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        `;
+        
+        if (targetBox === 'A') {
+            inputTextA.classList.toggle('loading', isLoading);
+        } else if (targetBox === 'B') {
+            inputTextB.classList.toggle('loading', isLoading);
+        } else if (targetBox === 'DEF') {
+            if (isLoading) {
+                definitionContent.innerHTML = loadingHTML;
+                similarWordsContent.innerHTML = loadingHTML;
+                // 🌟 ADDED: Image results loading state
+                imageResults.innerHTML = loadingHTML;
+            } else if (definitionContent.querySelector('.loading-container')) {
+                definitionContent.innerHTML = 'Definition for your source text will appear here.';
+                similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+                // 🌟 ADDED: Image results initial state
+                imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
+            }
+            definitionContent.classList.toggle('opacity-50', isLoading);
+            similarWordsContent.classList.toggle('opacity-50', isLoading);
+            // 🌟 ADDED: Image results opacity control
+            imageResults.classList.toggle('opacity-50', isLoading);
+        }
+    }
 
-        return synonymsText.split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0)
-            .map(s => {
-                // Use 'inline-block' to ensure correct box modeling for wrapping
-                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
-                             ${s}
-                         </span>`;
-            })
-            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
-    }
+   // --- Updated formatSynonyms function for robustness ---
+    function formatSynonyms(synonymsText) {
+        if (!synonymsText || synonymsText.toLowerCase() === 'n/a' || synonymsText.trim() === '') {
+            speakButtonSimilarWords.disabled = true;
+            return '<span class="text-gray-500">No synonyms found.</span>';
+        }
+        speakButtonSimilarWords.disabled = false;
 
-    function formatDefinition(text) {
+        return synonymsText.split(',')
+            .map(s => s.trim())
+            .filter(s => s.length > 0)
+            .map(s => {
+                // Use 'inline-block' to ensure correct box modeling for wrapping
+                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
+                                 ${s}
+                             </span>`;
+            })
+            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
+    }
+
+    function formatDefinition(text) {
     if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
     
     // 1. Convert NEWLINES (\n or \\n) to HTML line breaks (<br>).
@@ -2079,16 +2091,15 @@ body.dark .stop-btn::before {
     formattedText = formattedText.replace(/\*(.*?)\:/g, '<strong>$1:</strong>');
     
     // 4. NEW STEP: Remove any remaining single leading asterisks that are NOT followed by a colon.
-    // This is often needed if the API output includes asterisks as bullet points or simple markers.
     // We target only the asterisk character itself and replace it with nothing.
     formattedText = formattedText.replace(/\*/g, '');
     
     return formattedText;
 }
-    function stripHtml(html) {
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        return doc.body.textContent || "";
-    }
+    function stripHtml(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || "";
+    }
 
     // --- TTS CONTROL LOGIC ---
 
@@ -2125,12 +2136,9 @@ body.dark .stop-btn::before {
     }
 
     window.speakAllSimilarWords = function() {
-        const button = speakButtonSimilarWords;
         const words = similarWordsContent.textContent.trim().replace('Synonyms for your source text will appear here.', '');
         if (!words) return;
-        button.classList.add('loading');
-        button.disabled = true;
-        handleSpeak(words, null, button);
+        handleSpeak(words, 'SimilarWords'); // Use 'SimilarWords' as speakerId to target the right stop button
     }
     
     window.speakDefinition = function() {
@@ -2153,7 +2161,7 @@ body.dark .stop-btn::before {
             return;
         }
 
-        const buttonMap = { 'A': speakButtonA, 'B': speakButtonB, 'Def': speakButtonDef };
+        const buttonMap = { 'A': speakButtonA, 'B': speakButtonB, 'Def': speakButtonDef, 'SimilarWords': speakButtonSimilarWords };
         const button = buttonElement || buttonMap[speakerId];
         
         // Find the corresponding STOP button (using ID mapping based on speakerId)
@@ -2178,7 +2186,7 @@ body.dark .stop-btn::before {
         
         if (selectedVoice) {
             utterance.voice = selectedVoice;
-        } 
+        }  
         
         // 4. Set event handlers for button disabling/reenabling
         
