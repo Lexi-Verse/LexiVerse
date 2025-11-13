@@ -959,23 +959,23 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
 
 <script type="module">
-    // Global constants
-    const apiKey = "AIzaSyBNEWSCuBiDNyRxnIaF1PfdcJ2eZIoSwV8";
-    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-    // Removed const TTS_API_URL = `...`;
-    
-    // !!! IMPORTANT: REPLACED URLS TO MATCH LOGIC (AUTH/HISTORY is the main one) !!!
-    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbx8Idp9uW1Wfiryr8M8lbAgj__ezOUKSj5VbW7HTSIJslGN402BmL5KGCm0P88UXn39JQ/exec";   
-    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuXWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";   
+   // Global constants
+const apiKey = "AIzaSyBNEWSCuBiDNyRxnIaF1PfdcJ2eZIoSwV8";
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+// Removed const TTS_API_URL = `...`;
 
-    // 🌟 PEXELS API CONFIGURATION 🌟
-    // 🛑 ACTION REQUIRED: REPLACE 'YOUR_PEXELS_API_KEY_HERE' WITH YOUR ACTUAL KEY 🛑
-    const PEXELS_API_KEY = 'Xr6Q356j546ODjGgS5JlsqD0tOGu03N4ClFTFirZUfezTAxsyVSA6hUZ';    
-    const PEXELS_URL = 'https://api.pexels.com/v1/search';
+// !!! IMPORTANT: REPLACED URLS TO MATCH LOGIC (AUTH/HISTORY is the main one) !!!
+const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbx8Idp9uW1Wfiryr8M8lbAgj__ezOUKSj5VbW7HTSIJslGN402BmL5KGCm0P88UXn39JQ/exec";
+const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";
+
+// 🌟 PEXELS API CONFIGURATION 🌟
+// 🛑 ACTION REQUIRED: REPLACE 'YOUR_PEXELS_API_KEY_HERE' WITH YOUR ACTUAL KEY 🛑
+const PEXELS_API_KEY = 'Xr6Q356j546ODjGgS5JlsqD0tOGu03N4ClFTFirZUfezTAxsyVSA6hUZ';
+const PEXELS_URL = 'https://api.pexels.com/v1/search';
 
 
-    // Language data (unchanged)
-    const languages = [
+// Language data (unchanged)
+const languages = [
 { name: "Abkhaz", value: "Abkhaz" },
 { name: "Acehnese", value: "Acehnese" },
 { name: "Acholi", value: "Acholi" },
@@ -1137,648 +1137,648 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 ];
 
 
-    // DOM elements
-    const body = document.body;
-    const inputTextA = document.getElementById('inputTextA');
-    const inputTextB = document.getElementById('inputTextB');
-    const langA = document.getElementById('langA');
-    const langB = document.getElementById('langB');
-    const labelA = document.getElementById('labelA');
-    const labelB = document.getElementById('labelB');
-    const definitionContent = document.getElementById('definitionContent');
-    const similarWordsContent = document.getElementById('similarWordsContent');
-    // 🌟 ADDED: New DOM element for image results
-    const imageResults = document.getElementById('imageResults');    
-    const authContainer = document.getElementById('authContainer');
-    const authMessage = document.getElementById('authMessage');
-    const accountStatus = document.getElementById('accountStatus');
-    const historyListContainer = document.getElementById('historyListContainer');
-    const historyStatus = document.getElementById('historyStatus');
-    const clearHistoryButton = document.getElementById('clearHistoryButton');
-    const sourcesDiv = document.getElementById('sources');
-    const sourceList = document.getElementById('sourceList');
-    const speakButtonA = document.getElementById('speakButtonA');
-    const speakButtonB = document.getElementById('speakButtonB');
-    const speakButtonDef = document.getElementById('speakButtonDef');
-    const speakButtonSimilarWords = document.getElementById('speakButtonSimilarWords');
-    const darkModeToggle = document.getElementById('darkModeToggle');
+// DOM elements
+const body = document.body;
+const inputTextA = document.getElementById('inputTextA');
+const inputTextB = document.getElementById('inputTextB');
+const langA = document.getElementById('langA');
+const langB = document.getElementById('langB');
+const labelA = document.getElementById('labelA');
+const labelB = document.getElementById('labelB');
+const definitionContent = document.getElementById('definitionContent');
+const similarWordsContent = document.getElementById('similarWordsContent');
+// 🌟 ADDED: New DOM element for image results
+const imageResults = document.getElementById('imageResults');
+const authContainer = document.getElementById('authContainer');
+const authMessage = document.getElementById('authMessage');
+const accountStatus = document.getElementById('accountStatus');
+const historyListContainer = document.getElementById('historyListContainer');
+const historyStatus = document.getElementById('historyStatus');
+const clearHistoryButton = document.getElementById('clearHistoryButton');
+const sourcesDiv = document.getElementById('sources');
+const sourceList = document.getElementById('sourceList');
+const speakButtonA = document.getElementById('speakButtonA');
+const speakButtonB = document.getElementById('speakButtonB');
+const speakButtonDef = document.getElementById('speakButtonDef');
+const speakButtonSimilarWords = document.getElementById('speakButtonSimilarWords');
+const darkModeToggle = document.getElementById('darkModeToggle');
+const voiceSelect = document.getElementById('voiceSelect');
+const sidebar = document.getElementById('sidebar');
+const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+const translateButton = document.getElementById('translateButton');
+
+
+// State variables
+let audioPlayer = null;
+let isTranslating = false;
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+let ttsVoice = localStorage.getItem('ttsVoice') || 'Orus';
+// Global history tracking
+let currentHistoryData = [];
+let originalHistoryData = [];
+
+// Global variable for the Web Speech API synth object
+const nativeSynth = window.speechSynthesis;
+
+
+// --- Settings & UI Management ---
+
+window.toggleSidebar = function() {
+    sidebar.classList.toggle('open');
+    sidebarBackdrop.classList.toggle('open');
+}
+
+window.openSettingsModal = function() {
+    // Load current settings into the modal
+    darkModeToggle.checked = body.classList.contains('dark');
+    voiceSelect.value = ttsVoice;
+    document.getElementById('settingsModal').classList.remove('hidden');
+}
+
+function toggleDarkMode(isDark) {
+    if (isDark) {
+        body.classList.add('dark');
+        body.classList.remove('light');
+        localStorage.setItem('darkMode', 'true');
+    } else {
+        body.classList.remove('dark');
+        body.classList.add('light');
+        localStorage.setItem('darkMode', 'false');
+    }
+}
+
+function setTTSVoice(voice) {
+    ttsVoice = voice;
+    localStorage.setItem('ttsVoice', voice);
+}
+
+// Fix for sidebar menu links that need to close the sidebar
+window.closeSidebarAndScroll = function(targetId) {
+    toggleSidebar();
+    // Wait for transition, then scroll
+    setTimeout(() => {
+        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+}
+
+// --- NEW: Function to load all available browser voices into the select menu ---
+function loadAvailableVoices() {
     const voiceSelect = document.getElementById('voiceSelect');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-    const translateButton = document.getElementById('translateButton');
-
-
-    // State variables
-    let audioPlayer = null;    
-    let isTranslating = false;    
-    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;    
-    let ttsVoice = localStorage.getItem('ttsVoice') || 'Orus';    
-    // Global history tracking
-    let currentHistoryData = [];
-    let originalHistoryData = [];
     
-    // Global variable for the Web Speech API synth object
-    const nativeSynth = window.speechSynthesis;
+    // Save current selection before clearing
+    const savedVoice = voiceSelect.value;
+    voiceSelect.innerHTML = ''; 
 
+    // Get voices from the browser's native API
+    const voices = nativeSynth.getVoices();
 
-    // --- Settings & UI Management ---
-
-    window.toggleSidebar = function() {
-        sidebar.classList.toggle('open');
-        sidebarBackdrop.classList.toggle('open');
-    }
-
-    window.openSettingsModal = function() {
-        // Load current settings into the modal
-        darkModeToggle.checked = body.classList.contains('dark');
-        voiceSelect.value = ttsVoice;
-        document.getElementById('settingsModal').classList.remove('hidden');
-    }
-
-    function toggleDarkMode(isDark) {
-        if (isDark) {
-            body.classList.add('dark');
-            body.classList.remove('light');
-            localStorage.setItem('darkMode', 'true');
-        } else {
-            body.classList.remove('dark');
-            body.classList.add('light');
-            localStorage.setItem('darkMode', 'false');
-        }
-    }
-
-    function setTTSVoice(voice) {
-        ttsVoice = voice;
-        localStorage.setItem('ttsVoice', voice);
-    }
-
-    // Fix for sidebar menu links that need to close the sidebar
-    window.closeSidebarAndScroll = function(targetId) {
-        toggleSidebar();
-        // Wait for transition, then scroll
-        setTimeout(() => {
-            document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
-        }, 300);
-    }
-    
-    // --- NEW: Function to load all available browser voices into the select menu ---
-    function loadAvailableVoices() {
-        const voiceSelect = document.getElementById('voiceSelect');
+    voices.forEach(voice => {
+        const option = document.createElement('option');
+        // Display a user-friendly name and language/dialect
+        option.textContent = `${voice.name} (${voice.lang})`; 
+        option.value = voice.name; // Use the voice name as the value
         
-        // Save current selection before clearing
-        const savedVoice = voiceSelect.value;
-        voiceSelect.innerHTML = ''; 
-
-        // Get voices from the browser's native API
-        const voices = nativeSynth.getVoices();
-
-        voices.forEach(voice => {
-            const option = document.createElement('option');
-            // Display a user-friendly name and language/dialect
-            option.textContent = `${voice.name} (${voice.lang})`; 
-            option.value = voice.name; // Use the voice name as the value
-            
-            // Mark the default voice (if applicable)
-            if (voice.default) {
-                option.textContent += ' — DEFAULT';
-            }
-
-            voiceSelect.appendChild(option);
-        });
-
-        // Re-select the saved preference if it still exists in the new list
-        if (savedVoice && voices.some(v => v.name === savedVoice)) {
-            voiceSelect.value = savedVoice;
-            setTTSVoice(savedVoice);
-        } else if (voiceSelect.options.length > 0) {
-            // Fallback: Use the first voice and save it as the new default preference
-            setTTSVoice(voiceSelect.value);
+        // Mark the default voice (if applicable)
+        if (voice.default) {
+            option.textContent += ' — DEFAULT';
         }
+
+        voiceSelect.appendChild(option);
+    });
+
+    // Re-select the saved preference if it still exists in the new list
+    if (savedVoice && voices.some(v => v.name === savedVoice)) {
+        voiceSelect.value = savedVoice;
+        setTTSVoice(savedVoice);
+    } else if (voiceSelect.options.length > 0) {
+        // Fallback: Use the first voice and save it as the new default preference
+        setTTSVoice(voiceSelect.value);
     }
-    // CRITICAL STEP: Since getVoices() is loaded asynchronously, we listen for the voiceschanged event
-    if (nativeSynth.onvoiceschanged !== undefined) {
-        nativeSynth.onvoiceschanged = loadAvailableVoices;
-    }
-    // Call once immediately in case voices are already loaded
-    loadAvailableVoices();
-    // --- END: loadAvailableVoices ---
+}
+// CRITICAL STEP: Since getVoices() is loaded asynchronously, we listen for the voiceschanged event
+if (nativeSynth.onvoiceschanged !== undefined) {
+    nativeSynth.onvoiceschanged = loadAvailableVoices;
+}
+// Call once immediately in case voices are already loaded
+loadAvailableVoices();
+// --- END: loadAvailableVoices ---
 
 
-    // --- Core Fix: Language Selector Population and Update ---
-    function populateLanguageSelectors() {
-        langA.innerHTML = '';
-        languages.forEach(lang => {
-            const option = document.createElement('option');
-            option.value = lang.value;
-            option.textContent = lang.name;
-            langA.appendChild(option);
-        });
-        langA.value = 'English';   
+// --- Core Fix: Language Selector Population and Update ---
+function populateLanguageSelectors() {
+    langA.innerHTML = '';
+    languages.forEach(lang => {
+        const option = document.createElement('option');
+        option.value = lang.value;
+        option.textContent = lang.name;
+        langA.appendChild(option);
+    });
+    langA.value = 'English'; 
 
-        langB.innerHTML = '';
-        languages.forEach(lang => {
-            const option = document.createElement('option');
-            option.value = lang.value;
-            option.textContent = lang.name;
-            langB.appendChild(option);
-        });
-        langB.value = 'Tamil';   
+    langB.innerHTML = '';
+    languages.forEach(lang => {
+        const option = document.createElement('option');
+        option.value = lang.value;
+        option.textContent = lang.name;
+        langB.appendChild(option);
+    });
+    langB.value = 'Tamil'; 
 
-        updateLabels();
-    }
+    updateLabels();
+}
     
-    function updateLabels() {
-        if (langA.options[langA.selectedIndex]) {
-            labelA.textContent = langA.options[langA.selectedIndex].text;
-        }
-        if (langB.options[langB.selectedIndex]) {
-            labelB.textContent = langB.options[langB.selectedIndex].text;
-        }
+function updateLabels() {
+    if (langA.options[langA.selectedIndex]) {
+        labelA.textContent = langA.options[langA.selectedIndex].text;
     }
-
-    // NEW: Function to toggle password visibility
-    window.togglePasswordVisibility = function(inputId, iconId) {
-        const passwordInput = document.getElementById(inputId);
-        const toggleIcon = document.getElementById(iconId);
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleIcon.classList.remove('fa-eye');
-            toggleIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
-        }
+    if (langB.options[langB.selectedIndex]) {
+        labelB.textContent = langB.options[langB.selectedIndex].text;
     }
+}
+
+// NEW: Function to toggle password visibility
+window.togglePasswordVisibility = function(inputId, iconId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleIcon = document.getElementById(iconId);
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
 
 
-    // --- Auth & Modal Functions (FIXED GLOBAL ACCESS) ---
+// --- Auth & Modal Functions (FIXED GLOBAL ACCESS) ---
     
-    // NEW: Function to close modal if backdrop (but not content) is clicked
-    window.closeModalOnBackdrop = function(event, modalId) {
-        if (event.target.classList.contains('modal-backdrop')) {
-            closeModal(modalId);
-        }
+// NEW: Function to close modal if backdrop (but not content) is clicked
+window.closeModalOnBackdrop = function(event, modalId) {
+    if (event.target.classList.contains('modal-backdrop')) {
+        closeModal(modalId);
+    }
+}
+
+// FIX 1: Made globally accessible via window
+window.renderAuthView = function(view) {
+    authMessage.textContent = '';
+    
+    if (currentUser) {
+        view = 'status';
     }
 
-    // FIX 1: Made globally accessible via window
-    window.renderAuthView = function(view) {
-        authMessage.textContent = '';
-        
-        if (currentUser) {
-            view = 'status';
-        }
+    let html = '';
+    let title = '';
 
-        let html = '';
-        let title = '';
+    const inputClasses = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300";
+    const buttonPrimaryClasses = "w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md";
+    const buttonSecondaryClasses = "text-indigo-600 font-medium hover:underline transition duration-150";
 
-        const inputClasses = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300";
-        const buttonPrimaryClasses = "w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md";
-        const buttonSecondaryClasses = "text-indigo-600 font-medium hover:underline transition duration-150";
-
-       switch (view) {
-            case 'login':
-                title = 'Log In to LexiVerse';
-                html = `
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">${title}</h2>
-                    <form onsubmit="handleLogin(event)" class="space-y-4">
-                        <input type="email" id="loginEmail" placeholder="Gmail Address" required class="${inputClasses}">
-                        <div class="relative">
-                            <input type="password" id="loginPassword" placeholder="Password" required class="${inputClasses} pr-12">
-                            <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-indigo-600 transition">
-                                <i id="loginEyeIcon" class="fa-solid fa-eye"></i>
-                            </button>
-                        </div>
-                        <button type="submit" class="${buttonPrimaryClasses}">
-                            Log In
-                        </button>
-                       <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                            Don't have an account? <button type="button" onclick="renderAuthView('signup')" class="${buttonSecondaryClasses}">Sign Up</button>
-                       </p>
-                    </form>
-                `;
-                break;
-
-            case 'signup':
-                title = 'Sign Up for LexiVerse';
-                html = `
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">${title}</h2>
-                    <form onsubmit="handleSignup(event)" class="space-y-4">
-                        <input type="text" id="signupName" placeholder="Full Name" required class="${inputClasses}">
-                        <input type="email" id="signupEmail" placeholder="Gmail Address" required class="${inputClasses}">
-                        <div class="relative">
-                            <input type="password" id="signupPassword" placeholder="Password (Min 6 characters)" required class="${inputClasses} pr-12">
-                            <button type="button" onclick="togglePasswordVisibility('signupPassword', 'signupEyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-green-600 transition">
-                                <i id="signupEyeIcon" class="fa-solid fa-eye"></i>
-                            </button>
-                        </div>
-                        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md">
-                            Sign Up
-                        </button>
-                       <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                            Already have account! <button type="button" onclick="renderAuthView('login')" class="${buttonSecondaryClasses}">Log In</button>
-                       </p>
-                    </form>
-                `;
-                break;
-            
-            case 'status':
-                title = 'Account Status';
-                html = `
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">${title}</h2>
-                    <div class="space-y-3">
-                        <p class="text-gray-700 dark:text-gray-300 font-medium">Logged in as:</p>
-                        <p class="bg-indigo-50 dark:bg-indigo-900 p-3 rounded-lg font-semibold text-indigo-700 dark:text-indigo-300">
-                            <svg class="inline w-5 h-5 mr-1 align-sub" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            ${currentUser.email}
-                        </p>
-                        <p class="text-gray-500 dark:text-gray-400">Your translation history is saved.</p>
-                        <button onclick="handleLogout()" class="w-full mt-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-150 shadow-md">
-                            Log Out
+    switch (view) {
+        case 'login':
+            title = 'Log In to LexiVerse';
+            html = `
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">${title}</h2>
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <input type="email" id="loginEmail" placeholder="Gmail Address" required class="${inputClasses}">
+                    <div class="relative">
+                        <input type="password" id="loginPassword" placeholder="Password" required class="${inputClasses} pr-12">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-indigo-600 transition">
+                            <i id="loginEyeIcon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                `;
-                break;
-        }
+                    <button type="submit" class="${buttonPrimaryClasses}">
+                        Log In
+                    </button>
+                   <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        Don't have an account? <button type="button" onclick="renderAuthView('signup')" class="${buttonSecondaryClasses}">Sign Up</button>
+                   </p>
+                </form>
+            `;
+            break;
 
-        authContainer.innerHTML = html;
+        case 'signup':
+            title = 'Sign Up for LexiVerse';
+            html = `
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">${title}</h2>
+                <form onsubmit="handleSignup(event)" class="space-y-4">
+                    <input type="text" id="signupName" placeholder="Full Name" required class="${inputClasses}">
+                    <input type="email" id="signupEmail" placeholder="Gmail Address" required class="${inputClasses}">
+                    <div class="relative">
+                        <input type="password" id="signupPassword" placeholder="Password (Min 6 characters)" required class="${inputClasses} pr-12">
+                        <button type="button" onclick="togglePasswordVisibility('signupPassword', 'signupEyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-green-600 transition">
+                            <i id="signupEyeIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md">
+                        Sign Up
+                    </button>
+                   <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        Already have account! <button type="button" onclick="renderAuthView('login')" class="${buttonSecondaryClasses}">Log In</button>
+                   </p>
+                </form>
+            `;
+            break;
+            
+        case 'status':
+            title = 'Account Status';
+            html = `
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">${title}</h2>
+                <div class="space-y-3">
+                    <p class="text-gray-700 dark:text-gray-300 font-medium">Logged in as:</p>
+                    <p class="bg-indigo-50 dark:bg-indigo-900 p-3 rounded-lg font-semibold text-indigo-700 dark:text-indigo-300">
+                        <svg class="inline w-5 h-5 mr-1 align-sub" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        ${currentUser.email}
+                    </p>
+                    <p class="text-gray-500 dark:text-gray-400">Your translation history is saved.</p>
+                    <button onclick="handleLogout()" class="w-full mt-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-150 shadow-md">
+                        Log Out
+                    </button>
+                </div>
+            `;
+            break;
     }
 
-    window.openAccountModal = function() {
-        // Render the view *before* opening the modal
-        window.renderAuthView(currentUser ? 'status' : 'login');    
-        document.getElementById('accountModal').classList.remove('hidden');
+    authContainer.innerHTML = html;
+}
+
+window.openAccountModal = function() {
+    // Render the view *before* opening the modal
+    window.renderAuthView(currentUser ? 'status' : 'login'); 
+    document.getElementById('accountModal').classList.remove('hidden');
+}
+
+// FIX 3: Ensures closeModal is always available for inline HTML buttons
+window.closeModal = function(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    // Re-render auth view in case user just signed up/in/out, preparing for next open
+    window.renderAuthView(currentUser ? 'status' : 'login'); 
+}
+    
+function updateAccountStatus() {
+    if (currentUser) {
+        // 1. Determine the display name: Use the full name if available, 
+        //    otherwise fall back to the part of the email before '@'.
+        const displayName = currentUser.name 
+                            ? currentUser.name.split(' ')[0] // Display only the first name (optional)
+                            : currentUser.email.split('@')[0];
+            
+        // 2. Update the account status element
+        accountStatus.textContent = `Logged in (${displayName})`;
+            
+        // 3. Apply success styling
+        accountStatus.classList.add('text-green-600');
+        accountStatus.classList.remove('text-gray-600');
+            
+    } else {
+        // User is logged out (Original logic)
+        accountStatus.textContent = 'Account';
+        accountStatus.classList.remove('text-green-600');
+        accountStatus.classList.add('text-gray-600');
+    }
+}
+    
+// --- Auth Logic (Updated to use server-side endpoints for logging) ---
+
+async function sendAuthRequest(action, data) {
+    // The AUTH_HISTORY_URL handles login, signup, and getHistory actions
+    if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_AUTH_HISTORY_APPSCRIPT_URL_HERE")) {
+        authMessage.textContent = "Error: AUTH_HISTORY_URL is not configured.";
+        return { success: false };
     }
 
-    // FIX 3: Ensures closeModal is always available for inline HTML buttons
-    window.closeModal = function(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-        // Re-render auth view in case user just signed up/in/out, preparing for next open
-        window.renderAuthView(currentUser ? 'status' : 'login');    
+    authMessage.textContent = 'Processing...';
+
+    const formData = new FormData();
+    formData.append("action", action);
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+
+    try {
+        const response = await fetch(AUTH_HISTORY_URL, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        authMessage.textContent = `Network Error: ${error.message}`;
+        return { success: false };
+    }
+}
+
+
+window.handleSignup = async function(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    
+    if (!email.endsWith('@gmail.com')) {
+        authMessage.textContent = "Please use a valid Gmail address for sign up.";
+        showCustomToast("Invalid Email Format", 'error', 4000);
+        return;
+    }
+    if (password.length < 6) {
+        authMessage.textContent = "Password must be at least 6 characters.";
+        showCustomToast("Password too short", 'error', 4000);
+        return;
     }
     
-    function updateAccountStatus() {
-      if (currentUser) {
-          // 1. Determine the display name: Use the full name if available,  
-          //    otherwise fall back to the part of the email before '@'.
-          const displayName = currentUser.name  
-                                 ? currentUser.name.split(' ')[0] // Display only the first name (optional)
-                                 : currentUser.email.split('@')[0];
-          
-          // 2. Update the account status element
-          accountStatus.textContent = `Logged in (${displayName})`;
-          
-          // 3. Apply success styling
-          accountStatus.classList.add('text-green-600');
-          accountStatus.classList.remove('text-gray-600');
-          
-      } else {
-          // User is logged out (Original logic)
-          accountStatus.textContent = 'Account';
-          accountStatus.classList.remove('text-green-600');
-          accountStatus.classList.add('text-gray-600');
-      }
-    }
-    
-    // --- Auth Logic (Updated to use server-side endpoints for logging) ---
+    const result = await sendAuthRequest('signup', { name, email, password });
 
-    async function sendAuthRequest(action, data) {
-        // The AUTH_HISTORY_URL handles login, signup, and getHistory actions
-        if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_AUTH_HISTORY_APPSCRIPT_URL_HERE")) {
-            authMessage.textContent = "Error: AUTH_HISTORY_URL is not configured.";
-            return { success: false };
-        }
-
-        authMessage.textContent = 'Processing...';
-
-        const formData = new FormData();
-        formData.append("action", action);
-        for (const key in data) {
-            formData.append(key, data[key]);
-        }
-
-        try {
-            const response = await fetch(AUTH_HISTORY_URL, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-            
-            const result = await response.json();
-            return result;
-
-        } catch (error) {
-            authMessage.textContent = `Network Error: ${error.message}`;
-            return { success: false };
-        }
-    }
-
-
-    window.handleSignup = async function(event) {
-        event.preventDefault();
-        
-        const name = document.getElementById('signupName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const password = document.getElementById('signupPassword').value;
-        
-        if (!email.endsWith('@gmail.com')) {
-            authMessage.textContent = "Please use a valid Gmail address for sign up.";
-            showCustomToast("Invalid Email Format", 'error', 4000);
-            return;
-        }
-        if (password.length < 6) {
-            authMessage.textContent = "Password must be at least 6 characters.";
-            showCustomToast("Password too short", 'error', 4000);
-            return;
-        }
-        
-        const result = await sendAuthRequest('signup', { name, email, password });
-
-        if (result.success) {
-            currentUser = { email: email, name: name };
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateAccountStatus();
-            closeModal('accountModal');
-            // Use custom toast on success
-            showCustomToast(`Welcome, ${name}! You are now logged in.`, 'success');    
-            
-        } else {
-            const errorMessage = result.message || "Sign up failed.";
-            authMessage.textContent = errorMessage; // Keep error in modal
-            showCustomToast("Signup Failed: " + errorMessage, 'error', 5000);    
-        }
-    }
-
-    window.handleLogin = async function(event) {
-        event.preventDefault();
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value;
-
-        const result = await sendAuthRequest('login', { email, password });
-
-        if (result.success) {
-            currentUser = result.user;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateAccountStatus();
-            closeModal('accountModal');
-            // Use custom toast on success
-            showCustomToast(`Welcome back, ${result.user.name || 'User'}!`, 'success');
-
-        } else {
-            const errorMessage = result.message || "Login failed. Check your email and password.";
-            authMessage.textContent = errorMessage; // Keep error in modal
-            showCustomToast("Login Failed. Check credentials.", 'error', 5000);
-        }
-    }
-
-    window.handleLogout = function() {
-        currentUser = null;
-        localStorage.removeItem('currentUser');
+    if (result.success) {
+        currentUser = { email: email, name: name };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateAccountStatus();
         closeModal('accountModal');
         // Use custom toast on success
-        showCustomToast("You have been logged out.", 'logout');
+        showCustomToast(`Welcome, ${name}! You are now logged in.`, 'success'); 
+        
+    } else {
+        const errorMessage = result.message || "Sign up failed.";
+        authMessage.textContent = errorMessage; // Keep error in modal
+        showCustomToast("Signup Failed: " + errorMessage, 'error', 5000); 
     }
-    // --- Custom Toast Notification Handler ---
+}
 
-    function showCustomToast(message, type, duration = 4000) {
-        const toast = document.getElementById('statusToast');
-        const toastMessage = document.getElementById('toastMessage');
-        const toastIcon = document.getElementById('toastIcon');
-        if (!toast || !toastMessage || !toastIcon) return; // Safety check
+window.handleLogin = async function(event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
 
-        // 1. Reset all animation/type classes
-        toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none';
-        toastIcon.innerHTML = '';
+    const result = await sendAuthRequest('login', { email, password });
+
+    if (result.success) {
+        currentUser = result.user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateAccountStatus();
+        closeModal('accountModal');
+        // Use custom toast on success
+        showCustomToast(`Welcome back, ${result.user.name || 'User'}!`, 'success');
+
+    } else {
+        const errorMessage = result.message || "Login failed. Check your email and password.";
+        authMessage.textContent = errorMessage; // Keep error in modal
+        showCustomToast("Login Failed. Check credentials.", 'error', 5000);
+    }
+}
+
+window.handleLogout = function() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    updateAccountStatus();
+    closeModal('accountModal');
+    // Use custom toast on success
+    showCustomToast("You have been logged out.", 'logout');
+}
+// --- Custom Toast Notification Handler ---
+
+function showCustomToast(message, type, duration = 4000) {
+    const toast = document.getElementById('statusToast');
+    const toastMessage = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    if (!toast || !toastMessage || !toastIcon) return; // Safety check
+
+    // 1. Reset all animation/type classes
+    toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none';
+    toastIcon.innerHTML = '';
+    
+    let iconHtml = '';
+    let typeClass = '';
+
+    if (type === 'success') {
+        typeClass = 'toast-success';
+        iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; // Checkmark
+    } else if (type === 'logout') {
+        typeClass = 'toast-logout';
+        iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>'; // Door Exit
+    } else if (type === 'error') {
+        typeClass = 'toast-error';
+        iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    }
+
+    toastMessage.textContent = message;
+    toastIcon.innerHTML = iconHtml;
+    
+    // 2. Apply new type classes and trigger the visible animation
+    toast.classList.add(typeClass, 'toast-visible');
+
+    // 3. Hide after duration
+    setTimeout(() => {
+        // Reverse the animation (by removing the visible class)
+        toast.classList.remove('toast-visible');  
+        toast.classList.add('opacity-0');
         
-        let iconHtml = '';
-        let typeClass = '';
-
-        if (type === 'success') {
-            typeClass = 'toast-success';
-            iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; // Checkmark
-        } else if (type === 'logout') {
-            typeClass = 'toast-logout';
-            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>'; // Door Exit
-        } else if (type === 'error') {
-            typeClass = 'toast-error';
-            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
-
-        toastMessage.textContent = message;
-        toastIcon.innerHTML = iconHtml;
-        
-        // 2. Apply new type classes and trigger the visible animation
-        toast.classList.add(typeClass, 'toast-visible');
-
-        // 3. Hide after duration
+        // Ensure it's fully off-screen/non-interactive after transition
         setTimeout(() => {
-            // Reverse the animation (by removing the visible class)
-            toast.classList.remove('toast-visible');    
-            toast.classList.add('opacity-0');
-            
-            // Ensure it's fully off-screen/non-interactive after transition
-            setTimeout(() => {
-                toast.classList.remove(typeClass);
-                toast.classList.add('pointer-events-none');
-            }, 500); // Wait for the transition duration
-        }, duration);
-    }
+            toast.classList.remove(typeClass);
+            toast.classList.add('pointer-events-none');
+        }, 500); // Wait for the transition duration
+    }, duration);
+}
 
     
-    // --- History Functions ---
+// --- History Functions ---
 
-    function getHistory() {
-        const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
-        try {
-            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-             return history.map(item => ({
-                ...item,
-                // Add default values for fields not saved by old localStorage logic
-                definition: item.definition || 'No definition logged.',
-                similarWords: item.similarWords || 'No similar words logged.',
-                // Ensure timestamp is an ISO 8601 string for reliable sorting/filtering
-                timestamp: new Date(item.timestamp).toISOString(), 
-            }));
-        } catch (e) {
-            console.error("Error reading history from Local Storage:", e);
-            return [];
-        }
+function getHistory() {
+    const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+    try {
+        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+         return history.map(item => ({
+             ...item,
+             // Add default values for fields not saved by old localStorage logic
+             definition: item.definition || 'No definition logged.',
+             similarWords: item.similarWords || 'No similar words logged.',
+             // Ensure timestamp is an ISO 8601 string for reliable sorting/filtering
+             timestamp: new Date(item.timestamp).toISOString(), 
+         }));
+    } catch (e) {
+        console.error("Error reading history from Local Storage:", e);
+        return [];
+    }
+}
+
+// Old saveToHistory kept for local history  
+function saveToHistory(sourceText, targetText, translation) {
+    if (sourceText.length === 0 || translation.length === 0) return;
+
+    // Assuming langA and langB are globally defined select elements
+    const sourceLangText = langA.options[langA.selectedIndex].text;
+    const targetLangText = langB.options[langB.selectedIndex].text;
+
+    // Fetch existing history and map timestamps back to local string for storage compatibility
+    const history = getHistory().map(item => ({
+        ...item,    
+        timestamp: new Date(item.timestamp).toLocaleString()
+    })); 
+
+    const newEntry = {
+        source: sourceText,
+        target: translation,
+        sourceLang: sourceLangText,
+        targetLang: targetLangText,
+        timestamp: new Date().toLocaleString(), // Use local string for storage
+        definition: 'No definition logged.', 
+        similarWords: 'No similar words logged.' 
+    };
+
+    const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+
+    history.unshift(newEntry);
+    if (history.length > 50) {
+        history.pop();
     }
 
-    // Old saveToHistory kept for local history  
-    function saveToHistory(sourceText, targetText, translation) {
-        if (sourceText.length === 0 || translation.length === 0) return;
+    try {
+        localStorage.setItem(historyKey, JSON.stringify(history));
+    } catch (e) {
+        console.error("Error writing history to Local Storage:", e);
+    }
+}
 
-        // Assuming langA and langB are globally defined select elements
-        const sourceLangText = langA.options[langA.selectedIndex].text;
-        const targetLangText = langB.options[langB.selectedIndex].text;
+// NEW: Function to open the custom confirmation modal
+window.openClearHistoryConfirm = function() {
+    document.getElementById('clearHistoryConfirmModal')?.classList.remove('hidden');
+}
 
-        // Fetch existing history and map timestamps back to local string for storage compatibility
-        const history = getHistory().map(item => ({
-            ...item,    
-            timestamp: new Date(item.timestamp).toLocaleString()
-        })); 
+// ✅ FIXED: Function executed after user confirms deletion (Clears Local Storage only)  
+window.clearHistoryConfirmed = function() {
+    // 1. Close the confirmation modal (Assuming closeModal function is globally available)
+    if (typeof closeModal === 'function') {
+        closeModal('clearHistoryConfirmModal');
+    } else {
+        document.getElementById('clearHistoryConfirmModal')?.classList.add('hidden');
+    }
 
-        const newEntry = {
-            source: sourceText,
-            target: translation,
-            sourceLang: sourceLangText,
-            targetLang: targetLangText,
-            timestamp: new Date().toLocaleString(), // Use local string for storage
-            definition: 'No definition logged.', 
-            similarWords: 'No similar words logged.' 
+    // 2. Determine the history key (using the global currentUser object)
+    const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+    
+    // 3. Clear Local Storage
+    localStorage.removeItem(historyKey);
+    
+    // 4. Clear the client-side data
+    currentHistoryData = [];
+    originalHistoryData = [];
+
+    // 5. Hide the Clear History button in the history modal
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+    if (clearHistoryButton) {
+        clearHistoryButton.classList.add('hidden');
+    }
+
+    // 6. Re-render history list to show it's empty
+    openHistoryModal();  
+}
+
+// --- FIX 2 & 3: Read More Toggle Functionality for all fields ---
+window.toggleReadMore = function(toggleId) {
+    const hiddenContent = document.getElementById(`hidden-content-${toggleId}`);
+    const toggleButton = document.getElementById(`read-more-btn-${toggleId}`);
+    
+    if (!hiddenContent || !toggleButton) return;
+
+    if (hiddenContent.classList.contains('hidden')) {
+        hiddenContent.classList.remove('hidden');
+        const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
+        if(truncatedContainer) truncatedContainer.classList.add('hidden'); 
+        toggleButton.textContent = 'Read Less';
+    } else {
+        hiddenContent.classList.add('hidden');
+        const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
+        if(truncatedContainer) truncatedContainer.classList.remove('hidden'); 
+        toggleButton.textContent = 'Read More...';
+    }
+}
+
+// --- Filtering/Sorting Helpers ---
+
+/**
+ * Calculates if a given date is older than 2 days (i.e., 3 or more days ago).
+ * @param {string} isoTimestamp - The ISO 8601 timestamp string from the history item.
+ * @returns {boolean} True if the item is 3 or more days old.
+ */
+function isOlderThanTwoDays(isoTimestamp) {
+    const entryDate = new Date(isoTimestamp);
+    const now = new Date();
+    
+    // Convert 2 days to milliseconds  
+    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+    
+    // Calculate difference (entryDate will be smaller/older, so diff is positive)
+    const diffTime = now.getTime() - entryDate.getTime();
+
+    // If the difference is greater than or equal to 2 days
+    return diffTime >= twoDaysInMs;
+}
+
+// --- HISTORY RENDERING FUNCTION ---
+function renderHistoryList(historyArray) {
+    // Assuming historyListContainer is available globally
+    const historyListContainer = document.getElementById('historyListContainer');
+    if (!historyListContainer) return;
+
+    historyListContainer.innerHTML = ''; 
+    
+    if (historyArray.length === 0) {
+        historyListContainer.innerHTML = '<p class="text-gray-500 italic">No search history yet. Start translating!</p>';
+        return;
+    }
+
+    historyArray.forEach((item, index) => {
+        const entryId = `hist-${index}`;
+        const MAX_LENGTH = 200;
+        
+        // --- Unified Truncation/Render Helper ---
+        const renderFieldWithReadMore = (field, label, buttonPrefix, initialContainerClass = '') => {
+            const fullText = item[field] || 'No ' + field.toLowerCase().replace(/words$/, ' word') + ' logged.';
+            const needsReadMore = fullText.length > MAX_LENGTH && !fullText.includes('No ' + field.toLowerCase().replace(/words$/, ' word'));
+            const truncatedText = needsReadMore ? fullText.substring(0, MAX_LENGTH) + '...' : fullText;
+            const hiddenText = needsReadMore ? fullText.substring(MAX_LENGTH) : '';
+            const toggleId = `${buttonPrefix}${entryId}`;
+
+            return `
+                <p class="${initialContainerClass}">
+                    <span class="font-semibold text-gray-700 dark:text-gray-300">${label}: </span>
+                    
+                    <span id="trunc-${toggleId}">${truncatedText}</span>
+
+                    <span id="hidden-content-${toggleId}" class="${needsReadMore ? 'hidden' : ''} text-gray-600 dark:text-gray-400">
+                        ${hiddenText}
+                    </span>
+                    
+                    ${needsReadMore ? 
+                        `<button id="read-more-btn-${toggleId}" onclick="toggleReadMore('${toggleId}')" class="text-indigo-500 hover:text-indigo-700 font-medium ml-1 bg-transparent border-none p-0">
+                            Read More...
+                        </button>` 
+                        : ''
+                    }
+                </p>
+            `;
         };
 
-        const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
-
-        history.unshift(newEntry);
-        if (history.length > 50) {
-            history.pop();
-        }
-
-        try {
-            localStorage.setItem(historyKey, JSON.stringify(history));
-        } catch (e) {
-            console.error("Error writing history to Local Storage:", e);
-        }
-    }
-
-    // NEW: Function to open the custom confirmation modal
-    window.openClearHistoryConfirm = function() {
-        document.getElementById('clearHistoryConfirmModal')?.classList.remove('hidden');
-    }
-
-    // ✅ FIXED: Function executed after user confirms deletion (Clears Local Storage only)  
-    window.clearHistoryConfirmed = function() {
-        // 1. Close the confirmation modal (Assuming closeModal function is globally available)
-        if (typeof closeModal === 'function') {
-            closeModal('clearHistoryConfirmModal');
-        } else {
-            document.getElementById('clearHistoryConfirmModal')?.classList.add('hidden');
-        }
-
-        // 2. Determine the history key (using the global currentUser object)
-        const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+        // --- Construct the History Entry ---
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition duration-150 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600';
         
-        // 3. Clear Local Storage
-        localStorage.removeItem(historyKey);
-        
-        // 4. Clear the client-side data
-        currentHistoryData = [];
-        originalHistoryData = [];
+        // Display timestamp in local format
+        const displayTimestamp = new Date(item.timestamp).toLocaleString(); 
 
-        // 5. Hide the Clear History button in the history modal
-        const clearHistoryButton = document.getElementById('clearHistoryButton');
-        if (clearHistoryButton) {
-            clearHistoryButton.classList.add('hidden');
-        }
+        const sourceBaseHtml = renderFieldWithReadMore('source', 'Source', 'source-', 'font-bold text-gray-800 dark:text-gray-100');
+        const targetBaseHtml = renderFieldWithReadMore('target', 'Translation', 'target-', 'text-indigo-600 dark:text-indigo-300');
 
-        // 6. Re-render history list to show it's empty
-        openHistoryModal(); 
-    }
+        const sourceContent = sourceBaseHtml.replace(/<p class="[^"]*">/, '').replace('</p>', '');
+        const targetContent = targetBaseHtml.replace(/<p class="[^"]*">/, '').replace('</p>', '');
 
-    // --- FIX 2 & 3: Read More Toggle Functionality for all fields ---
-    window.toggleReadMore = function(toggleId) {
-        const hiddenContent = document.getElementById(`hidden-content-${toggleId}`);
-        const toggleButton = document.getElementById(`read-more-btn-${toggleId}`);
-        
-        if (!hiddenContent || !toggleButton) return;
-
-        if (hiddenContent.classList.contains('hidden')) {
-            hiddenContent.classList.remove('hidden');
-            const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
-            if(truncatedContainer) truncatedContainer.classList.add('hidden'); 
-            toggleButton.textContent = 'Read Less';
-        } else {
-            hiddenContent.classList.add('hidden');
-            const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
-            if(truncatedContainer) truncatedContainer.classList.remove('hidden'); 
-            toggleButton.textContent = 'Read More...';
-        }
-    }
-
-    // --- Filtering/Sorting Helpers ---
-
-    /**
-     * Calculates if a given date is older than 2 days (i.e., 3 or more days ago).
-     * @param {string} isoTimestamp - The ISO 8601 timestamp string from the history item.
-     * @returns {boolean} True if the item is 3 or more days old.
-     */
-    function isOlderThanTwoDays(isoTimestamp) {
-        const entryDate = new Date(isoTimestamp);
-        const now = new Date();
-        
-        // Convert 2 days to milliseconds  
-        const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-        
-        // Calculate difference (entryDate will be smaller/older, so diff is positive)
-        const diffTime = now.getTime() - entryDate.getTime();
-
-        // If the difference is greater than or equal to 2 days
-        return diffTime >= twoDaysInMs;
-    }
-
-    // --- HISTORY RENDERING FUNCTION ---
-    function renderHistoryList(historyArray) {
-        // Assuming historyListContainer is available globally
-        const historyListContainer = document.getElementById('historyListContainer');
-        if (!historyListContainer) return;
-
-        historyListContainer.innerHTML = ''; 
-        
-        if (historyArray.length === 0) {
-            historyListContainer.innerHTML = '<p class="text-gray-500 italic">No search history yet. Start translating!</p>';
-            return;
-        }
-
-        historyArray.forEach((item, index) => {
-            const entryId = `hist-${index}`;
-            const MAX_LENGTH = 200;
-            
-            // --- Unified Truncation/Render Helper ---
-            const renderFieldWithReadMore = (field, label, buttonPrefix, initialContainerClass = '') => {
-                const fullText = item[field] || 'No ' + field.toLowerCase().replace(/words$/, ' word') + ' logged.';
-                const needsReadMore = fullText.length > MAX_LENGTH && !fullText.includes('No ' + field.toLowerCase().replace(/words$/, ' word'));
-                const truncatedText = needsReadMore ? fullText.substring(0, MAX_LENGTH) + '...' : fullText;
-                const hiddenText = needsReadMore ? fullText.substring(MAX_LENGTH) : '';
-                const toggleId = `${buttonPrefix}${entryId}`;
-
-                return `
-                    <p class="${initialContainerClass}">
-                        <span class="font-semibold text-gray-700 dark:text-gray-300">${label}: </span>
-                        
-                        <span id="trunc-${toggleId}">${truncatedText}</span>
-
-                        <span id="hidden-content-${toggleId}" class="${needsReadMore ? 'hidden' : ''} text-gray-600 dark:text-gray-400">
-                            ${hiddenText}
-                        </span>
-                        
-                        ${needsReadMore ? 
-                            `<button id="read-more-btn-${toggleId}" onclick="toggleReadMore('${toggleId}')" class="text-indigo-500 hover:text-indigo-700 font-medium ml-1 bg-transparent border-none p-0">
-                                Read More...
-                            </button>` 
-                            : ''
-                        }
-                    </p>
-                `;
-            };
-
-            // --- Construct the History Entry ---
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition duration-150 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600';
-            
-            // Display timestamp in local format
-            const displayTimestamp = new Date(item.timestamp).toLocaleString(); 
-
-            const sourceBaseHtml = renderFieldWithReadMore('source', 'Source', 'source-', 'font-bold text-gray-800 dark:text-gray-100');
-            const targetBaseHtml = renderFieldWithReadMore('target', 'Translation', 'target-', 'text-indigo-600 dark:text-indigo-300');
-
-            const sourceContent = sourceBaseHtml.replace(/<p class="[^"]*">/, '').replace('</p>', '');
-            const targetContent = targetBaseHtml.replace(/<p class="[^"]*">/, '').replace('</p>', '');
-
-            entryDiv.innerHTML = `
+        entryDiv.innerHTML = `
                 <p class="text-xs text-gray-400 mb-1">${displayTimestamp}</p>
                 
                 <p class="font-bold text-gray-800 dark:text-gray-100">
@@ -1797,288 +1797,288 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                     ${renderFieldWithReadMore('similarWords', 'Similar Words', 'sim-')}
                 </div>
             `;
-            
-            historyListContainer.appendChild(entryDiv);
-        });
+        
+        historyListContainer.appendChild(entryDiv);
+    });
+}
+
+/**
+ * Creates the buttons container and injects the sorting and clear buttons.
+ */
+function setupHistoryButtons() {
+    let buttonContainer = document.getElementById('historySortButtons');
+    if (buttonContainer) {
+        return; 
     }
 
-    /**
-     * Creates the buttons container and injects the sorting and clear buttons.
-     */
-    function setupHistoryButtons() {
-        let buttonContainer = document.getElementById('historySortButtons');
-        if (buttonContainer) {
-            return; 
-        }
+    buttonContainer = document.createElement('div');
+    buttonContainer.id = 'historySortButtons';
+    buttonContainer.className = 'flex space-x-2 mb-4';
 
-        buttonContainer = document.createElement('div');
-        buttonContainer.id = 'historySortButtons';
-        buttonContainer.className = 'flex space-x-2 mb-4';
+    const buttonsConfig = [
+        { id: 'sort-all', text: 'All History', sortType: 'all', initialClass: 'bg-indigo-600 text-white' },
+        { id: 'sort-newest', text: 'Newest (Today/Yesterday)', sortType: 'newest', initialClass: 'bg-gray-200 text-gray-700 hover:bg-indigo-100' },
+        { id: 'sort-older', text: 'Older (3+ Days)', sortType: 'older', initialClass: 'bg-gray-200 text-gray-700 hover:bg-indigo-100' },
+    ];
 
-        const buttonsConfig = [
-            { id: 'sort-all', text: 'All History', sortType: 'all', initialClass: 'bg-indigo-600 text-white' },
-            { id: 'sort-newest', text: 'Newest (Today/Yesterday)', sortType: 'newest', initialClass: 'bg-gray-200 text-gray-700 hover:bg-indigo-100' },
-            { id: 'sort-older', text: 'Older (3+ Days)', sortType: 'older', initialClass: 'bg-gray-200 text-gray-700 hover:bg-indigo-100' },
-        ];
+    buttonsConfig.forEach(config => {
+        const btn = document.createElement('button');
+        btn.id = config.id;
+        btn.textContent = config.text;
+        btn.onclick = () => window.sortHistory(config.sortType);
+        btn.className = `px-4 py-2 text-sm font-medium rounded-lg transition duration-150 ${config.initialClass}`;
+        buttonContainer.appendChild(btn);
+    });
 
-        buttonsConfig.forEach(config => {
-            const btn = document.createElement('button');
-            btn.id = config.id;
-            btn.textContent = config.text;
-            btn.onclick = () => window.sortHistory(config.sortType);
-            btn.className = `px-4 py-2 text-sm font-medium rounded-lg transition duration-150 ${config.initialClass}`;
-            buttonContainer.appendChild(btn);
-        });
-
-        const clearBtn = document.getElementById('clearHistoryButton') || document.createElement('button');
-        clearBtn.id = 'clearHistoryButton';
-        clearBtn.onclick = window.openClearHistoryConfirm; 
-        clearBtn.textContent = 'Clear History';
-        clearBtn.className = 'ml-auto px-4 py-2 text-sm font-medium rounded-lg text-red-600 border border-red-600 hover:bg-red-50 transition duration-150 hidden';
-        buttonContainer.appendChild(clearBtn);
+    const clearBtn = document.getElementById('clearHistoryButton') || document.createElement('button');
+    clearBtn.id = 'clearHistoryButton';
+    clearBtn.onclick = window.openClearHistoryConfirm; 
+    clearBtn.textContent = 'Clear History';
+    clearBtn.className = 'ml-auto px-4 py-2 text-sm font-medium rounded-lg text-red-600 border border-red-600 hover:bg-red-50 transition duration-150 hidden';
+    buttonContainer.appendChild(clearBtn);
 
 
-        // Inject the container right before historyStatus
-        const historyStatus = document.getElementById('historyStatus');
-        if (historyStatus) {
-            historyStatus.parentNode.insertBefore(buttonContainer, historyStatus);
-        }  
-    }
+    // Inject the container right before historyStatus
+    const historyStatus = document.getElementById('historyStatus');
+    if (historyStatus) {
+        historyStatus.parentNode.insertBefore(buttonContainer, historyStatus);
+    }  
+}
 
 
-    // Client-side sorting/filtering function
-    window.sortHistory = function(sortType) {
-        const historySortButtons = document.getElementById('historySortButtons');
-        if (historySortButtons) {
-            // Remove active class from all sorting buttons
-            historySortButtons.querySelectorAll('button').forEach(btn => {
-                if (!btn.id.includes('clear')) {
-                    btn.classList.remove('bg-indigo-600', 'text-white');
-                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
-                }
-            });
-        }
-
-        let filteredHistory = [...originalHistoryData]; 
-        let buttonId;
-
-        if (sortType === 'newest') {
-            // Filter: Keep entries NOT older than 2 days (i.e., today or yesterday)
-            filteredHistory = originalHistoryData
-                .filter(item => !isOlderThanTwoDays(item.timestamp))
-                // Sort: Show newest first
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
-            buttonId = 'sort-newest';
-
-        } else if (sortType === 'older') {
-            // Filter: Keep entries that ARE older than 2 days (i.e., 3 or more days old)
-            filteredHistory = originalHistoryData
-                .filter(item => isOlderThanTwoDays(item.timestamp))
-                // Sort: Show newest first, even within the 'older' group
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
-            buttonId = 'sort-older';
-            
-        } else { // 'all' or default
-            // Filter: Show all entries
-            filteredHistory = [...originalHistoryData];
-            // Sort: Show newest first (default order)
-            filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            buttonId = 'sort-all';
-        }
-        
-        // Add active class to the current button
-        const activeBtn = document.getElementById(buttonId);
-        if (activeBtn) {
-            activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
-            activeBtn.classList.add('bg-indigo-600', 'text-white');
-        }
-
-        currentHistoryData = filteredHistory;
-        renderHistoryList(currentHistoryData); 
-    }
-
-
-    // --- HISTORY RETRIEVAL FUNCTION ---
-    window.openHistoryModal = async function() {
-        // 1. Setup/Inject Buttons
-        setupHistoryButtons();
-        
-        // Assuming these are globally available elements
-        const historyListContainer = document.getElementById('historyListContainer');
-        const clearHistoryButton = document.getElementById('clearHistoryButton');
-        const historyStatus = document.getElementById('historyStatus');
-        
-        if (!historyListContainer || !clearHistoryButton || !historyStatus) {
-            console.error("Required history modal elements not found.");
-            return;
-        }
-
-        historyListContainer.innerHTML = '';
-        clearHistoryButton.classList.add('hidden');
-        historyStatus.innerHTML = '<span class="text-indigo-600">Loading history...</span>';
-        document.getElementById('historyModal')?.classList.remove('hidden');
-
-        let history = [];
-        let statusText = '';
-        const userEmail = currentUser ? currentUser.email : 'guest';
-
-        if (currentUser) {
-            const fetchResult = await sendAuthRequest('getHistory', { email: userEmail }); 
-            
-            if (fetchResult.success && fetchResult.history) {
-                history = fetchResult.history.map(item => ({
-                    ...item,
-                    timestamp: new Date(item.timestamp).toISOString(),
-                }));
-                statusText = `History for <strong>${currentUser.email}</strong>, retrieved from server.`;
-            } else {
-                history = getHistory(); 
-                statusText = `Could not load server history. Showing local history for <strong>${currentUser.email}</strong>.`;
+// Client-side sorting/filtering function
+window.sortHistory = function(sortType) {
+    const historySortButtons = document.getElementById('historySortButtons');
+    if (historySortButtons) {
+        // Remove active class from all sorting buttons
+        historySortButtons.querySelectorAll('button').forEach(btn => {
+            if (!btn.id.includes('clear')) {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
             }
+        });
+    }
+
+    let filteredHistory = [...originalHistoryData]; 
+    let buttonId;
+
+    if (sortType === 'newest') {
+        // Filter: Keep entries NOT older than 2 days (i.e., today or yesterday)
+        filteredHistory = originalHistoryData
+            .filter(item => !isOlderThanTwoDays(item.timestamp))
+            // Sort: Show newest first
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
+        buttonId = 'sort-newest';
+
+    } else if (sortType === 'older') {
+        // Filter: Keep entries that ARE older than 2 days (i.e., 3 or more days old)
+        filteredHistory = originalHistoryData
+            .filter(item => isOlderThanTwoDays(item.timestamp))
+            // Sort: Show newest first, even within the 'older' group
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
+        buttonId = 'sort-older';
+            
+    } else { // 'all' or default
+        // Filter: Show all entries
+        filteredHistory = [...originalHistoryData];
+        // Sort: Show newest first (default order)
+        filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        buttonId = 'sort-all';
+    }
+    
+    // Add active class to the current button
+    const activeBtn = document.getElementById(buttonId);
+    if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
+        activeBtn.classList.add('bg-indigo-600', 'text-white');
+    }
+
+    currentHistoryData = filteredHistory;
+    renderHistoryList(currentHistoryData); 
+}
+
+
+// --- HISTORY RETRIEVAL FUNCTION ---
+window.openHistoryModal = async function() {
+    // 1. Setup/Inject Buttons
+    setupHistoryButtons();
+    
+    // Assuming these are globally available elements
+    const historyListContainer = document.getElementById('historyListContainer');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+    const historyStatus = document.getElementById('historyStatus');
+    
+    if (!historyListContainer || !clearHistoryButton || !historyStatus) {
+        console.error("Required history modal elements not found.");
+        return;
+    }
+
+    historyListContainer.innerHTML = '';
+    clearHistoryButton.classList.add('hidden');
+    historyStatus.innerHTML = '<span class="text-indigo-600">Loading history...</span>';
+    document.getElementById('historyModal')?.classList.remove('hidden');
+
+    let history = [];
+    let statusText = '';
+    const userEmail = currentUser ? currentUser.email : 'guest';
+
+    if (currentUser) {
+        const fetchResult = await sendAuthRequest('getHistory', { email: userEmail }); 
+        
+        if (fetchResult.success && fetchResult.history) {
+            history = fetchResult.history.map(item => ({
+                ...item,
+                timestamp: new Date(item.timestamp).toISOString(),
+            }));
+            statusText = `History for <strong>${currentUser.email}</strong>, retrieved from server.`;
         } else {
-            history = getHistory();
-            statusText = `You are not logged in. Showing <strong>Guest History</strong> (saved locally).`;
+            history = getHistory(); 
+            statusText = `Could not load server history. Showing local history for <strong>${currentUser.email}</strong>.`;
         }
-
-        historyStatus.innerHTML = statusText;
-        
-        originalHistoryData = history; 
-        currentHistoryData = history; 
-
-        // Show/Hide Clear History button
-        clearHistoryButton.classList.toggle('hidden', originalHistoryData.length === 0);
-
-        // Initial render: Default to 'All History' view (Newest first)
-        window.sortHistory('all'); 
+    } else {
+        history = getHistory();
+        statusText = `You are not logged in. Showing <strong>Guest History</strong> (saved locally).`;
     }
 
-    // --- Utility Functions (TTS, Formatting, etc.) ---
+    historyStatus.innerHTML = statusText;
     
-    function debounce(func, delay) {
-        let timeoutId;
-        return function(value) {
-            const context = this;
+    originalHistoryData = history; 
+    currentHistoryData = history; 
 
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                func.apply(context, [value]);
-            }, delay);
-        };
+    // Show/Hide Clear History button
+    clearHistoryButton.classList.toggle('hidden', originalHistoryData.length === 0);
+
+    // Initial render: Default to 'All History' view (Newest first)
+    window.sortHistory('all'); 
+}
+
+// --- Utility Functions (TTS, Formatting, etc.) ---
+    
+function debounce(func, delay) {
+    let timeoutId;
+    return function(value) {
+        const context = this;
+
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(context, [value]);
+        }, delay);
+    };
+}
+
+window.swapLanguages = function() {
+    const tempLang = langA.value;
+    langA.value = langB.value;
+    langB.value = tempLang;
+
+    const tempText = inputTextA.value;
+    inputTextA.value = inputTextB.value;
+    inputTextB.value = tempText;
+    
+    updateLabels();
+
+    // Re-run translation only if a manual button press is required
+    updateTranslateButtonState();    
+}
+
+window.clearText = function(boxId) {
+    isTranslating = true;
+    if (boxId === 'A') {
+        inputTextA.value = '';
+        inputTextB.value = '';
+        inputTextA.focus();
+    } else if (boxId === 'B') {
+        inputTextB.value = '';
+        inputTextA.value = '';
+        inputTextB.focus();
     }
 
-    window.swapLanguages = function() {
-        const tempLang = langA.value;
-        langA.value = langB.value;
-        langB.value = tempLang;
+    definitionContent.innerHTML = 'Definition for your source text will appear here.';
+    similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+    // 🌟 ADDED: Clear image results on clear 🌟
+    imageResults.innerHTML = 'Images related to your source text will appear here after translation.';    
+    speakButtonA.disabled = true;
+    speakButtonB.disabled = true;
+    speakButtonDef.disabled = true;
+    speakButtonSimilarWords.disabled = true;
+    
+    // Hide all stop buttons when clearing text
+    document.getElementById('stopButtonA').disabled = true;
+    document.getElementById('stopButtonA').classList.add('opacity-0');
+    document.getElementById('stopButtonB').disabled = true;
+    document.getElementById('stopButtonB').classList.add('opacity-0');
+    document.getElementById('stopButtonDef').disabled = true;
+    document.getElementById('stopButtonDef').classList.add('opacity-0');
+    document.getElementById('stopButtonSimilarWords').disabled = true;
+    document.getElementById('stopButtonSimilarWords').classList.add('opacity-0');
 
-        const tempText = inputTextA.value;
-        inputTextA.value = inputTextB.value;
-        inputTextB.value = tempText;
-        
-        updateLabels();
+    clearSources();
+    updateTranslateButtonState();    
+    isTranslating = false;
+}
 
-        // Re-run translation only if a manual button press is required
-        updateTranslateButtonState();   
-    }
+function clearSources() {
+    sourceList.innerHTML = '';
+    sourcesDiv.classList.add('hidden');
+}
+    
+function setLoading(isLoading, targetBox) {
+    // NEW: Added translateButton to loading state check
+    translateButton.disabled = isLoading || (inputTextA.value.trim().length === 0 && inputTextB.value.trim().length === 0);
 
-    window.clearText = function(boxId) {
-        isTranslating = true;
-        if (boxId === 'A') {
-            inputTextA.value = '';
-            inputTextB.value = '';
-            inputTextA.focus();
-        } else if (boxId === 'B') {
-            inputTextB.value = '';
-            inputTextA.value = '';
-            inputTextB.focus();
+    const loadingHTML = `
+        <div class="loading-container">
+            <svg class="svg-spinner w-8 h-8 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+    `;
+    
+    if (targetBox === 'A') {
+        inputTextA.classList.toggle('loading', isLoading);
+    } else if (targetBox === 'B') {
+        inputTextB.classList.toggle('loading', isLoading);
+    } else if (targetBox === 'DEF') {
+        if (isLoading) {
+            definitionContent.innerHTML = loadingHTML;
+            similarWordsContent.innerHTML = loadingHTML;
+            // 🌟 ADDED: Image results loading state
+            imageResults.innerHTML = loadingHTML;
+        } else if (definitionContent.querySelector('.loading-container')) {
+            definitionContent.innerHTML = 'Definition for your source text will appear here.';
+            similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+            // 🌟 ADDED: Image results initial state
+            imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
         }
+        definitionContent.classList.toggle('opacity-50', isLoading);
+        similarWordsContent.classList.toggle('opacity-50', isLoading);
+        // 🌟 ADDED: Image results opacity control
+        imageResults.classList.toggle('opacity-50', isLoading);
+    }
+}
 
-        definitionContent.innerHTML = 'Definition for your source text will appear here.';
-        similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-        // 🌟 ADDED: Clear image results on clear 🌟
-        imageResults.innerHTML = 'Images related to your source text will appear here after translation.';    
-        speakButtonA.disabled = true;
-        speakButtonB.disabled = true;
-        speakButtonDef.disabled = true;
+// --- Updated formatSynonyms function for robustness ---
+function formatSynonyms(synonymsText) {
+    if (!synonymsText || synonymsText.toLowerCase() === 'n/a' || synonymsText.trim() === '') {
         speakButtonSimilarWords.disabled = true;
-        
-        // Hide all stop buttons when clearing text
-        document.getElementById('stopButtonA').disabled = true;
-        document.getElementById('stopButtonA').classList.add('opacity-0');
-        document.getElementById('stopButtonB').disabled = true;
-        document.getElementById('stopButtonB').classList.add('opacity-0');
-        document.getElementById('stopButtonDef').disabled = true;
-        document.getElementById('stopButtonDef').classList.add('opacity-0');
-        document.getElementById('stopButtonSimilarWords').disabled = true;
-        document.getElementById('stopButtonSimilarWords').classList.add('opacity-0');
-
-        clearSources();
-        updateTranslateButtonState();   
-        isTranslating = false;
+        return '<span class="text-gray-500">No synonyms found.</span>';
     }
+    speakButtonSimilarWords.disabled = false;
 
-    function clearSources() {
-        sourceList.innerHTML = '';
-        sourcesDiv.classList.add('hidden');
-    }
-    
-    function setLoading(isLoading, targetBox) {
-        // NEW: Added translateButton to loading state check
-        translateButton.disabled = isLoading || (inputTextA.value.trim().length === 0 && inputTextB.value.trim().length === 0);
-
-        const loadingHTML = `
-            <div class="loading-container">
-                <svg class="svg-spinner w-8 h-8 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
-        `;
-        
-        if (targetBox === 'A') {
-            inputTextA.classList.toggle('loading', isLoading);
-        } else if (targetBox === 'B') {
-            inputTextB.classList.toggle('loading', isLoading);
-        } else if (targetBox === 'DEF') {
-            if (isLoading) {
-                definitionContent.innerHTML = loadingHTML;
-                similarWordsContent.innerHTML = loadingHTML;
-                // 🌟 ADDED: Image results loading state
-                imageResults.innerHTML = loadingHTML;
-            } else if (definitionContent.querySelector('.loading-container')) {
-                definitionContent.innerHTML = 'Definition for your source text will appear here.';
-                similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-                // 🌟 ADDED: Image results initial state
-                imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
-            }
-            definitionContent.classList.toggle('opacity-50', isLoading);
-            similarWordsContent.classList.toggle('opacity-50', isLoading);
-            // 🌟 ADDED: Image results opacity control
-            imageResults.classList.toggle('opacity-50', isLoading);
-        }
-    }
-
-   // --- Updated formatSynonyms function for robustness ---
-    function formatSynonyms(synonymsText) {
-        if (!synonymsText || synonymsText.toLowerCase() === 'n/a' || synonymsText.trim() === '') {
-            speakButtonSimilarWords.disabled = true;
-            return '<span class="text-gray-500">No synonyms found.</span>';
-        }
-        speakButtonSimilarWords.disabled = false;
-
-        return synonymsText.split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0)
-            .map(s => {
-                // Use 'inline-block' to ensure correct box modeling for wrapping
-                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
+    return synonymsText.split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+        .map(s => {
+            // Use 'inline-block' to ensure correct box modeling for wrapping
+            return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
                              ${s}
-                         </span>`;
-            })
-            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
-    }
+                           </span>`;
+        })
+        .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
+}
 
-    function formatDefinition(text) {
+function formatDefinition(text) {
     if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
     
     // 1. Convert NEWLINES (\n or \\n) to HTML line breaks (<br>).
@@ -2097,194 +2097,194 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     
     return formattedText;
 }
-    function stripHtml(html) {
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        return doc.body.textContent || "";
+function stripHtml(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+}
+
+// --- TTS CONTROL LOGIC ---
+
+// New helper to reset the Speak/Stop button states
+function resetSpeechState(button, stopButton, textAvailable) {
+    // Re-enable Speak button based on text content
+    button.disabled = !textAvailable; 
+    button.classList.remove('loading');
+
+    // Hide and disable Stop button
+    if (stopButton) {
+        stopButton.disabled = true;
+        stopButton.classList.add('opacity-0');
+    }
+}
+
+// Global Stop function
+window.stopSpeech = function() {
+    if (nativeSynth.speaking) {
+        nativeSynth.cancel();
+        // Note: cancel() automatically triggers the utterance's onend event, 
+        // which handles the visual reset via the handleSpeak logic below.
+    }
+    // Fallback reset for immediate visual change
+    document.querySelectorAll('.speak-btn').forEach(btn => btn.classList.remove('loading'));
+    document.querySelectorAll('.stop-btn').forEach(btn => { btn.disabled = true; btn.classList.add('opacity-0'); });
+};
+
+
+window.handleSpeakSimilarWord = function(word, buttonElement) {
+    buttonElement.classList.add('loading');
+    buttonElement.disabled = true;
+    handleSpeak(word, null, buttonElement);
+}
+
+window.speakAllSimilarWords = function() {
+    const words = similarWordsContent.textContent.trim().replace('Synonyms for your source text will appear here.', '');
+    if (!words) return;
+    handleSpeak(words, 'SimilarWords'); // Use 'SimilarWords' as speakerId to target the right stop button
+}
+    
+window.speakDefinition = function() {
+    const textToSpeak = stripHtml(definitionContent.innerHTML);
+    if (!textToSpeak || textToSpeak.includes('Definition for your source text')) return;
+    handleSpeak(textToSpeak, 'Def');
+}
+
+window.speakResult = function(boxId) {
+    const textToSpeak = (boxId === 'A' ? inputTextA.value : inputTextB.value).trim();
+    if (!textToSpeak) return;
+    handleSpeak(textToSpeak, boxId);
+}
+
+// REPLACED: Original async handleSpeak (Gemini TTS API) with new native version
+window.handleSpeak = function(textToSpeak, speakerId, buttonElement) {
+    // 1. Check for browser support
+    if (!('speechSynthesis' in window)) {
+        console.error("Browser does not support the Web Speech API.");
+        return;
     }
 
-    // --- TTS CONTROL LOGIC ---
+    const buttonMap = { 'A': speakButtonA, 'B': speakButtonB, 'Def': speakButtonDef, 'SimilarWords': speakButtonSimilarWords };
+    const button = buttonElement || buttonMap[speakerId];
+    
+    // Find the corresponding STOP button (using ID mapping based on speakerId)
+    const stopButton = document.getElementById(`stopButton${speakerId}`);
+    
+    if (!textToSpeak.trim() || !button) return;
 
-    // New helper to reset the Speak/Stop button states
-    function resetSpeechState(button, stopButton, textAvailable) {
-        // Re-enable Speak button based on text content
-        button.disabled = !textAvailable; 
-        button.classList.remove('loading');
-
-        // Hide and disable Stop button
-        if (stopButton) {
-            stopButton.disabled = true;
-            stopButton.classList.add('opacity-0');
-        }
-    }
-
-    // Global Stop function
-    window.stopSpeech = function() {
-        if (nativeSynth.speaking) {
-            nativeSynth.cancel();
-            // Note: cancel() automatically triggers the utterance's onend event, 
-            // which handles the visual reset via the handleSpeak logic below.
-        }
-        // Fallback reset for immediate visual change
-        document.querySelectorAll('.speak-btn').forEach(btn => btn.classList.remove('loading'));
-        document.querySelectorAll('.stop-btn').forEach(btn => { btn.disabled = true; btn.classList.add('opacity-0'); });
-    };
-
-
-    window.handleSpeakSimilarWord = function(word, buttonElement) {
-        buttonElement.classList.add('loading');
-        buttonElement.disabled = true;
-        handleSpeak(word, null, buttonElement);
-    }
-
-    window.speakAllSimilarWords = function() {
-        const words = similarWordsContent.textContent.trim().replace('Synonyms for your source text will appear here.', '');
-        if (!words) return;
-        handleSpeak(words, 'SimilarWords'); // Use 'SimilarWords' as speakerId to target the right stop button
+    // 2. Stop any previous speech
+    if (nativeSynth.speaking) {
+        nativeSynth.cancel();
     }
     
-    window.speakDefinition = function() {
-        const textToSpeak = stripHtml(definitionContent.innerHTML);
-        if (!textToSpeak || textToSpeak.includes('Definition for your source text')) return;
-        handleSpeak(textToSpeak, 'Def');
+    // 3. Setup the Utterance
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    
+    // Find and set the preferred voice based on the currently selected option's value
+    const currentVoiceName = document.getElementById('voiceSelect').value;
+    const voices = nativeSynth.getVoices();
+    
+    // Find the voice object corresponding to the selected name
+    const selectedVoice = voices.find(v => v.name === currentVoiceName);
+    
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+    }  
+    
+    // 4. Set event handlers for button disabling/reenabling
+    
+    // STARTING STATE: Disable Speak, Enable Stop, Show Loading/Pulse
+    button.disabled = true;
+    button.classList.add('loading');
+    if (stopButton) {
+        stopButton.disabled = false;
+        stopButton.classList.remove('opacity-0'); // MAKE STOP BUTTON APPEAR
     }
 
-    window.speakResult = function(boxId) {
-        const textToSpeak = (boxId === 'A' ? inputTextA.value : inputTextB.value).trim();
-        if (!textToSpeak) return;
-        handleSpeak(textToSpeak, boxId);
+    // END/ERROR STATE: Reset buttons
+    const resetHandler = () => {
+         // Pass true if there is text in the box to re-enable the speak button
+         const textAvailable = !!textToSpeak.trim(); 
+         resetSpeechState(button, stopButton, textAvailable);
+    };
+
+    utterance.onend = resetHandler;
+    utterance.onerror = resetHandler;
+
+    // 5. Speak the text
+    nativeSynth.speak(utterance);
+}
+
+
+// ----------------------------------------------------------------------------------
+// 🌟 NEW: PEXELS IMAGE SEARCH FUNCTION 🌟
+// ----------------------------------------------------------------------------------
+async function fetchPexelsImages(query) {
+    if (!PEXELS_API_KEY || PEXELS_API_KEY === 'YOUR_PEXELS_API_KEY_HERE') {
+        imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Pexels API Key is not configured.</p>`;
+        return;
+    }
+    
+    if (query.length < 2) {
+        imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">Enter more text to search for images.</p>`;
+        return;
     }
 
-    // REPLACED: Original async handleSpeak (Gemini TTS API) with new native version
-    window.handleSpeak = function(textToSpeak, speakerId, buttonElement) {
-        // 1. Check for browser support
-        if (!('speechSynthesis' in window)) {
-            console.error("Browser does not support the Web Speech API.");
+    imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Pexels...</div>';
+
+    const url = new URL(PEXELS_URL);
+    url.searchParams.append('query', query);
+    url.searchParams.append('per_page', 8);    
+    url.searchParams.append('orientation', 'square');    
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': PEXELS_API_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+
+        if (response.status !== 200) {
+            imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">API Error: Could not fetch images (Status: ${response.status}).</p>`;
             return;
         }
 
-        const buttonMap = { 'A': speakButtonA, 'B': speakButtonB, 'Def': speakButtonDef, 'SimilarWords': speakButtonSimilarWords };
-        const button = buttonElement || buttonMap[speakerId];
-        
-        // Find the corresponding STOP button (using ID mapping based on speakerId)
-        const stopButton = document.getElementById(`stopButton${speakerId}`);
-        
-        if (!textToSpeak.trim() || !button) return;
-
-        // 2. Stop any previous speech
-        if (nativeSynth.speaking) {
-            nativeSynth.cancel();
-        }
-        
-        // 3. Setup the Utterance
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        
-        // Find and set the preferred voice based on the currently selected option's value
-        const currentVoiceName = document.getElementById('voiceSelect').value;
-        const voices = nativeSynth.getVoices();
-        
-        // Find the voice object corresponding to the selected name
-        const selectedVoice = voices.find(v => v.name === currentVoiceName);
-        
-        if (selectedVoice) {
-            utterance.voice = selectedVoice;
-        }  
-        
-        // 4. Set event handlers for button disabling/reenabling
-        
-        // STARTING STATE: Disable Speak, Enable Stop, Show Loading/Pulse
-        button.disabled = true;
-        button.classList.add('loading');
-        if (stopButton) {
-            stopButton.disabled = false;
-            stopButton.classList.remove('opacity-0'); // MAKE STOP BUTTON APPEAR
-        }
-
-        // END/ERROR STATE: Reset buttons
-        const resetHandler = () => {
-             // Pass true if there is text in the box to re-enable the speak button
-             const textAvailable = !!textToSpeak.trim(); 
-             resetSpeechState(button, stopButton, textAvailable);
-        };
-
-        utterance.onend = resetHandler;
-        utterance.onerror = resetHandler;
-
-        // 5. Speak the text
-        nativeSynth.speak(utterance);
-    }
-
-
-    // ----------------------------------------------------------------------------------
-    // 🌟 NEW: PEXELS IMAGE SEARCH FUNCTION 🌟
-    // ----------------------------------------------------------------------------------
-    async function fetchPexelsImages(query) {
-        if (!PEXELS_API_KEY || PEXELS_API_KEY === 'YOUR_PEXELS_API_KEY_HERE') {
-            imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Pexels API Key is not configured.</p>`;
-            return;
-        }
-        
-        if (query.length < 2) {
-            imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">Enter more text to search for images.</p>`;
-            return;
-        }
-
-        imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Pexels...</div>';
-
-        const url = new URL(PEXELS_URL);
-        url.searchParams.append('query', query);
-        url.searchParams.append('per_page', 8);    
-        url.searchParams.append('orientation', 'square');    
-
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': PEXELS_API_KEY,
-                    'Content-Type': 'application/json'
-                }
-            });
+        if (data.photos && data.photos.length > 0) {
+            imageResults.innerHTML = ''; // Clear the "Searching..." text
             
-            const data = await response.json();
+            // Add a wrapper for better grid/flex layout (assuming your CSS handles this for the imageResults div)
+            const imageWrapper = document.createElement('div');
+            imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; // Adjust classes as needed for your layout
 
-            if (response.status !== 200) {
-                imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">API Error: Could not fetch images (Status: ${response.status}).</p>`;
-                return;
-            }
-
-            if (data.photos && data.photos.length > 0) {
-                imageResults.innerHTML = ''; // Clear the "Searching..." text
+            data.photos.forEach(photo => {
+                const img = document.createElement('img');
+                // Use 'small' source for a good balance of size/speed
+                img.src = photo.src.small;    
+                img.alt = photo.alt || 'Pexels Photo';
                 
-                // Add a wrapper for better grid/flex layout (assuming your CSS handles this for the imageResults div)
-                const imageWrapper = document.createElement('div');
-                imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; // Adjust classes as needed for your layout
+                // Basic styling for images
+                img.className = 'w-[100px] h-[100px] object-cover rounded-md shadow-md transition transform hover:scale-105 cursor-pointer';
+                img.onclick = () => window.open(photo.url, '_blank'); // Open the Pexels link in a new tab
 
-                data.photos.forEach(photo => {
-                    const img = document.createElement('img');
-                    // Use 'small' source for a good balance of size/speed
-                    img.src = photo.src.small;    
-                    img.alt = photo.alt || 'Pexels Photo';
-                    
-                    // Basic styling for images
-                    img.className = 'w-[100px] h-[100px] object-cover rounded-md shadow-md transition transform hover:scale-105 cursor-pointer';
-                    img.onclick = () => window.open(photo.url, '_blank'); // Open the Pexels link in a new tab
+                imageWrapper.appendChild(img);
+            });
+             imageResults.appendChild(imageWrapper);
 
-                    imageWrapper.appendChild(img);
-                });
-                 imageResults.appendChild(imageWrapper);
-
-            } else {
-                imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">No images found on Pexels for "${query}".</p>`;
-            }
-
-        } catch (error) {
-            console.error('Network or Fetch Error:', error);
-            imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">A network error occurred while connecting to Pexels.</p>';
+        } else {
+            imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">No images found on Pexels for "${query}".</p>`;
         }
+
+    } catch (error) {
+        console.error('Network or Fetch Error:', error);
+        imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">A network error occurred while connecting to Pexels.</p>';
     }
+}
 
 
-    // --- Core Translation Logic ---
-    async function getTranslationAndDefinition(text, fromLang, toLang) {
+// --- Core Translation Logic ---
+async function getTranslationAndDefinition(text, fromLang, toLang) {
                 const systemPrompt = "You are an expert, multilingual translator and dictionary. I will provide text, a source language, and a target language. You MUST provide three distinct pieces of information in this exact format:\n\n1.  The translation: [TRANSLATION]...translated text...[/TRANSLATION]\n\n2.  A concise dictionary definition of the *original* source text (in its *original* language), including part of speech and an example sentence. Use simple markdown like **bold** text and newline characters(\\n): [DEFINITION]...definition text...[/DEFINITION]\n\n3.  A list of similar words (synonyms) for the *original* source text (in its *original* language), separated by commas: [SYNONYMS]...synonym 1, synonym 2, synonym 3...[/SYNONYMS]\n\nIf the text is a full sentence, the definition part can provide a brief grammatical breakdown. If no definition or synonyms are found, use 'N/A' inside the tag.";
                 const userQuery = `Process this text: "${text}". Source: ${fromLang}. Target: ${toLang}.`;
 
@@ -2343,227 +2343,227 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                     console.error("Translation error:", error);
                     return { translation: "Error: API failure.", definition: "Error: API failure.", synonyms: 'N/A' };
                 }
-    }
+}
     
-    // NEW: Function to send translation data to the Apps Script logger
-    async function sendTranslationToLogger(sourceWord, translatedWord, definition, similarWords) {
-        // Uses the dedicated logger URL
-        if (!TRANSLATION_LOGGER_URL || TRANSLATION_LOGGER_URL.includes("YOUR_TRANSLATION_LOGGER_APPSCRIPT_URL_HERE")) {
-            console.warn("TRANSLATION_LOGGER_URL is not set. Skipping server-side history logging.");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("sourceWord", sourceWord);
-        formData.append("translatedWord", translatedWord);
-        formData.append("definition", stripHtml(definition)); // Use plain text definition
-        formData.append("similarWords", similarWords); // Use raw synonym string
-        formData.append("userEmail", currentUser ? currentUser.email : 'Guest'); // Include user email ('Guest' if not logged in)
-        formData.append("sourceLang", langA.value); // Include source lang
-        formData.append("targetLang", langB.value); // Include target lang
-
-
-        try {
-            const response = await fetch(TRANSLATION_LOGGER_URL, {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-            if (result.result !== 'success') {
-                console.error("Server History Log Failed:", result.message);
-            }
-        } catch (error) {
-            console.error("Network error during history logging:", error);
-        }
+// NEW: Function to send translation data to the Apps Script logger
+async function sendTranslationToLogger(sourceWord, translatedWord, definition, similarWords) {
+    // Uses the dedicated logger URL
+    if (!TRANSLATION_LOGGER_URL || TRANSLATION_LOGGER_URL.includes("YOUR_TRANSLATION_LOGGER_APPSCRIPT_URL_HERE")) {
+        console.warn("TRANSLATION_LOGGER_URL is not set. Skipping server-side history logging.");
+        return;
     }
-    
-    // NEW: Centralized function to determine which way to translate
-    function getSourceAndTarget() {
-        const textA = inputTextA.value.trim();
-        const textB = inputTextB.value.trim();
 
-        if (textA.length > 0 && textB.length === 0) {
-            return {
-                sourceText: textA,
-                sourceLang: langA.value,
-                targetLang: langB.value,
-                resultBox: 'B',
-                sourceBox: 'A'
-            };
-        } else if (textB.length > 0 && textA.length === 0) {
-            return {
-                sourceText: textB,
-                sourceLang: langB.value,
-                targetLang: langA.value,
-                resultBox: 'A',
-                sourceBox: 'B'
-            };
+    const formData = new FormData();
+    formData.append("sourceWord", sourceWord);
+    formData.append("translatedWord", translatedWord);
+    formData.append("definition", stripHtml(definition)); // Use plain text definition
+    formData.append("similarWords", similarWords); // Use raw synonym string
+    formData.append("userEmail", currentUser ? currentUser.email : 'Guest'); // Include user email ('Guest' if not logged in)
+    formData.append("sourceLang", langA.value); // Include source lang
+    formData.append("targetLang", langB.value); // Include target lang
+
+
+    try {
+        const response = await fetch(TRANSLATION_LOGGER_URL, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        if (result.result !== 'success') {
+            console.error("Server History Log Failed:", result.message);
         }
-            // If both boxes are filled, default to A->B for the manual button press
-        if (textA.length > 0 && textB.length > 0) {
-            return {
-                sourceText: textA,
-                sourceLang: langA.value,
-                targetLang: langB.value,
-                resultBox: 'B',
-                sourceBox: 'A'
-            };
-        }
-        return null; // Nothing to translate
+    } catch (error) {
+        console.error("Network error during history logging:", error);
     }
+}
     
-    // ----------------------------------------------------------------------------------
-    // 🌟 INTEGRATED/REPLACED: handleTranslateButtonClick WITH ANIMATION/ENTER LOGIC 🌟
-    // ----------------------------------------------------------------------------------
-    window.handleTranslateButtonClick = function(event) {
-        const translationInfo = getSourceAndTarget();
+// NEW: Centralized function to determine which way to translate
+function getSourceAndTarget() {
+    const textA = inputTextA.value.trim();
+    const textB = inputTextB.value.trim();
+
+    if (textA.length > 0 && textB.length === 0) {
+        return {
+            sourceText: textA,
+            sourceLang: langA.value,
+            targetLang: langB.value,
+            resultBox: 'B',
+            sourceBox: 'A'
+        };
+    } else if (textB.length > 0 && textA.length === 0) {
+        return {
+            sourceText: textB,
+            sourceLang: langB.value,
+            targetLang: langA.value,
+            resultBox: 'A',
+            sourceBox: 'B'
+        };
+    }
+        // If both boxes are filled, default to A->B for the manual button press
+    if (textA.length > 0 && textB.length > 0) {
+        return {
+            sourceText: textA,
+            sourceLang: langA.value,
+            targetLang: langB.value,
+            resultBox: 'B',
+            sourceBox: 'A'
+        };
+    }
+    return null; // Nothing to translate
+}
+    
+// ----------------------------------------------------------------------------------
+// 🌟 INTEGRATED/REPLACED: handleTranslateButtonClick WITH ANIMATION/ENTER LOGIC 🌟
+// ----------------------------------------------------------------------------------
+window.handleTranslateButtonClick = function(event) {
+    const translationInfo = getSourceAndTarget();
+    
+    if (!translationInfo || isTranslating) {
+        // If the button is clicked or Enter is pressed when nothing should happen, just return.
+        return;
+    }
+
+    // 1. Start the visual feedback (PULSE ANIMATION)
+    translateButton.classList.add('is-translating');
+    translateButton.disabled = true; // Disable during process
+
+    // The actual API call is handled asynchronously in the translateAtoB/BtoA functions.
+    // We call them with isManual=true to ensure the API call runs.
+    
+    if (translationInfo.sourceBox === 'A') {
+        translateAtoB(translationInfo.sourceText, true);    
+    } else {
+        translateBtoA(translationInfo.sourceText, true);
+    }
+
+    // We will remove the 'is-translating' class inside the translateAtoB/BtoA functions'
+    // final cleanup step, ensuring the animation stops when the API result is received.
+}
+    
+// ----------------------------------------------------------------------------------
+// 🌟 INTEGRATED: checkTranslate FUNCTION FOR ENTER KEY PRESS 🌟
+// ----------------------------------------------------------------------------------
+window.checkTranslate = function(event) {
+    // Check for the Enter key (keyCode 13 or key 'Enter')
+    if (event.key === 'Enter' || event.keyCode === 13) {
         
-        if (!translationInfo || isTranslating) {
-            // If the button is clicked or Enter is pressed when nothing should happen, just return.
-            return;
+        // CHECK FOR MODIFIER KEYS: If Shift OR Control is pressed, allow a newline.
+        if (event.shiftKey || event.ctrlKey) {
+            // Allow the default action (creating a newline) to happen.
+            return;    
         }
 
-        // 1. Start the visual feedback (PULSE ANIMATION)
-        translateButton.classList.add('is-translating');
-        translateButton.disabled = true; // Disable during process
-
-        // The actual API call is handled asynchronously in the translateAtoB/BtoA functions.
-        // We call them with isManual=true to ensure the API call runs.
+        // If ONLY Enter is pressed (no Shift or Control), prevent default and translate.
+        event.preventDefault();    
         
-        if (translationInfo.sourceBox === 'A') {
-            translateAtoB(translationInfo.sourceText, true);    
-        } else {
-            translateBtoA(translationInfo.sourceText, true);
-        }
-
-        // We will remove the 'is-translating' class inside the translateAtoB/BtoA functions'
-        // final cleanup step, ensuring the animation stops when the API result is received.
+        // Trigger the main handler
+        window.handleTranslateButtonClick();
     }
+}
+// ----------------------------------------------------------------------------------
     
-    // ----------------------------------------------------------------------------------
-    // 🌟 INTEGRATED: checkTranslate FUNCTION FOR ENTER KEY PRESS 🌟
-    // ----------------------------------------------------------------------------------
-    window.checkTranslate = function(event) {
-        // Check for the Enter key (keyCode 13 or key 'Enter')
-        if (event.key === 'Enter' || event.keyCode === 13) {
-            
-            // CHECK FOR MODIFIER KEYS: If Shift OR Control is pressed, allow a newline.
-            if (event.shiftKey || event.ctrlKey) {
-                // Allow the default action (creating a newline) to happen.
-                return;    
-            }
+// MODIFIED: translateAtoB and translateBtoA to call fetchPexelsImages
+async function translateAtoB(text, isManual = false) {    
+    if (isTranslating) return;
+    text = text.trim();
+    
+    speakButtonA.disabled = text.length === 0;
+    updateTranslateButtonState();
 
-            // If ONLY Enter is pressed (no Shift or Control), prevent default and translate.
-            event.preventDefault();    
-            
-            // Trigger the main handler
-            window.handleTranslateButtonClick();
-        }
-    }
-    // ----------------------------------------------------------------------------------
-    
-    // MODIFIED: translateAtoB and translateBtoA to call fetchPexelsImages
-    async function translateAtoB(text, isManual = false) {    
-        if (isTranslating) return;
-        text = text.trim();
+    if (!text) {
+        inputTextB.value = '';
+        definitionContent.innerHTML = 'Definition for your source text will appear here.';
+        similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+        // 🌟 ADDED: Clear image results 🌟
+        imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
+        speakButtonB.disabled = true;
+        speakButtonDef.disabled = true;
+        speakButtonSimilarWords.disabled = true;
+        clearSources();
         
-        speakButtonA.disabled = text.length === 0;
-        updateTranslateButtonState();
+        // REMOVE ANIMATION if text was cleared during the process
+        translateButton.classList.remove('is-translating');
+        return;
+    }
 
-        if (!text) {
-            inputTextB.value = '';
-            definitionContent.innerHTML = 'Definition for your source text will appear here.';
-            similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-            // 🌟 ADDED: Clear image results 🌟
-            imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
-            speakButtonB.disabled = true;
-            speakButtonDef.disabled = true;
-            speakButtonSimilarWords.disabled = true;
-            clearSources();
-            
-            // REMOVE ANIMATION if text was cleared during the process
-            translateButton.classList.remove('is-translating');
-            return;
+    // Only proceed with API call if manually triggered
+    if (!isManual) return;    
+
+    isTranslating = true;
+    setLoading(true, 'B');    
+    setLoading(true, 'DEF');    
+
+    const { translation, definition, synonyms } = await getTranslationAndDefinition(text, langA.value, langB.value);
+    
+    setLoading(false, 'B');
+    setLoading(false, 'DEF');
+    
+    if (isManual) { // Ensure we only update if it was the intended manual action
+        inputTextB.value = translation;
+        const formattedDefinition = formatDefinition(definition);
+        const formattedSynonyms = formatSynonyms(synonyms);
+        
+        definitionContent.innerHTML = formattedDefinition;
+        similarWordsContent.innerHTML = formattedSynonyms;    
+        
+        // 🌟 PEXELS IMAGE SEARCH CALL 🌟
+        fetchPexelsImages(text);
+
+        if (translation && translation !== "Translation not found." && translation !== "Error: API failure.") {
+            // LOCAL HISTORY
+            saveToHistory(text, langA.value, translation);
+            // SERVER-SIDE HISTORY LOGGING (NEW)
+            sendTranslationToLogger(text, translation, formattedDefinition, synonyms);
         }
+        
+        speakButtonB.disabled = translation.length === 0;
+        speakButtonDef.disabled = (definitionContent.textContent || definitionContent.innerText).includes('Definition for your source text');
+        
+        // 🌟 FINAL ANIMATION CLEANUP 🌟
+        translateButton.classList.remove('is-translating');
+    }
+
+    isTranslating = false;
+    updateTranslateButtonState();
+}
+
+async function translateBtoA(text, isManual = false) {    
+    if (isTranslating) return;    
+    text = text.trim();
+    
+    speakButtonB.disabled = text.length === 0;
+    updateTranslateButtonState();
+
+    if (!text) {
+        inputTextA.value = '';
+        definitionContent.innerHTML = 'Definition for your source text will appear here.';
+        similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+        // 🌟 ADDED: Clear image results 🌟
+        imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
+        speakButtonA.disabled = true;
+        speakButtonDef.disabled = true;
+        speakButtonSimilarWords.disabled = true;
+        clearSources();
+        
+        // REMOVE ANIMATION if text was cleared during the process
+        translateButton.classList.remove('is-translating');
+        return;
+    }
 
         // Only proceed with API call if manually triggered
-        if (!isManual) return;    
+    if (!isManual) return;    
 
-        isTranslating = true;
-        setLoading(true, 'B');    
-        setLoading(true, 'DEF');    
+    isTranslating = true;
+    setLoading(true, 'A');    
+    setLoading(true, 'DEF');    
 
-        const { translation, definition, synonyms } = await getTranslationAndDefinition(text, langA.value, langB.value);
-        
-        setLoading(false, 'B');
-        setLoading(false, 'DEF');
-        
+    const { translation, definition, synonyms } = await getTranslationAndDefinition(text, langB.value, langA.value);
+    
+    setLoading(false, 'A');
+    setLoading(false, 'DEF');
+
         if (isManual) { // Ensure we only update if it was the intended manual action
-            inputTextB.value = translation;
-            const formattedDefinition = formatDefinition(definition);
-            const formattedSynonyms = formatSynonyms(synonyms);
-            
-            definitionContent.innerHTML = formattedDefinition;
-            similarWordsContent.innerHTML = formattedSynonyms;    
-            
-            // 🌟 PEXELS IMAGE SEARCH CALL 🌟
-            fetchPexelsImages(text);
-
-            if (translation && translation !== "Translation not found." && translation !== "Error: API failure.") {
-                // LOCAL HISTORY
-                saveToHistory(text, langA.value, translation);
-                // SERVER-SIDE HISTORY LOGGING (NEW)
-                sendTranslationToLogger(text, translation, formattedDefinition, synonyms);
-            }
-            
-            speakButtonB.disabled = translation.length === 0;
-            speakButtonDef.disabled = (definitionContent.textContent || definitionContent.innerText).includes('Definition for your source text');
-            
-            // 🌟 FINAL ANIMATION CLEANUP 🌟
-            translateButton.classList.remove('is-translating');
-        }
-
-        isTranslating = false;
-        updateTranslateButtonState();
-    }
-
-    async function translateBtoA(text, isManual = false) {    
-        if (isTranslating) return;    
-        text = text.trim();
-        
-        speakButtonB.disabled = text.length === 0;
-        updateTranslateButtonState();
-
-        if (!text) {
-            inputTextA.value = '';
-            definitionContent.innerHTML = 'Definition for your source text will appear here.';
-            similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-            // 🌟 ADDED: Clear image results 🌟
-            imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
-            speakButtonA.disabled = true;
-            speakButtonDef.disabled = true;
-            speakButtonSimilarWords.disabled = true;
-            clearSources();
-            
-            // REMOVE ANIMATION if text was cleared during the process
-            translateButton.classList.remove('is-translating');
-            return;
-        }
-
-            // Only proceed with API call if manually triggered
-        if (!isManual) return;    
-
-        isTranslating = true;
-        setLoading(true, 'A');    
-        setLoading(true, 'DEF');    
-
-        const { translation, definition, synonyms } = await getTranslationAndDefinition(text, langB.value, langA.value);
-        
-        setLoading(false, 'A');
-        setLoading(false, 'DEF');
-
-            if (isManual) { // Ensure we only update if it was the intended manual action
             inputTextA.value = translation;
             const formattedDefinition = formatDefinition(definition);
             const formattedSynonyms = formatSynonyms(synonyms);
@@ -2588,98 +2588,136 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             translateButton.classList.remove('is-translating');
         }
 
-        isTranslating = false;
+    isTranslating = false;
+    updateTranslateButtonState();
+}
+// ----------------------------------------------------------------------------------
+
+// Function to manage the state of the dedicated Translate button
+function updateTranslateButtonState() {
+    const hasInputA = inputTextA.value.trim().length > 0;
+    const hasInputB = inputTextB.value.trim().length > 0;
+    
+    // The button is enabled if either box has text AND we're not currently translating
+    translateButton.disabled = isTranslating || !(hasInputA || hasInputB);
+    
+    // Highlight the active box
+    if (hasInputA && !hasInputB) {
+        inputTextA.classList.add('border-indigo-500');
+        inputTextB.classList.remove('border-indigo-500');
+    } else if (hasInputB && !hasInputA) {
+        inputTextB.classList.add('border-indigo-500');
+        inputTextA.classList.remove('border-indigo-500');
+    } else {
+        // If both are filled or both are empty, remove highlighting
+        inputTextA.classList.remove('border-indigo-500');
+        inputTextB.classList.remove('border-indigo-500');
+    }
+}
+
+// ----------------------------------------------------------------------------------
+// 💡 NEW FUNCTION: Apply System Dark Mode Preference
+// ----------------------------------------------------------------------------------
+function applySystemPreference() {
+    // 1. Check for system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // 2. Check for local storage setting
+    const localSetting = localStorage.getItem('darkMode');
+    
+    // 3. Determine final mode: Local storage overrides system preference
+    let isDark;
+    if (localSetting === 'true') {
+        isDark = true;
+    } else if (localSetting === 'false') {
+        isDark = false;
+    } else {
+        // No local storage setting, use system preference
+        isDark = prefersDark;
+    }
+    
+    // 4. Apply mode
+    toggleDarkMode(isDark);
+    
+    // 5. Update the manual toggle button to reflect the applied mode
+    darkModeToggle.checked = isDark;
+
+    // 6. Listen for changes to system preference in real-time
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        // Only automatically switch if the user hasn't set a manual preference
+        if (localStorage.getItem('darkMode') === null) {
+            toggleDarkMode(e.matches);
+            darkModeToggle.checked = e.matches;
+        }
+    });
+}
+// ----------------------------------------------------------------------------------
+
+
+// --- Event Listeners and Initialization ---
+
+function initializeListeners() {
+    // 🚀 CRITICAL STEP 1: Apply system preference first
+    applySystemPreference();
+    
+    // Bind input listeners (only update button state, no automatic translation)
+    inputTextA.addEventListener('input', (event) => {    
+        updateTranslateButtonState();    
+        speakButtonA.disabled = event.target.value.trim().length === 0;
+        inputTextB.value = ''; // Clear other box on input
+    });
+    inputTextB.addEventListener('input', (event) => {    
+        updateTranslateButtonState();    
+        speakButtonB.disabled = event.target.value.trim().length === 0;
+        inputTextA.value = ''; // Clear other box on input
+    });
+
+    langA.addEventListener('change', () => {
+        updateLabels();
         updateTranslateButtonState();
-    }
-    // ----------------------------------------------------------------------------------
-
-    // Function to manage the state of the dedicated Translate button
-    function updateTranslateButtonState() {
-        const hasInputA = inputTextA.value.trim().length > 0;
-        const hasInputB = inputTextB.value.trim().length > 0;
-        
-        // The button is enabled if either box has text AND we're not currently translating
-        translateButton.disabled = isTranslating || !(hasInputA || hasInputB);
-        
-        // Highlight the active box
-        if (hasInputA && !hasInputB) {
-            inputTextA.classList.add('border-indigo-500');
-            inputTextB.classList.remove('border-indigo-500');
-        } else if (hasInputB && !hasInputA) {
-            inputTextB.classList.add('border-indigo-500');
-            inputTextA.classList.remove('border-indigo-500');
-        } else {
-            // If both are filled or both are empty, remove highlighting
-            inputTextA.classList.remove('border-indigo-500');
-            inputTextB.classList.remove('border-indigo-500');
-        }
-    }
-
-
-    // --- Event Listeners and Initialization ---
-
-    function initializeListeners() {
-        // Bind input listeners (only update button state, no automatic translation)
-        inputTextA.addEventListener('input', (event) => {    
-            updateTranslateButtonState();    
-            speakButtonA.disabled = event.target.value.trim().length === 0;
-            inputTextB.value = ''; // Clear other box on input
-        });
-        inputTextB.addEventListener('input', (event) => {    
-            updateTranslateButtonState();    
-            speakButtonB.disabled = event.target.value.trim().length === 0;
-            inputTextA.value = ''; // Clear other box on input
-        });
-
-        langA.addEventListener('change', () => {
-            updateLabels();
-            updateTranslateButtonState();
-        });
-        langB.addEventListener('change', () => {
-            updateLabels();
-            updateTranslateButtonState();
-        });
-        
-        // Settings Listeners
-        darkModeToggle.addEventListener('change', (e) => toggleDarkMode(e.target.checked));
-        
-        // UPDATE: Change event updates ttsVoice and saves it
-        voiceSelect.addEventListener('change', (e) => setTTSVoice(e.target.value));    
-        
-        // 🌟 NEW LISTENER: Bind click event to the main handler
-        translateButton.addEventListener('click', window.handleTranslateButtonClick);    
-
-        // 🚀 CRITICAL FIX: Add keyup listeners to trigger checkTranslate on Enter
-        inputTextA.addEventListener('keyup', window.checkTranslate);
-        inputTextB.addEventListener('keyup', window.checkTranslate);
-        // ---------------------------------------------------------------------
-
-        // CONTACT FORM VALIDATION LISTENERS (ADDED HERE)
-        const contactForm = document.getElementById('contactForm');
-        if (contactForm) {
-            contactForm.querySelectorAll('input, textarea').forEach(input => {
-                input.addEventListener('input', () => validateField(input));
-                input.addEventListener('blur', () => validateField(input));
-            });
-        }
-        // END CONTACT FORM VALIDATION LISTENERS
-        
-        // Initial setup
-        populateLanguageSelectors();
-        updateAccountStatus();
+    });
+    langB.addEventListener('change', () => {
+        updateLabels();
         updateTranslateButtonState();
-        
-        // Apply saved settings
-        if (localStorage.getItem('darkMode') === 'true') {
-            toggleDarkMode(true);
-        }
-        if (localStorage.getItem('ttsVoice')) {
-            ttsVoice = localStorage.getItem('ttsVoice');
-            voiceSelect.value = ttsVoice;
-        }
-    }
+    });
+    
+    // Settings Listeners
+    darkModeToggle.addEventListener('change', (e) => toggleDarkMode(e.target.checked));
+    
+    // UPDATE: Change event updates ttsVoice and saves it
+    voiceSelect.addEventListener('change', (e) => setTTSVoice(e.target.value));    
+    
+    // 🌟 NEW LISTENER: Bind click event to the main handler
+    translateButton.addEventListener('click', window.handleTranslateButtonClick);    
 
-    document.addEventListener('DOMContentLoaded', initializeListeners);
+    // 🚀 CRITICAL FIX: Add keyup listeners to trigger checkTranslate on Enter
+    inputTextA.addEventListener('keyup', window.checkTranslate);
+    inputTextB.addEventListener('keyup', window.checkTranslate);
+    // ---------------------------------------------------------------------
+
+    // CONTACT FORM VALIDATION LISTENERS (ADDED HERE)
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', () => validateField(input));
+            input.addEventListener('blur', () => validateField(input));
+        });
+    }
+    // END CONTACT FORM VALIDATION LISTENERS
+    
+    // Initial setup
+    populateLanguageSelectors();
+    updateAccountStatus();
+    updateTranslateButtonState();
+    
+    // Apply saved settings (Only TTS voice is left, DarkMode is handled by applySystemPreference)
+    if (localStorage.getItem('ttsVoice')) {
+        ttsVoice = localStorage.getItem('ttsVoice');
+        voiceSelect.value = ttsVoice;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initializeListeners);
 
 
 // --- CONTACT US VALIDATION & SUBMISSION LOGIC ---
@@ -2797,7 +2835,7 @@ window.handleContactSubmit = async function(event) {
     setTimeout(() => { statusDiv.classList.add('hidden'); }, 10000);
 }
 
- // Disable right-click
+// Disable right-click
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 });
@@ -2829,7 +2867,7 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
     }
 });
-    document.addEventListener('dragstart', function(e) {
+document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
