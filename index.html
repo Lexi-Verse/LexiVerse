@@ -957,21 +957,21 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     </div>
  </div>
 
+
 <script type="module">
-    // --- CONFIGURATION: PROXY URL (New, Separate Backend) ---
-    // 🛑 ACTION REQUIRED 1: REPLACE THIS WITH THE URL OF YOUR NEW API PROXY APPS SCRIPT 🛑
-    const PROXY_API_URL = "https://lexiverse-proxy-project.vercel.app/api/proxy"; 
+    // Global constants
+    const apiKey = "AIzaSyBNEWSCuBiDNyRxnIaF1PfdcJ2eZIoSwV8";
+    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    // Removed const TTS_API_URL = `...`;
+    
+    // !!! IMPORTANT: REPLACED URLS TO MATCH LOGIC (AUTH/HISTORY is the main one) !!!
+    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbySBTZu6C07EXu-rRdIQalDgKX89e_WBL45F8SvyWc8sdgZCkDwuiyHTkhq0IqQJnvAdw/exec";   
+    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuXWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";   
 
-    // --- CONFIGURATION: AUTH/HISTORY URLs (Existing Backends, Keep if separate) ---
-    // NOTE: These must be the URLs of your existing Auth/History Apps Script deployments.
-    // If you haven't changed them, leave them as the sample URLs, but use your real ones.
-    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbzrvxhk0CgoPktwRBQibpOkPOpZaLVWFj4Xucltmg96g8cW4EFVyj6Dt_NSX3poapsCHg/exec";    
-    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbwoC2VvmrUcB1yrz4oFjg_v-RkJplS99DQwetxoGDZ03aIvwQzPmJwRHEwvFYlCK44V/exec";    
-
-    // These are placeholders for security purposes. The PROXY handles the real keys.
-    const GEMINI_API_URL = "PROXY_HANDLED"; 
-    const PEXELS_API_KEY = 'PROXY_HANDLED';    
-    const PEXELS_URL = 'https://api.pexels.com/v1/search'; 
+    // 🌟 PEXELS API CONFIGURATION 🌟
+    // 🛑 ACTION REQUIRED: REPLACE 'YOUR_PEXELS_API_KEY_HERE' WITH YOUR ACTUAL KEY 🛑
+    const PEXELS_API_KEY = 'Xr6Q356j546ODjGgS5JlsqD0tOGu03N4ClFTFirZUfezTAxsyVSA6hUZ';    
+    const PEXELS_URL = 'https://api.pexels.com/v1/search';
 
 
     // Language data (unchanged)
@@ -1273,7 +1273,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             option.textContent = lang.name;
             langA.appendChild(option);
         });
-        langA.value = 'English';    
+        langA.value = 'English';   
 
         langB.innerHTML = '';
         languages.forEach(lang => {
@@ -1282,7 +1282,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             option.textContent = lang.name;
             langB.appendChild(option);
         });
-        langB.value = 'Tamil';    
+        langB.value = 'Tamil';   
 
         updateLabels();
     }
@@ -1353,7 +1353,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                             Log In
                         </button>
                        <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                                Don't have an account? <button type="button" onclick="renderAuthView('signup')" class="${buttonSecondaryClasses}">Sign Up</button>
+                            Don't have an account? <button type="button" onclick="renderAuthView('signup')" class="${buttonSecondaryClasses}">Sign Up</button>
                        </p>
                     </form>
                 `;
@@ -1376,7 +1376,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                             Sign Up
                         </button>
                        <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                                Already have account! <button type="button" onclick="renderAuthView('login')" class="${buttonSecondaryClasses}">Log In</button>
+                            Already have account! <button type="button" onclick="renderAuthView('login')" class="${buttonSecondaryClasses}">Log In</button>
                        </p>
                     </form>
                 `;
@@ -1422,8 +1422,8 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
           // 1. Determine the display name: Use the full name if available,  
           //    otherwise fall back to the part of the email before '@'.
           const displayName = currentUser.name  
-                                   ? currentUser.name.split(' ')[0] // Display only the first name (optional)
-                                   : currentUser.email.split('@')[0];
+                                 ? currentUser.name.split(' ')[0] // Display only the first name (optional)
+                                 : currentUser.email.split('@')[0];
           
           // 2. Update the account status element
           accountStatus.textContent = `Logged in (${displayName})`;
@@ -1443,9 +1443,9 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     // --- Auth Logic (Updated to use server-side endpoints for logging) ---
 
     async function sendAuthRequest(action, data) {
-        // Use the AUTH_HISTORY_URL (which points to the PROXY_API_URL if merged)
-        if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_DEPLOYED_PROXY_APPSCRIPT_URL_HERE")) {
-            authMessage.textContent = "Error: Authentication URL is not configured.";
+        // The AUTH_HISTORY_URL handles login, signup, and getHistory actions
+        if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_AUTH_HISTORY_APPSCRIPT_URL_HERE")) {
+            authMessage.textContent = "Error: AUTH_HISTORY_URL is not configured.";
             return { success: false };
         }
 
@@ -1627,7 +1627,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             sourceLang: sourceLangText,
             targetLang: targetLangText,
             timestamp: new Date().toLocaleString(), // Use local string for storage
-            definition: 'No definition logged.',  
+            definition: 'No definition logged.', 
             similarWords: 'No similar words logged.' 
         };
 
@@ -1676,7 +1676,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }
 
         // 6. Re-render history list to show it's empty
-        openHistoryModal();  
+        openHistoryModal(); 
     }
 
     // --- FIX 2 & 3: Read More Toggle Functionality for all fields ---
@@ -1689,12 +1689,12 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         if (hiddenContent.classList.contains('hidden')) {
             hiddenContent.classList.remove('hidden');
             const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
-            if(truncatedContainer) truncatedContainer.classList.add('hidden');  
+            if(truncatedContainer) truncatedContainer.classList.add('hidden'); 
             toggleButton.textContent = 'Read Less';
         } else {
             hiddenContent.classList.add('hidden');
             const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
-            if(truncatedContainer) truncatedContainer.classList.remove('hidden');  
+            if(truncatedContainer) truncatedContainer.classList.remove('hidden'); 
             toggleButton.textContent = 'Read More...';
         }
     }
@@ -1770,7 +1770,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             entryDiv.className = 'p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition duration-150 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600';
             
             // Display timestamp in local format
-            const displayTimestamp = new Date(item.timestamp).toLocaleString();  
+            const displayTimestamp = new Date(item.timestamp).toLocaleString(); 
 
             const sourceBaseHtml = renderFieldWithReadMore('source', 'Source', 'source-', 'font-bold text-gray-800 dark:text-gray-100');
             const targetBaseHtml = renderFieldWithReadMore('target', 'Translation', 'target-', 'text-indigo-600 dark:text-indigo-300');
@@ -1782,12 +1782,12 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                 <p class="text-xs text-gray-400 mb-1">${displayTimestamp}</p>
                 
                 <p class="font-bold text-gray-800 dark:text-gray-100">
-                    ${sourceContent}  
+                    ${sourceContent} 
                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(${item.sourceLang})</span>
                 </p>
 
                 <p class="text-indigo-600 dark:text-indigo-300">
-                    ${targetContent}  
+                    ${targetContent} 
                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(${item.targetLang})</span>
                 </p>
 
@@ -1808,7 +1808,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     function setupHistoryButtons() {
         let buttonContainer = document.getElementById('historySortButtons');
         if (buttonContainer) {
-            return;  
+            return; 
         }
 
         buttonContainer = document.createElement('div');
@@ -1832,7 +1832,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
         const clearBtn = document.getElementById('clearHistoryButton') || document.createElement('button');
         clearBtn.id = 'clearHistoryButton';
-        clearBtn.onclick = window.openClearHistoryConfirm;  
+        clearBtn.onclick = window.openClearHistoryConfirm; 
         clearBtn.textContent = 'Clear History';
         clearBtn.className = 'ml-auto px-4 py-2 text-sm font-medium rounded-lg text-red-600 border border-red-600 hover:bg-red-50 transition duration-150 hidden';
         buttonContainer.appendChild(clearBtn);
@@ -1867,7 +1867,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             filteredHistory = originalHistoryData
                 .filter(item => !isOlderThanTwoDays(item.timestamp))
                 // Sort: Show newest first
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
             buttonId = 'sort-newest';
 
         } else if (sortType === 'older') {
@@ -1875,7 +1875,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             filteredHistory = originalHistoryData
                 .filter(item => isOlderThanTwoDays(item.timestamp))
                 // Sort: Show newest first, even within the 'older' group
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
             buttonId = 'sort-older';
             
         } else { // 'all' or default
@@ -1894,7 +1894,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }
 
         currentHistoryData = filteredHistory;
-        renderHistoryList(currentHistoryData);  
+        renderHistoryList(currentHistoryData); 
     }
 
 
@@ -1923,7 +1923,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         const userEmail = currentUser ? currentUser.email : 'guest';
 
         if (currentUser) {
-            // Use AUTH_HISTORY_URL (which should point to your Apps Script Auth backend)
             const fetchResult = await sendAuthRequest('getHistory', { email: userEmail }); 
             
             if (fetchResult.success && fetchResult.history) {
@@ -1950,7 +1949,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         clearHistoryButton.classList.toggle('hidden', originalHistoryData.length === 0);
 
         // Initial render: Default to 'All History' view (Newest first)
-        window.sortHistory('all');  
+        window.sortHistory('all'); 
     }
 
     // --- Utility Functions (TTS, Formatting, etc.) ---
@@ -1979,7 +1978,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         updateLabels();
 
         // Re-run translation only if a manual button press is required
-        updateTranslateButtonState();    
+        updateTranslateButtonState();   
     }
 
     window.clearText = function(boxId) {
@@ -2014,7 +2013,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         document.getElementById('stopButtonSimilarWords').classList.add('opacity-0');
 
         clearSources();
-        updateTranslateButtonState();    
+        updateTranslateButtonState();   
         isTranslating = false;
     }
 
@@ -2068,16 +2067,16 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         speakButtonSimilarWords.disabled = false;
 
         return synonymsText.split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0)
-            .map(s => {
-                // Use 'inline-block' to ensure correct box modeling for wrapping
-                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
+            .map(s => s.trim())
+            .filter(s => s.length > 0)
+            .map(s => {
+                // Use 'inline-block' to ensure correct box modeling for wrapping
+                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
                              ${s}
-                           </span>`;
-            })
-            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
-    }
+                         </span>`;
+            })
+            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
+    }
 
     function formatDefinition(text) {
     if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
@@ -2108,7 +2107,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     // New helper to reset the Speak/Stop button states
     function resetSpeechState(button, stopButton, textAvailable) {
         // Re-enable Speak button based on text content
-        button.disabled = !textAvailable;  
+        button.disabled = !textAvailable; 
         button.classList.remove('loading');
 
         // Hide and disable Stop button
@@ -2203,7 +2202,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         // END/ERROR STATE: Reset buttons
         const resetHandler = () => {
              // Pass true if there is text in the box to re-enable the speak button
-             const textAvailable = !!textToSpeak.trim();  
+             const textAvailable = !!textToSpeak.trim(); 
              resetSpeechState(button, stopButton, textAvailable);
         };
 
@@ -2216,11 +2215,11 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
 
     // ----------------------------------------------------------------------------------
-    // 🌟 NEW: PEXELS IMAGE SEARCH FUNCTION (MODIFIED TO USE PROXY) 🌟
+    // 🌟 NEW: PEXELS IMAGE SEARCH FUNCTION 🌟
     // ----------------------------------------------------------------------------------
     async function fetchPexelsImages(query) {
-        if (!PROXY_API_URL || PROXY_API_URL === 'YOUR_DEPLOYED_API_PROXY_APPSCRIPT_URL_HERE') {
-            imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Proxy URL is not configured. Cannot fetch images.</p>`;
+        if (!PEXELS_API_KEY || PEXELS_API_KEY === 'YOUR_PEXELS_API_KEY_HERE') {
+            imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Pexels API Key is not configured.</p>`;
             return;
         }
         
@@ -2229,44 +2228,49 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             return;
         }
 
-        imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Pexels via proxy...</div>';
+        imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Pexels...</div>';
 
-        // Prepare data to send to the Apps Script proxy
-        const formData = new FormData();
-        formData.append('action', 'pexelsSearch'); // Tell the backend what API to call
-        formData.append('query', query);
-        
+        const url = new URL(PEXELS_URL);
+        url.searchParams.append('query', query);
+        url.searchParams.append('per_page', 8);    
+        url.searchParams.append('orientation', 'square');    
+
         try {
-            const response = await fetch(PROXY_API_URL, {
-                method: 'POST',
-                body: formData // Send as POST request with FormData
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': PEXELS_API_KEY,
+                    'Content-Type': 'application/json'
+                }
             });
             
             const data = await response.json();
 
-            if (response.status !== 200 || data.error) {
-                imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Image Proxy Error: ${data.error || 'Could not fetch images.'}</p>`;
+            if (response.status !== 200) {
+                imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">API Error: Could not fetch images (Status: ${response.status}).</p>`;
                 return;
             }
 
-            // Assume 'data' received from the proxy is the Pexels API result
             if (data.photos && data.photos.length > 0) {
                 imageResults.innerHTML = ''; // Clear the "Searching..." text
                 
+                // Add a wrapper for better grid/flex layout (assuming your CSS handles this for the imageResults div)
                 const imageWrapper = document.createElement('div');
-                imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; 
+                imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; // Adjust classes as needed for your layout
 
                 data.photos.forEach(photo => {
                     const img = document.createElement('img');
+                    // Use 'small' source for a good balance of size/speed
                     img.src = photo.src.small;    
                     img.alt = photo.alt || 'Pexels Photo';
                     
+                    // Basic styling for images
                     img.className = 'w-[100px] h-[100px] object-cover rounded-md shadow-md transition transform hover:scale-105 cursor-pointer';
                     img.onclick = () => window.open(photo.url, '_blank'); // Open the Pexels link in a new tab
 
                     imageWrapper.appendChild(img);
                 });
-                imageResults.appendChild(imageWrapper);
+                 imageResults.appendChild(imageWrapper);
 
             } else {
                 imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">No images found on Pexels for "${query}".</p>`;
@@ -2274,98 +2278,82 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
         } catch (error) {
             console.error('Network or Fetch Error:', error);
-            imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">A network error occurred while connecting to the proxy.</p>';
+            imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">A network error occurred while connecting to Pexels.</p>';
         }
     }
 
 
-    // --- Core Translation Logic (MODIFIED TO USE PROXY) ---
+    // --- Core Translation Logic ---
     async function getTranslationAndDefinition(text, fromLang, toLang) {
-        // Use the dedicated PROXY_API_URL for external API calls
-        if (!PROXY_API_URL || PROXY_API_URL === 'YOUR_DEPLOYED_API_PROXY_APPSCRIPT_URL_HERE') {
-            return { translation: "Error: Proxy URL not configured.", definition: "Error: Proxy URL not configured.", synonyms: 'N/A' };
-        }
-        
-        const systemPrompt = "You are an expert, multilingual translator and dictionary. I will provide text, a source language, and a target language. You MUST provide three distinct pieces of information in this exact format:\n\n1.  The translation: [TRANSLATION]...translated text...[/TRANSLATION]\n\n2.  A concise dictionary definition of the *original* source text (in its *original* language), including part of speech and an example sentence. Use simple markdown like **bold** text and newline characters(\\n): [DEFINITION]...definition text...[/DEFINITION]\n\n3.  A list of similar words (synonyms) for the *original* source text (in its *original* language), separated by commas: [SYNONYMS]...synonym 1, synonym 2, synonym 3...[/SYNONYMS]\n\nIf the text is a full sentence, the definition part can provide a brief grammatical breakdown. If no definition or synonyms are found, use 'N/A' inside the tag.";
-        const userQuery = `Process this text: "${text}". Source: ${fromLang}. Target: ${toLang}.`;
+                const systemPrompt = "You are an expert, multilingual translator and dictionary. I will provide text, a source language, and a target language. You MUST provide three distinct pieces of information in this exact format:\n\n1.  The translation: [TRANSLATION]...translated text...[/TRANSLATION]\n\n2.  A concise dictionary definition of the *original* source text (in its *original* language), including part of speech and an example sentence. Use simple markdown like **bold** text and newline characters(\\n): [DEFINITION]...definition text...[/DEFINITION]\n\n3.  A list of similar words (synonyms) for the *original* source text (in its *original* language), separated by commas: [SYNONYMS]...synonym 1, synonym 2, synonym 3...[/SYNONYMS]\n\nIf the text is a full sentence, the definition part can provide a brief grammatical breakdown. If no definition or synonyms are found, use 'N/A' inside the tag.";
+                const userQuery = `Process this text: "${text}". Source: ${fromLang}. Target: ${toLang}.`;
 
-        const payload = {
-            action: "geminiTranslate", // Tell the backend what API to call
-            contents: [{ parts: [{ text: userQuery }] }],
-            tools: [{ "google_search": {} }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-        };
-                    
-        try {
-            // Send the request to your Apps Script Proxy URL
-            const response = await fetch(PROXY_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error(`Proxy returned status ${response.status}`);
-
-            const result = await response.json();
-
-            // Check for proxy-side errors
-            if (result.error) {
-                console.error("Proxy Error:", result.error);
-                return { translation: `Proxy Error: ${result.error}`, definition: `Proxy Error: ${result.error}`, synonyms: 'N/A' };
-            }
+                const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
             
-            // Assume the result is the standard Gemini API response structure
-            const candidate = result.candidates?.[0];
+                try {
+                const response = await fetch(GEMINI_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-            clearSources();
-            const groundingMetadata = candidate?.groundingMetadata;
-            if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                const sources = groundingMetadata.groundingAttributions
-                    .map(attr => attr.web)
-                    .filter(web => web?.uri && web?.title);
+                if (!response.ok) throw new Error(`API returned status ${response.status}`);
 
-                if (sources.length > 0) {
-                    sourcesDiv.classList.remove('hidden');
-                    sources.forEach(source => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline transition duration-150 ease-in-out">${source.title}</a>`;
-                        sourceList.appendChild(li);
-                    });
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                clearSources();
+                const groundingMetadata = candidate?.groundingMetadata;
+                if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                    const sources = groundingMetadata.groundingAttributions
+                        .map(attr => attr.web)
+                        .filter(web => web?.uri && web?.title);
+
+                    if (sources.length > 0) {
+                        sourcesDiv.classList.remove('hidden');
+                        sources.forEach(source => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline transition duration-150 ease-in-out">${source.title}</a>`;
+                            sourceList.appendChild(li);
+                        });
+                    }
                 }
-            }
 
-            if (candidate && candidate.content?.parts?.[0]?.text) {
-                const rawText = candidate.content.parts[0].text;
-                
-                const translationMatch = rawText.match(/\[TRANSLATION\]([\s\S]*?)\[\/TRANSLATION\]/);
-                const definitionMatch = rawText.match(/\[DEFINITION\]([\s\S]*?)\[\/DEFINITION\]/);
-                const synonymsMatch = rawText.match(/\[SYNONYMS\]([\s\S]*?)\[\/SYNONYMS\]/);
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const rawText = candidate.content.parts[0].text;
+                    
+                    const translationMatch = rawText.match(/\[TRANSLATION\]([\s\S]*?)\[\/TRANSLATION\]/);
+                    const definitionMatch = rawText.match(/\[DEFINITION\]([\s\S]*?)\[\/DEFINITION\]/);
+                    const synonymsMatch = rawText.match(/\[SYNONYMS\]([\s\S]*?)\[\/SYNONYMS\]/);
 
-                const translation = translationMatch ? translationMatch[1].trim() : "Translation not found.";
-                const definition = definitionMatch ? definitionMatch[1].trim() : "Definition not found.";
-                const synonyms = synonymsMatch ? synonymsMatch[1].trim() : 'N/A';
+                    const translation = translationMatch ? translationMatch[1].trim() : "Translation not found.";
+                    const definition = definitionMatch ? definitionMatch[1].trim() : "Definition not found.";
+                    const synonyms = synonymsMatch ? synonymsMatch[1].trim() : 'N/A';
 
-                return { translation, definition, synonyms };
-            } else {
-                return { translation: "Error: No content.", definition: "Error: No content.", synonyms: 'N/A' };
-            }
+                    return { translation, definition, synonyms };
+                } else {
+                    return { translation: "Error: No content.", definition: "Error: No content.", synonyms: 'N/A' };
+                }
 
-        } catch (error) {
-            console.error("Translation error:", error);
-            return { translation: "Error: API failure.", definition: "Error: API failure.", synonyms: 'N/A' };
-        }
+                } catch (error) {
+                    console.error("Translation error:", error);
+                    return { translation: "Error: API failure.", definition: "Error: API failure.", synonyms: 'N/A' };
+                }
     }
     
     // NEW: Function to send translation data to the Apps Script logger
     async function sendTranslationToLogger(sourceWord, translatedWord, definition, similarWords) {
-        // Use the dedicated logger URL (which should point to your Auth/History backend)
+        // Uses the dedicated logger URL
         if (!TRANSLATION_LOGGER_URL || TRANSLATION_LOGGER_URL.includes("YOUR_TRANSLATION_LOGGER_APPSCRIPT_URL_HERE")) {
             console.warn("TRANSLATION_LOGGER_URL is not set. Skipping server-side history logging.");
             return;
         }
 
         const formData = new FormData();
-        formData.append("action", "logTranslation"); // New action for logging
         formData.append("sourceWord", sourceWord);
         formData.append("translatedWord", translatedWord);
         formData.append("definition", stripHtml(definition)); // Use plain text definition
@@ -2809,7 +2797,7 @@ window.handleContactSubmit = async function(event) {
     setTimeout(() => { statusDiv.classList.add('hidden'); }, 10000);
 }
 
-// Disable right-click
+ // Disable right-click
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 });
