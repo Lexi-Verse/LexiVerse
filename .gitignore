@@ -1,0 +1,27 @@
+# ------------------------------------
+# 1. DEPENDENCY FOLDERS
+# ------------------------------------
+# Node.js modules (Vercel installs these during the build process)
+/node_modules
+
+# ------------------------------------
+# 2. LOCAL SECRETS & CONFIGURATION
+# ------------------------------------
+# Environment variables file (where you store API keys locally)
+.env
+.env.local
+
+# ------------------------------------
+# 3. BUILD OUTPUTS (Vercel Specific)
+# ------------------------------------
+# Vercel's temporary build output folder
+.vercel
+
+# ------------------------------------
+# 4. OPERATING SYSTEM & EDITOR FILES
+# ------------------------------------
+# macOS temporary files
+.DS_Store
+
+# Windows thumbnail database
+Thumbs.db
