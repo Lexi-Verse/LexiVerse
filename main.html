@@ -1,0 +1,2850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiVerse - Instant Translator & Dictionary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="logotranslator.png" type="image/png"> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0e0e0; 
+            color: #1f2937; /* gray-800 */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        
+        
+        /* Dark Mode Styles (Rest of your existing Dark Mode CSS) */
+        body.dark {
+            background-color: #111827; /* gray-900 */
+            color: #f3f4f6; /* gray-100 */
+        }
+        body.dark .card {
+            background-color: #1f2937; /* gray-800 */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        body.dark .text-gray-900 { color: #f3f4f6; }
+        body.dark .text-gray-800 { color: #e5e7eb; }
+        body.dark .text-gray-700 { color: #d1d5db; }
+        body.dark .text-gray-600 { color: #9ca3af; }
+        body.dark .border-gray-300 { border-color: #374151; }
+        body.dark .bg-gray-50 { background-color: #374151; }
+        body.dark .bg-white { background-color: #1f2937; }
+
+        /* Dark Mode Text Areas and Inputs */
+        body.dark textarea,
+        body.dark input[type="email"],
+        body.dark input[type="password"],
+        body.dark input[type="text"],
+        body.dark input[type="tel"],
+        body.dark select {
+            background-color: #374151;
+            color: #f3f4f6;
+            border-color: #4b5563;
+        }
+        body.dark .clear-btn { color: #9ca3af; }
+        body.dark .clear-btn:hover { color: #f3f4f6; }
+        
+        /* Dark Mode Content Boxes */
+        body.dark .bg-blue-50 { background-color: #1e3a8a; border-color: #3b82f6; color: #bfdbfe; }
+        body.dark .bg-green-50 { background-color: #065f46; border-color: #10b981; color: #a7f3d0; }
+        body.dark .similar-word-btn { background-color: #065f46; color: #a7f3d0; }
+        body.dark .similar-word-btn:hover { background-color: #047857; }
+        body.dark .text-indigo-600 { color: #818cf8; }
+        body.dark .bg-indigo-50 { background-color: #3730a3; }
+
+        /* Typing Loader Animation */
+        textarea.loading {
+            opacity: 0.8; 
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="15" viewBox="0 0 50 15"><circle cx="7" cy="7.5" r="4" fill="%236366f1"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="0"/></circle><circle cx="25" cy="7.5" r="4" fill="%236366f1"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="0.2s"/></circle><circle cx="43" cy="7.5" r="4" fill="%236366f1"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="0.4s"/></circle></svg>');
+            background-repeat: no-repeat;
+            background-position: center center;
+            color: transparent;
+        }
+        
+        /* Similar Words Loading Design */
+        .similar-word-btn.loading {
+            pointer-events: none;
+            opacity: 0.6;
+            background-color: #c7d2fe;
+            animation: pulse 1s infinite;
+        }
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 100px;
+        }
+        .svg-spinner {
+            animation: spin 1.2s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Clear Button Styling/Positioning */
+        .clear-btn {
+            position: absolute;
+            top: 0.5rem; 
+            right: 0.5rem; 
+            color: #9ca3af; 
+            background-color: transparent;
+            border-radius: 9999px;
+            padding: 0.25rem;
+            display: none;
+            transition: color 0.15s ease-in-out;
+            z-index: 10;
+        }
+        textarea:not(:placeholder-shown) ~ .clear-btn,
+        textarea.loading ~ .clear-btn {
+             display: block; 
+        }
+
+        /* Modal Transitions & Backdrop Fix (Applied to all modals) */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            display: flex; align-items: center; justify-content: center; z-index: 50;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .modal-backdrop:not(.hidden) {
+             opacity: 1;
+             pointer-events: auto;
+        }
+        
+        .modal-content {
+            padding: 2rem; border-radius: 1rem; 
+            max-width: 90%; max-height: 90vh;
+            overflow-y: auto; position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+            transform: scale(0.95);
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0; 
+            background-color: #f7f9fc;
+        }
+        body.dark .modal-content {
+             background-color: #111827; 
+        }
+        .modal-backdrop:not(.hidden) .modal-content {
+            transform: scale(1); opacity: 1;
+        }
+        
+        /* Header Button Styling */
+        .header-btn {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #eef2ff; 
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex; 
+        }
+        .header-btn:hover {
+            background-color: #c7d2fe; 
+            color: #4f46e5;
+        }
+
+        /* NEW MOBILE RESPONSIVENESS: Hide text labels on small screens */
+        @media (max-width: 768px) {
+            .header-btn span {
+                display: none;
+            }
+            .header-btn {
+                padding: 0.5rem; 
+            }
+        }
+
+        /* Positioning the top menu elements */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align menu to the top left */
+            margin-bottom: 0.5rem; 
+            padding-top: 0.5rem; 
+            position: relative; /* Context for absolute placement */
+        }
+
+        /* Menu Icons (Top Left Corner) */
+        .menu-top-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: absolute;
+            top: 0; /* MOVED UPWARD */
+            left: 0;
+            z-index: 20;
+        }
+
+        /* Menu Icons (Top Right Corner) */
+        .menu-top-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: absolute;
+            top: 0; /* MOVED UPWARD */
+            right: 0;
+            z-index: 20;
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background-color: #ffffff; 
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 60;
+            padding: 1rem;
+        }
+        #sidebar.open {
+            transform: translateX(0);
+        }
+        #sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 59;
+            display: none;
+        }
+        #sidebar-backdrop.open {
+            display: block;
+        }
+        body.dark #sidebar {
+            background-color: #1f2937;
+            color: #f3f4f6;
+        }
+        body.dark .menu-icon-btn { color: #818cf8; }
+        body.dark .menu-icon-btn:hover { background-color: #1f2937; }
+        body.dark .header-btn { background-color: #3730a3; color: #eef2ff; }
+        body.dark .header-btn:hover { background-color: #4f46e5; }
+        
+        /* Style for the dedicated Translate button */
+        #translateButton {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0; /* Add margin above and below */
+        }
+        @media (min-width: 768px) {
+            #translateButton {
+                width: auto;
+                margin: 0; 
+                align-self: flex-end; /* Align to the bottom when in a row */
+            }
+        }
+
+        /* Style to highlight the active input box on the desktop grid */
+        @media (min-width: 768px) {
+            #inputTextA.border-indigo-500 {
+                border-width: 2px;
+                border-color: #6366f1; /* indigo-500 */
+            }
+            #inputTextB.border-indigo-500 {
+                border-width: 2px;
+                border-color: #6366f1; /* indigo-500 */
+            }
+        }
+       /* --- Custom CSS for Animation and Button Positioning --- */
+
+/* 1. Animation Keyframes (from your input) */
+@keyframes pulse-translate {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+    }
+    50% {
+        transform: scale(1.05); 
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); 
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    }
+}
+
+/* 2. Class to apply the animation (from your input) */
+.is-translating {
+    animation: pulse-translate 0.5s ease-out; 
+}
+
+/* 3. Button Positioning and Styles (CRITICAL ADDITIONS) */
+
+/* Clear button position (inside the relative textarea container) */
+.clear-btn {
+    position: absolute;
+    top: 10px; /* Adjust vertical position */
+    right: 10px; /* Adjust horizontal position */
+    padding: 0.25rem;
+    border-radius: 9999px; /* Tailwind 'rounded-full' */
+    color: #9ca3af; /* Tailwind gray-400 */
+    background-color: transparent;
+    transition: color 0.2s, background-color 0.2s;
+    cursor: pointer;
+}
+
+.clear-btn:hover {
+    color: #ef4444; /* Tailwind red-500 */
+    background-color: #fecaca; /* Tailwind red-200 */
+}
+
+/* Speaker button styles (usually positioned outside the textarea, in the header) */
+.speak-btn {
+    color: #4f46e5; /* Tailwind indigo-600 */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.speak-btn:hover {
+    color: #1e40af; /* Tailwind blue-800 */
+}
+
+.speak-btn.loading {
+    /* Spin animation for the loading state if needed, similar to the main spinner */
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* --- TOAST & ICON ANIMATIONS --- */
+
+/* 1. Pop-In Animation (for the entire toast) */
+@keyframes toast-in {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 50px); /* Starts off-screen (down) */
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0); /* Moves to final position */
+    }
+}
+
+/* 2. Login/Signup Icon Animation (for a 'boost/check' look) */
+@keyframes login-boost {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.2) rotate(-5deg); color: #34d399; } /* Tailwind green-400 */
+    100% { transform: scale(1); }
+}
+
+/* 3. Logout Icon Animation (for a 'slide-out' look) */
+@keyframes logout-slide {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(10px); opacity: 0; }
+}
+
+/* --- TOAST STATUS CLASSES --- */
+
+/* Base class applied when the toast is visible */
+.toast-visible {
+    animation: toast-in 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; /* Applied on show */
+    pointer-events: auto;
+}
+
+/* Style for successful login/signup */
+.toast-success {
+    background-color: #d1fae5; /* Tailwind green-100 */
+    color: #065f46; /* Tailwind green-800 */
+}
+.toast-success #toastIcon {
+    animation: login-boost 0.5s ease-out;
+}
+
+/* Style for successful logout */
+.toast-logout {
+    background-color: #fee2e2; /* Tailwind red-100 */
+    color: #991b1b; /* Tailwind red-800 */
+}
+.toast-logout #toastIcon {
+    animation: logout-slide 0.5s ease-out;
+}
+
+/* Style for errors (e.g., failed login/signup validation) */
+.toast-error {
+    background-color: #fef2f2; /* Tailwind red-50 */
+    color: #b91c1c; /* Tailwind red-700 */
+    border: 1px solid #fca5a5; /* Tailwind red-300 */
+}
+
+/* --- RESIZING SMOOTHNESS FIX --- */
+
+/* Targets the text areas while they are actively being resized. */
+/* This overrides the transition-all duration-300 class from Tailwind */
+textarea:active {
+    /* Temporarily disable transitions for smoother, instant dragging */
+    transition: none !important; 
+    
+    /* Optional: Temporarily remove focus ring shadows if they are causing lag */
+    box-shadow: none !important;
+}
+
+/* Ensure the focus state still applies transitions AFTER resizing is done */
+textarea:focus {
+    /* Re-apply transition rules for normal focus/hover states */
+    transition: all 300ms ease-in-out; 
+}
+   /* --- CUSTOM LOGO STYLING (Existing + Centering) --- */
+.lexiverse-logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* This centers the image horizontally within the container */
+    flex-grow: 1; /* Allows it to take up the center space */
+    text-decoration: none;
+    color: inherit;
+    /* Removed fixed width: 100px as flex-grow: 1 implies dynamic width. 
+        If you need a specific size for the logo area, adjust as needed. */
+}
+
+/* 1. Image Styles and Animation Application */
+.small-logo-img {
+    /* Initial size for the image (adjust as needed, e.g., to match the '100px' context) */
+    width: 125px; 
+    height: auto;
+    
+    /* Apply the animation: pulse, 2 seconds, smooth, infinite loop */
+    animation: pulse 2s ease-in-out infinite;
+    /* Optional: Smooth transition for hover effects */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Optional: Hover effect */
+.small-logo-img:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* 2. Keyframe Animation Definition (The Dynamic Pulse Effect) */
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* --- Global Keyframes: Sonar Pulse Animation --- */
+@keyframes sonar-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1); /* Start expanded to the circle size */
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.25); /* Expand slightly further */
+        opacity: 0;
+    }
+}
+
+/* --- Speak Button Base Styles (Dynamic Blue/Indigo) --- */
+.speak-btn {
+    color: #3730a3; /* Indigo-700 for the icon */
+    background-color: transparent; 
+    border: none;
+    cursor: pointer;
+    padding: 0; 
+    position: relative; 
+    z-index: 10; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    transition: color 0.2s ease-in-out, transform 0.1s ease-in-out; 
+    margin-left: 5px; 
+}
+
+/* Solid Blue Background Circle */
+.speak-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px; 
+    height: 38px; 
+    border-radius: 50%;
+    background-color: #c3dafe; /* Light Blue solid background */
+    transform: translate(-50%, -50%); 
+    z-index: -1; 
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+/* Blue Sonar Pulse Effect */
+.speak-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px; 
+    height: 38px;
+    border-radius: 50%;
+    background-color: #6366f1; /* Indigo color for pulse */
+    z-index: -2; 
+    opacity: 0;
+}
+
+/* Pulse trigger: When the Speak button is active or loading */
+.speak-btn:hover::after,
+.speak-btn.loading::after {
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.speak-btn:not([disabled]):hover::before,
+.speak-btn.loading::before {
+    animation: sonar-pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* --- Dark Mode Overrides for SPEAK Button --- */
+body.dark .speak-btn {
+    color: #c7d2fe; /* Light icon color */
+}
+body.dark .speak-btn::after {
+    background-color: #3730a3; /* Dark Indigo solid background */
+}
+body.dark .speak-btn::before {
+    background-color: #818cf8; /* Lighter pulse color in dark mode */
+}
+
+
+/* --- Stop Button Styles (Dynamic Red/Pink) --- */
+.stop-btn {
+    color: #ef4444; /* Red-500 for the icon */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative; 
+    z-index: 10; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, color 0.2s ease-in-out; 
+    
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+/* Solid Red Background Circle */
+.stop-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px; 
+    height: 38px; 
+    border-radius: 50%;
+    background-color: #fee2e2; /* Light Red solid background */
+    transform: translate(-50%, -50%); 
+    z-index: -1; 
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+/* Red Sonar Pulse Effect */
+.stop-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px; 
+    height: 38px;
+    border-radius: 50%;
+    background-color: #ef4444; /* Red color for pulse */
+    z-index: -2; 
+    opacity: 0;
+}
+
+/* Pulse trigger: When the Stop button is visible (i.e., not disabled) */
+.stop-btn:not([disabled])::before {
+    animation: sonar-pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Active State: Stop Button visibility toggle (applied by JavaScript) */
+.stop-btn:not([disabled]) {
+    opacity: 1; 
+    transform: scale(1); 
+    pointer-events: auto; 
+}
+
+/* --- Dark Mode Overrides for STOP Button --- */
+body.dark .stop-btn {
+    color: #fca5a5; /* Light icon color */
+}
+body.dark .stop-btn::after {
+    background-color: #991b1b; /* Dark Red solid background */
+}
+body.dark .stop-btn::before {
+    background-color: #f87171; /* Lighter pulse color in dark mode */
+}
+
+    </style>
+</head>
+<body class="light"> 
+    <div id="app" class="min-h-screen flex items-start justify-center p-4 md:p-8">
+        <div class="w-full max-w-4xl mt-12 bg-white card rounded-xl shadow-xl p-6 md:p-10 relative">
+            
+            <header class="text-center">
+                <div class="header-container">
+                    
+                        
+                        <div class="menu-top-left">
+                        <button class="menu-icon-btn text-xl font-extrabold" onclick="toggleSidebar()" title="Open Navigation Menu">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    </div>
+
+                        
+                        <div class="menu-top-right">
+                            <button id="accountButton" onclick="openAccountModal()" class="header-btn text-sm font-medium text-gray-700 hover:text-indigo-600">
+                                <svg class="w-5 h-5 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                <span id="accountStatus">Account</span>
+                             </button>
+                           
+                             <button onclick="openHistoryModal()" class="header-btn text-sm font-medium text-gray-700 hover:text-indigo-600">
+                                 <svg class="w-5 h-5 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                 <span>History</span>
+                             </button>
+
+                             <button id="settingsButton" onclick="openSettingsModal()" class="header-btn text-sm font-medium text-gray-700 hover:text-indigo-600">
+                                 <svg class="w-5 h-5 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                 <span>Settings</span>
+                               </button>
+                           
+                           
+                        </div>
+                    
+                        <h1 class="text-3xl font-extrabold text-gray-900 mx-auto w-full pt-16 md:pt-11">
+                            <div class="lexiverse-logo-container"><img src="logotranslator.png" alt="Logo" class="small-logo-img"></div>
+                            LexiVerse
+                        </h1>
+                </div>
+                <p class="text-gray-500 text-lg mb-4">Instant Translator & Dictionary. Type in either box.</p>
+            </header>
+
+            <div class="flex flex-col sm:flex-row gap-4 items-center mb-8">
+                <div class="flex-1 w-full">
+                    <label for="langA" class="block text-sm font-medium text-gray-700 mb-1">Language A (Source)</label>
+                    <select id="langA" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 bg-gray-50 transition-all duration-300">
+                        </select>
+                </div>
+
+                <div class="flex items-center justify-center p-2">
+                    <button id="swapButton" onclick="swapLanguages()" class="btn-icon p-2 text-gray-500 hover:text-indigo-600 transition duration-150 ease-in-out rounded-full bg-gray-100 hover:bg-indigo-100 shadow-md" title="Swap Languages">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    </button>
+                </div>
+
+                <div class="flex-1 w-full">
+                    <label for="langB" class="block text-sm font-medium text-gray-700 mb-1">Language B (Target)</label>
+                    <select id="langB" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 bg-gray-50 transition-all duration-300">
+                        </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="columnA" class="space-y-2 order-1">
+                    <div class="flex items-center justify-between">
+                        <label id="labelA" for="inputTextA" class="block text-xl font-bold text-gray-800">Language A</label>
+                        <!-- START: Language A Speak/Stop Buttons -->
+                        <div class="flex items-center">
+                            <button id="speakButtonA" onclick="speakResult('A')" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Source Text">
+                                <i class="fas fa-volume-up w-5 h-5"></i>
+                            </button>
+                            <button id="stopButtonA" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                <i class="fas fa-stop w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <!-- END: Language A Speak/Stop Buttons -->
+                    </div>
+                    <div class="relative">
+                        <textarea id="inputTextA" 
+rows="5" 
+placeholder="Type here..." 
+class="w-full p-4 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y transition-all duration-300">
+</textarea>
+                        <button onclick="clearText('A')" class="clear-btn" title="Clear text">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="translateButtonContainer" 
+                   class="flex justify-center 
+                        col-span-full          
+                        order-2 md:order-3      
+                        -my-4 md:-my-5 md:-mt-4">       
+                    <button id="translateButton" onclick="handleTranslateButtonClick()" disabled class="py-3 px-8 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-6 h-6 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        Translate
+                    </button>
+                </div>
+                
+                <div id="columnB" class="space-y-2 order-3 md:order-2">
+                    <div class="flex items-center justify-between">
+                        <label id="labelB" for="inputTextB" class="block text-xl font-bold text-gray-800">Language B</label>
+                        <!-- START: Language B Speak/Stop Buttons -->
+                        <div class="flex items-center">
+                            <button id="speakButtonB" onclick="speakResult('B')" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Translation">
+                                <i class="fas fa-volume-up w-5 h-5"></i>
+                            </button>
+                            <button id="stopButtonB" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                <i class="fas fa-stop w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <!-- END: Language B Speak/Stop Buttons -->
+                    </div>
+                    
+                    <div class="relative">
+                        <textarea id="inputTextB" 
+rows="5" 
+placeholder="Translation appears here..." 
+class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-y transition-all duration-300">
+</textarea>
+                  <button onclick="clearText('B')" class="clear-btn" title="Clear text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div id="definitionSection" class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xl font-bold text-gray-800">
+                                <svg class="inline w-6 h-6 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.208 5 7.5 5A6.495 6.495 0 003 11.5c0 1.638.583 3.167 1.581 4.391C5.69 17.51 7.243 18 9 18a6.5 6.5 0 006.5-6.5c0-1.638-.583-3.167-1.581-4.391C13.832 6.477 12.208 6 10.5 6A6.495 6.495 0 006 11.5c0 1.638.583 3.167 1.581 4.391C8.69 17.51 10.243 18 12 18z"></path></svg>
+                                Dictionary Definition
+                            </label>
+                            <!-- START: Definition Speak/Stop Buttons -->
+                            <div class="flex items-center">
+                                <button id="speakButtonDef" onclick="speakDefinition()" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Definition">
+                                    <i class="fas fa-volume-up w-5 h-5"></i>
+                                </button>
+                                <button id="stopButtonDef" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                    <i class="fas fa-stop w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <!-- END: Definition Speak/Stop Buttons -->
+                        </div>
+                        <div id="definitionContent" class="w-full min-h-[100px] p-4 bg-blue-50 border border-blue-200 rounded-lg text-gray-700 leading-relaxed transition-all duration-300 relative">
+                            Definition for your source text will appear here.
+                        </div>
+                    </div>
+
+                    <div id="similarWordsSection" class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xl font-bold text-gray-800">
+                                <svg class="inline w-6 h-6 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                Similar Words
+                            </label>
+                            <!-- START: Similar Words Speak/Stop Buttons -->
+                            <div class="flex items-center">
+                                <button id="speakButtonSimilarWords" onclick="speakAllSimilarWords()" disabled class="speak-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200" title="Speak Similar Words">
+                                    <i class="fas fa-volume-up w-5 h-5"></i>
+                                </button>
+                                <button id="stopButtonSimilarWords" onclick="stopSpeech()" disabled class="stop-btn btn-icon flex items-center p-2 rounded-lg text-sm transition-all duration-200 text-red-500 opacity-0" title="Stop Speaking">
+                                    <i class="fas fa-stop w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <!-- END: Similar Words Speak/Stop Buttons -->
+                        </div>
+                        <div id="similarWordsContent" class="w-full min-h-[100px] p-4 bg-green-50 border border-green-200 rounded-lg text-gray-700 leading-relaxed transition-all duration-300 flex flex-wrap gap-2 items-start content-start relative">
+                            Synonyms for your source text will appear here.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div id="imageSearchSection" class="space-y-4">
+                    <label class="block text-xl font-bold text-gray-800 dark:text-gray-100">
+                        <svg class="inline w-6 h-6 mr-1 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Related Images
+                    </label>
+                    
+                    <div id="imageResults" class="w-full min-h-[150px] p-4 bg-gray-50 border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 flex flex-wrap gap-3 items-center content-start">
+                        Images related to your source text will appear here after translation.
+                    </div>
+                </div>
+            </div>
+
+            <div id="sources" class="mt-8 pt-6 border-t border-gray-200 hidden">
+                <p class="font-semibold text-sm text-gray-500 mb-1">Sources:</p>
+                <ul id="sourceList" class="list-disc list-inside text-xs text-gray-600 space-y-1"></ul>
+            </div>
+        </div>
+    </div>
+
+ <div id="contact-card" class="flex justify-center p-4 md:p-8">
+    <div class="w-full max-w-4xl bg-white card rounded-xl shadow-xl p-6 md:p-10 transition-all duration-300">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">Contact Us</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6 text-center">We would love to hear from you!</p>
+        
+        <form class="space-y-4" id="contactForm" onsubmit="handleContactSubmit(event)" 
+            action="https://script.google.com/macros/s/AKfycbzvzTMXkNpzVW820iIvjGusUcwQdTn4omhTxPa7iU1TsVcYoUJ0rrLvHweyfMQ9hn5GQQ/exec" method="post">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                    <input type="text" id="contactName" name="name" placeholder="Full Name" required 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300">
+                    <span class="error-message text-xs text-red-500 hidden mt-1"></span>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="contactEmail" name="email" placeholder="Email Address" required 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300">
+                    <span class="error-message text-xs text-red-500 hidden mt-1"></span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <input type="tel" id="contactPhone" name="phone" placeholder="Phone Number" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300">
+                <span class="error-message text-xs text-red-500 hidden mt-1"></span>
+            </div>
+            <div class="form-group">
+                <textarea rows="5" id="contactMessage" name="message" placeholder="Your Message" required 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300"></textarea>
+                <span class="error-message text-xs text-red-500 hidden mt-1"></span>
+            </div>
+            
+            <div id="status" class="status-box hidden p-3 rounded-lg text-sm font-semibold"></div>
+
+            <button type="submit" id="contactSubmitButton" class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md">
+                Send Message
+            </button>
+        </form>
+    </div>
+</div>
+</div>
+
+    
+    <div id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+    <div id="sidebar">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center justify-between">
+            LexiVerse Menu
+            <button onclick="toggleSidebar()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </h2>
+        <nav class="space-y-2">
+            <a href="#" class="block p-3 rounded-lg text-lg font-medium text-indigo-600 hover:bg-indigo-50 transition duration-150 dark:text-indigo-300 dark:hover:bg-indigo-900">Home</a>
+            <a href="#app" class="block p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-indigo-50 transition duration-150 dark:text-gray-300 dark:hover:bg-indigo-900" onclick="closeSidebarAndScroll('#app')">Translator</a>
+            <a href="#definitionSection" class="block p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-indigo-50 transition duration-150 dark:text-gray-300 dark:hover:bg-indigo-900" onclick="closeSidebarAndScroll('#definitionSection')">Dictionary Definition</a>
+            <a href="#similarWordsSection" class="block p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-indigo-50 transition duration-150 dark:text-gray-300 dark:hover:bg-indigo-900" onclick="closeSidebarAndScroll('#similarWordsSection')">Similar Words</a>
+            <a href="#contact-card" class="block p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-indigo-50 transition duration-150 dark:text-gray-300 dark:hover:bg-indigo-900" onclick="closeSidebarAndScroll('#contact-card')">Contact Us</a>
+        </nav>
+
+        <div class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+            <button onclick="openAccountModal(); toggleSidebar()" class="w-full text-left p-3 rounded-lg text-base font-medium text-gray-700 hover:bg-indigo-50 dark:text-gray-300 dark:hover:bg-indigo-900 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                Account
+            </button>
+            <button onclick="openHistoryModal(); toggleSidebar()" class="w-full text-left p-3 rounded-lg text-base font-medium text-gray-700 hover:bg-indigo-50 dark:text-gray-300 dark:hover:bg-indigo-900 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                History
+            </button>
+             <button onclick="openSettingsModal(); toggleSidebar()" class="w-full text-left p-3 rounded-lg text-base font-medium text-gray-700 hover:bg-indigo-50 dark:text-gray-300 dark:hover:bg-indigo-900 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                 Settings
+             </button>
+        </div>
+    </div>
+    
+    <div id="accountModal" class="modal-backdrop hidden" onclick="closeModalOnBackdrop(event, 'accountModal')">
+        <div class="modal-content w-full max-w-sm"> 
+            <button onclick="closeModal('accountModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div id="authContainer"></div>
+             <p id="authMessage" class="mt-4 text-center text-sm font-medium text-red-500"></p>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal-backdrop hidden" onclick="closeModalOnBackdrop(event, 'historyModal')">
+        <div class="modal-content w-full max-w-2xl">
+            <button onclick="closeModal('historyModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Search History</h2>
+            <p id="historyStatus" class="text-sm text-gray-500 mb-4"></p>
+            <button onclick="openClearHistoryConfirm()" id="clearHistoryButton" class="text-sm text-red-500 hover:text-red-700 mb-4 hidden">
+                Clear History
+            </button>
+            <div id="historyListContainer" class="space-y-3 max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal-backdrop hidden" onclick="closeModalOnBackdrop(event, 'settingsModal')">
+        <div class="modal-content w-full max-w-sm">
+            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Settings</h2>
+
+            <div class="space-y-6">
+                <div class="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <span class="font-medium text-gray-800 dark:text-gray-100">Dark Mode</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="darkModeToggle" value="" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <div class="p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-6 h-6 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.121-7.072a7 7 0 010 9.9M1.757 9.219L6 13.462V18h4.538l4.243 4.243a1 1 0 001.414 0 1 1 0 000-1.414L11.414 16H8V8.586l5.243-5.243a1 1 0 000-1.414 1 1 0 00-1.414 0L6 7.586V3.757a1 1 0 00-1.414 0 1 1 0 000 1.414L3.086 7H1.757a1 1 0 00-1 1V16a1 1 0 001 1h.757l-.378.378a1 1 0 000 1.414 1 1 0 001.414 0L6 18.414V20a1 1 0 001.707.707L12 16.414l5.293 5.293a1 1 0 001.414 0 1 1 0 000-1.414L13.414 16H16a1 1 0 001-1V9a1 1 0 00-1-1H1.757z"></path></svg>
+                        <label class="font-medium text-gray-800 dark:text-gray-100">Audio Voice</label>
+                    </div>
+                    <select id="voiceSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300">
+                        <option value="Orus">Male Voice (Orus)</option>
+                        <option value="Keisha">Female Voice (Keisha)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="clearHistoryConfirmModal" class="modal-backdrop hidden" onclick="closeModalOnBackdrop(event, 'clearHistoryConfirmModal')">
+        <div class="modal-content w-full max-w-sm text-center">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Clear History</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to clear your entire search history? This cannot be undone.</p>
+            <div class="flex justify-around space-x-4">
+                <button onclick="closeModal('clearHistoryConfirmModal')" class="w-full py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-150">
+                    Cancel
+                </button>
+                <button onclick="clearHistoryConfirmed()" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-150">
+                    Yes, Clear History
+                </button>
+            </div>
+        </div>
+    </div>
+
+ <div id="statusToast" 
+     class="fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none"
+     role="alert">
+    <div class="flex items-center justify-center space-x-2">
+        <span id="toastIcon"></span> 
+        <span id="toastMessage" class="font-semibold"></span>
+    </div>
+ </div>
+
+<script type="module">
+    // --- CONFIGURATION: PROXY URL (New, Separate Backend) ---
+    // 🛑 ACTION REQUIRED 1: REPLACE THIS WITH THE URL OF YOUR NEW API PROXY APPS SCRIPT 🛑
+    const PROXY_API_URL = "https://script.google.com/macros/s/AKfycbzBplOj63T9zeWsP8MP02r2GeofN5_IJ6AsOgp68N6hwg6oJ-5Akn-6D8psInj0OO1H/exec"; 
+
+    // --- CONFIGURATION: AUTH/HISTORY URLs (Existing Backends, Keep if separate) ---
+    // NOTE: These must be the URLs of your existing Auth/History Apps Script deployments.
+    // If you haven't changed them, leave them as the sample URLs, but use your real ones.
+    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbzrvxhk0CgoPktwRBQibpOkPOpZaLVWFj4Xucltmg96g8cW4EFVyj6Dt_NSX3poapsCHg/exec";    
+    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbwoC2VvmrUcB1yrz4oFjg_v-RkJplS99DQwetxoGDZ03aIvwQzPmJwRHEwvFYlCK44V/exec";    
+
+    // These are placeholders for security purposes. The PROXY handles the real keys.
+    const GEMINI_API_URL = "PROXY_HANDLED"; 
+    const PEXELS_API_KEY = 'PROXY_HANDLED';    
+    const PEXELS_URL = 'https://api.pexels.com/v1/search'; 
+
+
+    // Language data (unchanged)
+    const languages = [
+{ name: "Abkhaz", value: "Abkhaz" },
+{ name: "Acehnese", value: "Acehnese" },
+{ name: "Acholi", value: "Acholi" },
+{ name: "Afar", value: "Afar" },
+{ name: "Afrikaans", value: "Afrikaans" },
+{ name: "Albanian", value: "Albanian" },
+{ name: "Alur", value: "Alur" },
+{ name: "Amharic", value: "Amharic" },
+{ name: "Arabic", value: "Arabic" },
+{ name: "Armenian", value: "Armenian" },
+{ name: "Assamese", value: "Assamese" },
+{ name: "Avar", value: "Avar" },
+{ name: "Awadhi", value: "Awadhi" },
+{ name: "Aymara", value: "Aymara" },
+{ name: "Azerbaijani", value: "Azerbaijani" },
+{ name: "Balinese", value: "Balinese" },
+{ name: "Baluchi", value: "Baluchi" },
+{ name: "Bambara", value: "Bambara" },
+{ name: "Baoulé", value: "Baoulé" },
+{ name: "Bashkir", value: "Bashkir" },
+{ name: "Basque", value: "Basque" },
+{ name: "Batak Karo", value: "Batak Karo" },
+{ name: "Batak Simalungun", value: "Batak Simalungun" },
+{ name: "Batak Toba", value: "Batak Toba" },
+{ name: "Belarusian", value: "Belarusian" },
+{ name: "Bemba", value: "Bemba" },
+{ name: "Bengali", value: "Bengali" },
+{ name: "Betawi", value: "Betawi" },
+{ name: "Bhojpuri", value: "Bhojpuri" },
+{ name: "Bikol", value: "Bikol" },
+{ name: "Bosnian", value: "Bosnian" },
+{ name: "Breton", value: "Breton" },
+{ name: "Bulgarian", value: "Bulgarian" },
+{ name: "Buryat", value: "Buryat" },
+{ name: "Cantonese", value: "Cantonese" },
+{ name: "Catalan", value: "Catalan" },
+{ name: "Cebuano", value: "Cebuano" },
+{ name: "Chamorro", value: "Chamorro" },
+{ name: "Chechen", value: "Chechen" },
+{ name: "Chewa", value: "Chewa" },
+{ name: "Chinese (Simplified)", value: "Chinese (Simplified)" },
+{ name: "Chinese (Traditional)", value: "Chinese (Traditional)" },
+{ name: "Chuukese", value: "Chuukese" },
+{ name: "Chuvash", value: "Chuvash" },
+{ name: "Corsican", value: "Corsican" },
+{ name: "Crimean Tatar (Cyrillic)", value: "Crimean Tatar (Cyrillic)" },
+{ name: "Crimean Tatar (Latin)", value: "Crimean Tatar (Latin)" },
+{ name: "Croatian", value: "Croatian" },
+{ name: "Czech", value: "Czech" },
+{ name: "Danish", value: "Danish" },
+{ name: "Dari", value: "Dari" },
+{ name: "Dhivehi", value: "Dhivehi" },
+{ name: "Dinka", value: "Dinka" },
+{ name: "Dogri", value: "Dogri" },
+{ name: "Dombe", value: "Dombe" },
+{ name: "Dutch", value: "Dutch" },
+{ name: "Dyula", value: "Dyula" },
+{ name: "Dzongkha", value: "Dzongkha" },
+{ name: "English", value: "English" },
+{ name: "Esperanto", value: "Esperanto" },
+{ name: "Estonian", value: "Estonian" },
+{ name: "Ewe", value: "Ewe" },
+{ name: "Faroese", value: "Faroese" },
+{ name: "Fijian", value: "Fijian" },
+{ name: "Filipino", value: "Filipino" },
+{ name: "Finnish", value: "Finnish" },
+{ name: "Fon", value: "Fon" },
+{ name: "French", value: "French" },
+{ name: "French (Canada)", value: "French (Canada)" },
+{ name: "Frisian", value: "Frisian" },
+{ name: "Friulian", value: "Friulian" },
+{ name: "Fulani", value: "Fulani" },
+{ name: "Ga", value: "Ga" },
+{ name: "Galician", value: "Galician" },
+{ name: "Georgian", value: "Georgian" },
+{ name: "German", value: "German" },
+{ name: "Greek", value: "Greek" },
+{ name: "Guarani", value: "Guarani" },
+{ name: "Gujarati", value: "Gujarati" },
+{ name: "Haitian Creole", value: "Haitian Creole" },
+{ name: "Hakha Chin", value: "Hakha Chin" },
+{ name: "Hausa", value: "Hausa" },
+{ name: "Hawaiian", value: "Hawaiian" },
+{ name: "Hebrew", value: "Hebrew" },
+{ name: "Hiligaynon", value: "Hiligaynon" },
+{ name: "Hindi", value: "Hindi" },
+{ name: "Hmong", value: "Hmong" },
+{ name: "Hungarian", value: "Hungarian" },
+{ name: "Hunsrik", value: "Hunsrik" },
+{ name: "Iban", value: "Iban" },
+{ name: "Icelandic", value: "Icelandic" },
+{ name: "Igbo", value: "Igbo" },
+{ name: "Ilocano", value: "Ilocano" },
+{ name: "Indonesian", value: "Indonesian" },
+{ name: "Inuktut (Latin)", value: "Inuktut (Latin)" },
+{ name: "Inuktut (Syllabics)", value: "Inuktut (Syllabics)" },
+{ name: "Irish", value: "Irish" },
+{ name: "Italian", value: "Italian" },
+{ name: "Japanese", value: "Japanese" },
+{ name: "Javanese", value: "Javanese" },
+{ name: "Kannada", value: "Kannada" },
+{ name: "Kazakh", value: "Kazakh" },
+{ name: "Khmer", value: "Khmer" },
+{ name: "Kinyarwanda", value: "Kinyarwanda" },
+{ name: "Konkani", value: "Konkani" },
+{ name: "Korean", value: "Korean" },
+{ name: "Kurdish (Kurmanji)", value: "Kurdish (Kurmanji)" },
+{ name: "Kurdish (Sorani)", value: "Kurdish (Sorani)" },
+{ name: "Lao", value: "Lao" },
+{ name: "Latvian", value: "Latvian" },
+{ name: "Lithuanian", value: "Lithuanian" },
+{ name: "Lombard", value: "Lombard" },
+{ name: "Malay", value: "Malay" },
+{ name: "Malayalam", value: "Malayalam" },
+{ name: "Maltese", value: "Maltese" },
+{ name: "Maori", value: "Maori" },
+{ name: "Marathi", value: "Marathi" },
+{ name: "Mongolian", value: "Mongolian" },
+{ name: "Nepali", value: "Nepali" },
+{ name: "Norwegian", value: "Norwegian" },
+{ name: "Odia (Oriya)", value: "Odia (Oriya)" },
+{ name: "Pashto", value: "Pashto" },
+{ name: "Persian", value: "Persian" },
+{ name: "Polish", value: "Polish" },
+{ name: "Portuguese", value: "Portuguese" },
+{ name: "Punjabi (Gurmukhi)", value: "Punjabi (Gurmukhi)" },
+{ name: "Punjabi (Shahmukhi)", value: "Punjabi (Shahmukhi)" },
+{ name: "Romanian", value: "Romanian" },
+{ name: "Russian", value: "Russian" },
+{ name: "Serbian", value: "Serbian" },
+{ name: "Sinhala", value: "Sinhala" },
+{ name: "Slovak", value: "Slovak" },
+{ name: "Slovenian", value: "Slovenian" },
+{ name: "Somali", value: "Somali" },
+{ name: "Spanish", value: "Spanish" },
+{ name: "Sundanese", value: "Sundanese" },
+{ name: "Swahili", value: "Swahili" },
+{ name: "Swedish", value: "Swedish" },
+{ name: "Tagalog (Filipino)", value: "Tagalog (Filipino)" },
+{ name: "Tamil", value: "Tamil" },
+{ name: "Tatar", value: "Tatar" },
+{ name: "Telugu", value: "Telugu" },
+{ name: "Thai", value: "Thai" },
+{ name: "Tibetan", value: "Tibetan" },
+{ name: "Tigrinya", value: "Tigrinya" },
+{ name: "Tswana", value: "Tswana" },
+{ name: "Turkish", value: "Turkish" },
+{ name: "Turkmen", value: "Turkmen" },
+{ name: "Ukrainian", value: "Ukrainian" },
+{ name: "Urdu", value: "Urdu" },
+{ name: "Uyghur", value: "Uyghur" },
+{ name: "Uzbek", value: "Uzbek" },
+{ name: "Vietnamese", value: "Vietnamese" },
+{ name: "Welsh", value: "Welsh" },
+{ name: "Xhosa", value: "Xhosa" },
+{ name: "Yiddish", value: "Yiddish" },
+{ name: "Yoruba", value: "Yoruba" },
+{ name: "Zulu", value: "Zulu" }
+];
+
+
+    // DOM elements
+    const body = document.body;
+    const inputTextA = document.getElementById('inputTextA');
+    const inputTextB = document.getElementById('inputTextB');
+    const langA = document.getElementById('langA');
+    const langB = document.getElementById('langB');
+    const labelA = document.getElementById('labelA');
+    const labelB = document.getElementById('labelB');
+    const definitionContent = document.getElementById('definitionContent');
+    const similarWordsContent = document.getElementById('similarWordsContent');
+    // 🌟 ADDED: New DOM element for image results
+    const imageResults = document.getElementById('imageResults');    
+    const authContainer = document.getElementById('authContainer');
+    const authMessage = document.getElementById('authMessage');
+    const accountStatus = document.getElementById('accountStatus');
+    const historyListContainer = document.getElementById('historyListContainer');
+    const historyStatus = document.getElementById('historyStatus');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+    const sourcesDiv = document.getElementById('sources');
+    const sourceList = document.getElementById('sourceList');
+    const speakButtonA = document.getElementById('speakButtonA');
+    const speakButtonB = document.getElementById('speakButtonB');
+    const speakButtonDef = document.getElementById('speakButtonDef');
+    const speakButtonSimilarWords = document.getElementById('speakButtonSimilarWords');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    const translateButton = document.getElementById('translateButton');
+
+
+    // State variables
+    let audioPlayer = null;    
+    let isTranslating = false;    
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;    
+    let ttsVoice = localStorage.getItem('ttsVoice') || 'Orus';    
+    // Global history tracking
+    let currentHistoryData = [];
+    let originalHistoryData = [];
+    
+    // Global variable for the Web Speech API synth object
+    const nativeSynth = window.speechSynthesis;
+
+
+    // --- Settings & UI Management ---
+
+    window.toggleSidebar = function() {
+        sidebar.classList.toggle('open');
+        sidebarBackdrop.classList.toggle('open');
+    }
+
+    window.openSettingsModal = function() {
+        // Load current settings into the modal
+        darkModeToggle.checked = body.classList.contains('dark');
+        voiceSelect.value = ttsVoice;
+        document.getElementById('settingsModal').classList.remove('hidden');
+    }
+
+    function toggleDarkMode(isDark) {
+        if (isDark) {
+            body.classList.add('dark');
+            body.classList.remove('light');
+            localStorage.setItem('darkMode', 'true');
+        } else {
+            body.classList.remove('dark');
+            body.classList.add('light');
+            localStorage.setItem('darkMode', 'false');
+        }
+    }
+
+    function setTTSVoice(voice) {
+        ttsVoice = voice;
+        localStorage.setItem('ttsVoice', voice);
+    }
+
+    // Fix for sidebar menu links that need to close the sidebar
+    window.closeSidebarAndScroll = function(targetId) {
+        toggleSidebar();
+        // Wait for transition, then scroll
+        setTimeout(() => {
+            document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
+    
+    // --- NEW: Function to load all available browser voices into the select menu ---
+    function loadAvailableVoices() {
+        const voiceSelect = document.getElementById('voiceSelect');
+        
+        // Save current selection before clearing
+        const savedVoice = voiceSelect.value;
+        voiceSelect.innerHTML = ''; 
+
+        // Get voices from the browser's native API
+        const voices = nativeSynth.getVoices();
+
+        voices.forEach(voice => {
+            const option = document.createElement('option');
+            // Display a user-friendly name and language/dialect
+            option.textContent = `${voice.name} (${voice.lang})`; 
+            option.value = voice.name; // Use the voice name as the value
+            
+            // Mark the default voice (if applicable)
+            if (voice.default) {
+                option.textContent += ' — DEFAULT';
+            }
+
+            voiceSelect.appendChild(option);
+        });
+
+        // Re-select the saved preference if it still exists in the new list
+        if (savedVoice && voices.some(v => v.name === savedVoice)) {
+            voiceSelect.value = savedVoice;
+            setTTSVoice(savedVoice);
+        } else if (voiceSelect.options.length > 0) {
+            // Fallback: Use the first voice and save it as the new default preference
+            setTTSVoice(voiceSelect.value);
+        }
+    }
+    // CRITICAL STEP: Since getVoices() is loaded asynchronously, we listen for the voiceschanged event
+    if (nativeSynth.onvoiceschanged !== undefined) {
+        nativeSynth.onvoiceschanged = loadAvailableVoices;
+    }
+    // Call once immediately in case voices are already loaded
+    loadAvailableVoices();
+    // --- END: loadAvailableVoices ---
+
+
+    // --- Core Fix: Language Selector Population and Update ---
+    function populateLanguageSelectors() {
+        langA.innerHTML = '';
+        languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang.value;
+            option.textContent = lang.name;
+            langA.appendChild(option);
+        });
+        langA.value = 'English';    
+
+        langB.innerHTML = '';
+        languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang.value;
+            option.textContent = lang.name;
+            langB.appendChild(option);
+        });
+        langB.value = 'Tamil';    
+
+        updateLabels();
+    }
+    
+    function updateLabels() {
+        if (langA.options[langA.selectedIndex]) {
+            labelA.textContent = langA.options[langA.selectedIndex].text;
+        }
+        if (langB.options[langB.selectedIndex]) {
+            labelB.textContent = langB.options[langB.selectedIndex].text;
+        }
+    }
+
+    // NEW: Function to toggle password visibility
+    window.togglePasswordVisibility = function(inputId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleIcon = document.getElementById(iconId);
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+
+
+    // --- Auth & Modal Functions (FIXED GLOBAL ACCESS) ---
+    
+    // NEW: Function to close modal if backdrop (but not content) is clicked
+    window.closeModalOnBackdrop = function(event, modalId) {
+        if (event.target.classList.contains('modal-backdrop')) {
+            closeModal(modalId);
+        }
+    }
+
+    // FIX 1: Made globally accessible via window
+    window.renderAuthView = function(view) {
+        authMessage.textContent = '';
+        
+        if (currentUser) {
+            view = 'status';
+        }
+
+        let html = '';
+        let title = '';
+
+        const inputClasses = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 transition-all duration-300";
+        const buttonPrimaryClasses = "w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md";
+        const buttonSecondaryClasses = "text-indigo-600 font-medium hover:underline transition duration-150";
+
+       switch (view) {
+            case 'login':
+                title = 'Log In to LexiVerse';
+                html = `
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">${title}</h2>
+                    <form onsubmit="handleLogin(event)" class="space-y-4">
+                        <input type="email" id="loginEmail" placeholder="Gmail Address" required class="${inputClasses}">
+                        <div class="relative">
+                            <input type="password" id="loginPassword" placeholder="Password" required class="${inputClasses} pr-12">
+                            <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-indigo-600 transition">
+                                <i id="loginEyeIcon" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="${buttonPrimaryClasses}">
+                            Log In
+                        </button>
+                       <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                                Don't have an account? <button type="button" onclick="renderAuthView('signup')" class="${buttonSecondaryClasses}">Sign Up</button>
+                       </p>
+                    </form>
+                `;
+                break;
+
+            case 'signup':
+                title = 'Sign Up for LexiVerse';
+                html = `
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">${title}</h2>
+                    <form onsubmit="handleSignup(event)" class="space-y-4">
+                        <input type="text" id="signupName" placeholder="Full Name" required class="${inputClasses}">
+                        <input type="email" id="signupEmail" placeholder="Gmail Address" required class="${inputClasses}">
+                        <div class="relative">
+                            <input type="password" id="signupPassword" placeholder="Password (Min 6 characters)" required class="${inputClasses} pr-12">
+                            <button type="button" onclick="togglePasswordVisibility('signupPassword', 'signupEyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-green-600 transition">
+                                <i id="signupEyeIcon" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md">
+                            Sign Up
+                        </button>
+                       <p class="text-center text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                                Already have account! <button type="button" onclick="renderAuthView('login')" class="${buttonSecondaryClasses}">Log In</button>
+                       </p>
+                    </form>
+                `;
+                break;
+            
+            case 'status':
+                title = 'Account Status';
+                html = `
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">${title}</h2>
+                    <div class="space-y-3">
+                        <p class="text-gray-700 dark:text-gray-300 font-medium">Logged in as:</p>
+                        <p class="bg-indigo-50 dark:bg-indigo-900 p-3 rounded-lg font-semibold text-indigo-700 dark:text-indigo-300">
+                            <svg class="inline w-5 h-5 mr-1 align-sub" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            ${currentUser.email}
+                        </p>
+                        <p class="text-gray-500 dark:text-gray-400">Your translation history is saved.</p>
+                        <button onclick="handleLogout()" class="w-full mt-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-150 shadow-md">
+                            Log Out
+                        </button>
+                    </div>
+                `;
+                break;
+        }
+
+        authContainer.innerHTML = html;
+    }
+
+    window.openAccountModal = function() {
+        // Render the view *before* opening the modal
+        window.renderAuthView(currentUser ? 'status' : 'login');    
+        document.getElementById('accountModal').classList.remove('hidden');
+    }
+
+    // FIX 3: Ensures closeModal is always available for inline HTML buttons
+    window.closeModal = function(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        // Re-render auth view in case user just signed up/in/out, preparing for next open
+        window.renderAuthView(currentUser ? 'status' : 'login');    
+    }
+    
+    function updateAccountStatus() {
+      if (currentUser) {
+          // 1. Determine the display name: Use the full name if available,  
+          //    otherwise fall back to the part of the email before '@'.
+          const displayName = currentUser.name  
+                                   ? currentUser.name.split(' ')[0] // Display only the first name (optional)
+                                   : currentUser.email.split('@')[0];
+          
+          // 2. Update the account status element
+          accountStatus.textContent = `Logged in (${displayName})`;
+          
+          // 3. Apply success styling
+          accountStatus.classList.add('text-green-600');
+          accountStatus.classList.remove('text-gray-600');
+          
+      } else {
+          // User is logged out (Original logic)
+          accountStatus.textContent = 'Account';
+          accountStatus.classList.remove('text-green-600');
+          accountStatus.classList.add('text-gray-600');
+      }
+    }
+    
+    // --- Auth Logic (Updated to use server-side endpoints for logging) ---
+
+    async function sendAuthRequest(action, data) {
+        // Use the AUTH_HISTORY_URL (which points to the PROXY_API_URL if merged)
+        if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_DEPLOYED_PROXY_APPSCRIPT_URL_HERE")) {
+            authMessage.textContent = "Error: Authentication URL is not configured.";
+            return { success: false };
+        }
+
+        authMessage.textContent = 'Processing...';
+
+        const formData = new FormData();
+        formData.append("action", action);
+        for (const key in data) {
+            formData.append(key, data[key]);
+        }
+
+        try {
+            const response = await fetch(AUTH_HISTORY_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+            
+            const result = await response.json();
+            return result;
+
+        } catch (error) {
+            authMessage.textContent = `Network Error: ${error.message}`;
+            return { success: false };
+        }
+    }
+
+
+    window.handleSignup = async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        
+        if (!email.endsWith('@gmail.com')) {
+            authMessage.textContent = "Please use a valid Gmail address for sign up.";
+            showCustomToast("Invalid Email Format", 'error', 4000);
+            return;
+        }
+        if (password.length < 6) {
+            authMessage.textContent = "Password must be at least 6 characters.";
+            showCustomToast("Password too short", 'error', 4000);
+            return;
+        }
+        
+        const result = await sendAuthRequest('signup', { name, email, password });
+
+        if (result.success) {
+            currentUser = { email: email, name: name };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAccountStatus();
+            closeModal('accountModal');
+            // Use custom toast on success
+            showCustomToast(`Welcome, ${name}! You are now logged in.`, 'success');    
+            
+        } else {
+            const errorMessage = result.message || "Sign up failed.";
+            authMessage.textContent = errorMessage; // Keep error in modal
+            showCustomToast("Signup Failed: " + errorMessage, 'error', 5000);    
+        }
+    }
+
+    window.handleLogin = async function(event) {
+        event.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        const result = await sendAuthRequest('login', { email, password });
+
+        if (result.success) {
+            currentUser = result.user;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAccountStatus();
+            closeModal('accountModal');
+            // Use custom toast on success
+            showCustomToast(`Welcome back, ${result.user.name || 'User'}!`, 'success');
+
+        } else {
+            const errorMessage = result.message || "Login failed. Check your email and password.";
+            authMessage.textContent = errorMessage; // Keep error in modal
+            showCustomToast("Login Failed. Check credentials.", 'error', 5000);
+        }
+    }
+
+    window.handleLogout = function() {
+        currentUser = null;
+        localStorage.removeItem('currentUser');
+        updateAccountStatus();
+        closeModal('accountModal');
+        // Use custom toast on success
+        showCustomToast("You have been logged out.", 'logout');
+    }
+    // --- Custom Toast Notification Handler ---
+
+    function showCustomToast(message, type, duration = 4000) {
+        const toast = document.getElementById('statusToast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+        if (!toast || !toastMessage || !toastIcon) return; // Safety check
+
+        // 1. Reset all animation/type classes
+        toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none';
+        toastIcon.innerHTML = '';
+        
+        let iconHtml = '';
+        let typeClass = '';
+
+        if (type === 'success') {
+            typeClass = 'toast-success';
+            iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; // Checkmark
+        } else if (type === 'logout') {
+            typeClass = 'toast-logout';
+            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>'; // Door Exit
+        } else if (type === 'error') {
+            typeClass = 'toast-error';
+            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        }
+
+        toastMessage.textContent = message;
+        toastIcon.innerHTML = iconHtml;
+        
+        // 2. Apply new type classes and trigger the visible animation
+        toast.classList.add(typeClass, 'toast-visible');
+
+        // 3. Hide after duration
+        setTimeout(() => {
+            // Reverse the animation (by removing the visible class)
+            toast.classList.remove('toast-visible');    
+            toast.classList.add('opacity-0');
+            
+            // Ensure it's fully off-screen/non-interactive after transition
+            setTimeout(() => {
+                toast.classList.remove(typeClass);
+                toast.classList.add('pointer-events-none');
+            }, 500); // Wait for the transition duration
+        }, duration);
+    }
+
+    
+    // --- History Functions ---
+
+    function getHistory() {
+        const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+        try {
+            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+             return history.map(item => ({
+                ...item,
+                // Add default values for fields not saved by old localStorage logic
+                definition: item.definition || 'No definition logged.',
+                similarWords: item.similarWords || 'No similar words logged.',
+                // Ensure timestamp is an ISO 8601 string for reliable sorting/filtering
+                timestamp: new Date(item.timestamp).toISOString(), 
+            }));
+        } catch (e) {
+            console.error("Error reading history from Local Storage:", e);
+            return [];
+        }
+    }
+
+    // Old saveToHistory kept for local history  
+    function saveToHistory(sourceText, targetText, translation) {
+        if (sourceText.length === 0 || translation.length === 0) return;
+
+        // Assuming langA and langB are globally defined select elements
+        const sourceLangText = langA.options[langA.selectedIndex].text;
+        const targetLangText = langB.options[langB.selectedIndex].text;
+
+        // Fetch existing history and map timestamps back to local string for storage compatibility
+        const history = getHistory().map(item => ({
+            ...item,    
+            timestamp: new Date(item.timestamp).toLocaleString()
+        })); 
+
+        const newEntry = {
+            source: sourceText,
+            target: translation,
+            sourceLang: sourceLangText,
+            targetLang: targetLangText,
+            timestamp: new Date().toLocaleString(), // Use local string for storage
+            definition: 'No definition logged.',  
+            similarWords: 'No similar words logged.' 
+        };
+
+        const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+
+        history.unshift(newEntry);
+        if (history.length > 50) {
+            history.pop();
+        }
+
+        try {
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        } catch (e) {
+            console.error("Error writing history to Local Storage:", e);
+        }
+    }
+
+    // NEW: Function to open the custom confirmation modal
+    window.openClearHistoryConfirm = function() {
+        document.getElementById('clearHistoryConfirmModal')?.classList.remove('hidden');
+    }
+
+    // ✅ FIXED: Function executed after user confirms deletion (Clears Local Storage only)  
+    window.clearHistoryConfirmed = function() {
+        // 1. Close the confirmation modal (Assuming closeModal function is globally available)
+        if (typeof closeModal === 'function') {
+            closeModal('clearHistoryConfirmModal');
+        } else {
+            document.getElementById('clearHistoryConfirmModal')?.classList.add('hidden');
+        }
+
+        // 2. Determine the history key (using the global currentUser object)
+        const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
+        
+        // 3. Clear Local Storage
+        localStorage.removeItem(historyKey);
+        
+        // 4. Clear the client-side data
+        currentHistoryData = [];
+        originalHistoryData = [];
+
+        // 5. Hide the Clear History button in the history modal
+        const clearHistoryButton = document.getElementById('clearHistoryButton');
+        if (clearHistoryButton) {
+            clearHistoryButton.classList.add('hidden');
+        }
+
+        // 6. Re-render history list to show it's empty
+        openHistoryModal();  
+    }
+
+    // --- FIX 2 & 3: Read More Toggle Functionality for all fields ---
+    window.toggleReadMore = function(toggleId) {
+        const hiddenContent = document.getElementById(`hidden-content-${toggleId}`);
+        const toggleButton = document.getElementById(`read-more-btn-${toggleId}`);
+        
+        if (!hiddenContent || !toggleButton) return;
+
+        if (hiddenContent.classList.contains('hidden')) {
+            hiddenContent.classList.remove('hidden');
+            const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
+            if(truncatedContainer) truncatedContainer.classList.add('hidden');  
+            toggleButton.textContent = 'Read Less';
+        } else {
+            hiddenContent.classList.add('hidden');
+            const truncatedContainer = document.getElementById(`trunc-${toggleId}`);
+            if(truncatedContainer) truncatedContainer.classList.remove('hidden');  
+            toggleButton.textContent = 'Read More...';
+        }
+    }
+
+    // --- Filtering/Sorting Helpers ---
+
+    /**
+     * Calculates if a given date is older than 2 days (i.e., 3 or more days ago).
+     * @param {string} isoTimestamp - The ISO 8601 timestamp string from the history item.
+     * @returns {boolean} True if the item is 3 or more days old.
+     */
+    function isOlderThanTwoDays(isoTimestamp) {
+        const entryDate = new Date(isoTimestamp);
+        const now = new Date();
+        
+        // Convert 2 days to milliseconds  
+        const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+        
+        // Calculate difference (entryDate will be smaller/older, so diff is positive)
+        const diffTime = now.getTime() - entryDate.getTime();
+
+        // If the difference is greater than or equal to 2 days
+        return diffTime >= twoDaysInMs;
+    }
+
+    // --- HISTORY RENDERING FUNCTION ---
+    function renderHistoryList(historyArray) {
+        // Assuming historyListContainer is available globally
+        const historyListContainer = document.getElementById('historyListContainer');
+        if (!historyListContainer) return;
+
+        historyListContainer.innerHTML = ''; 
+        
+        if (historyArray.length === 0) {
+            historyListContainer.innerHTML = '<p class="text-gray-500 italic">No search history yet. Start translating!</p>';
+            return;
+        }
+
+        historyArray.forEach((item, index) => {
+            const entryId = `hist-${index}`;
+            const MAX_LENGTH = 200;
+            
+            // --- Unified Truncation/Render Helper ---
+            const renderFieldWithReadMore = (field, label, buttonPrefix, initialContainerClass = '') => {
+                const fullText = item[field] || 'No ' + field.toLowerCase().replace(/words$/, ' word') + ' logged.';
+                const needsReadMore = fullText.length > MAX_LENGTH && !fullText.includes('No ' + field.toLowerCase().replace(/words$/, ' word'));
+                const truncatedText = needsReadMore ? fullText.substring(0, MAX_LENGTH) + '...' : fullText;
+                const hiddenText = needsReadMore ? fullText.substring(MAX_LENGTH) : '';
+                const toggleId = `${buttonPrefix}${entryId}`;
+
+                return `
+                    <p class="${initialContainerClass}">
+                        <span class="font-semibold text-gray-700 dark:text-gray-300">${label}: </span>
+                        
+                        <span id="trunc-${toggleId}">${truncatedText}</span>
+
+                        <span id="hidden-content-${toggleId}" class="${needsReadMore ? 'hidden' : ''} text-gray-600 dark:text-gray-400">
+                            ${hiddenText}
+                        </span>
+                        
+                        ${needsReadMore ? 
+                            `<button id="read-more-btn-${toggleId}" onclick="toggleReadMore('${toggleId}')" class="text-indigo-500 hover:text-indigo-700 font-medium ml-1 bg-transparent border-none p-0">
+                                Read More...
+                            </button>` 
+                            : ''
+                        }
+                    </p>
+                `;
+            };
+
+            // --- Construct the History Entry ---
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition duration-150 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600';
+            
+            // Display timestamp in local format
+            const displayTimestamp = new Date(item.timestamp).toLocaleString();  
+
+            const sourceBaseHtml = renderFieldWithReadMore('source', 'Source', 'source-', 'font-bold text-gray-800 dark:text-gray-100');
+            const targetBaseHtml = renderFieldWithReadMore('target', 'Translation', 'target-', 'text-indigo-600 dark:text-indigo-300');
+
+            const sourceContent = sourceBaseHtml.replace(/<p class="[^"]*">/, '').replace('</p>', '');
+            const targetContent = targetBaseHtml.replace(/<p class="[^"]*">/, '').replace('</p>', '');
+
+            entryDiv.innerHTML = `
+                <p class="text-xs text-gray-400 mb-1">${displayTimestamp}</p>
+                
+                <p class="font-bold text-gray-800 dark:text-gray-100">
+                    ${sourceContent}  
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(${item.sourceLang})</span>
+                </p>
+
+                <p class="text-indigo-600 dark:text-indigo-300">
+                    ${targetContent}  
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(${item.targetLang})</span>
+                </p>
+
+                <div class="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600 text-sm space-y-2">
+                    ${renderFieldWithReadMore('definition', 'Definition', 'def-')}
+
+                    ${renderFieldWithReadMore('similarWords', 'Similar Words', 'sim-')}
+                </div>
+            `;
+            
+            historyListContainer.appendChild(entryDiv);
+        });
+    }
+
+    /**
+     * Creates the buttons container and injects the sorting and clear buttons.
+     */
+    function setupHistoryButtons() {
+        let buttonContainer = document.getElementById('historySortButtons');
+        if (buttonContainer) {
+            return;  
+        }
+
+        buttonContainer = document.createElement('div');
+        buttonContainer.id = 'historySortButtons';
+        buttonContainer.className = 'flex space-x-2 mb-4';
+
+        const buttonsConfig = [
+            { id: 'sort-all', text: 'All History', sortType: 'all', initialClass: 'bg-indigo-600 text-white' },
+            { id: 'sort-newest', text: 'Newest (Today/Yesterday)', sortType: 'newest', initialClass: 'bg-gray-200 text-gray-700 hover:bg-indigo-100' },
+            { id: 'sort-older', text: 'Older (3+ Days)', sortType: 'older', initialClass: 'bg-gray-200 text-gray-700 hover:bg-indigo-100' },
+        ];
+
+        buttonsConfig.forEach(config => {
+            const btn = document.createElement('button');
+            btn.id = config.id;
+            btn.textContent = config.text;
+            btn.onclick = () => window.sortHistory(config.sortType);
+            btn.className = `px-4 py-2 text-sm font-medium rounded-lg transition duration-150 ${config.initialClass}`;
+            buttonContainer.appendChild(btn);
+        });
+
+        const clearBtn = document.getElementById('clearHistoryButton') || document.createElement('button');
+        clearBtn.id = 'clearHistoryButton';
+        clearBtn.onclick = window.openClearHistoryConfirm;  
+        clearBtn.textContent = 'Clear History';
+        clearBtn.className = 'ml-auto px-4 py-2 text-sm font-medium rounded-lg text-red-600 border border-red-600 hover:bg-red-50 transition duration-150 hidden';
+        buttonContainer.appendChild(clearBtn);
+
+
+        // Inject the container right before historyStatus
+        const historyStatus = document.getElementById('historyStatus');
+        if (historyStatus) {
+            historyStatus.parentNode.insertBefore(buttonContainer, historyStatus);
+        }  
+    }
+
+
+    // Client-side sorting/filtering function
+    window.sortHistory = function(sortType) {
+        const historySortButtons = document.getElementById('historySortButtons');
+        if (historySortButtons) {
+            // Remove active class from all sorting buttons
+            historySortButtons.querySelectorAll('button').forEach(btn => {
+                if (!btn.id.includes('clear')) {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
+                }
+            });
+        }
+
+        let filteredHistory = [...originalHistoryData]; 
+        let buttonId;
+
+        if (sortType === 'newest') {
+            // Filter: Keep entries NOT older than 2 days (i.e., today or yesterday)
+            filteredHistory = originalHistoryData
+                .filter(item => !isOlderThanTwoDays(item.timestamp))
+                // Sort: Show newest first
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  
+            buttonId = 'sort-newest';
+
+        } else if (sortType === 'older') {
+            // Filter: Keep entries that ARE older than 2 days (i.e., 3 or more days old)
+            filteredHistory = originalHistoryData
+                .filter(item => isOlderThanTwoDays(item.timestamp))
+                // Sort: Show newest first, even within the 'older' group
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  
+            buttonId = 'sort-older';
+            
+        } else { // 'all' or default
+            // Filter: Show all entries
+            filteredHistory = [...originalHistoryData];
+            // Sort: Show newest first (default order)
+            filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            buttonId = 'sort-all';
+        }
+        
+        // Add active class to the current button
+        const activeBtn = document.getElementById(buttonId);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
+            activeBtn.classList.add('bg-indigo-600', 'text-white');
+        }
+
+        currentHistoryData = filteredHistory;
+        renderHistoryList(currentHistoryData);  
+    }
+
+
+    // --- HISTORY RETRIEVAL FUNCTION ---
+    window.openHistoryModal = async function() {
+        // 1. Setup/Inject Buttons
+        setupHistoryButtons();
+        
+        // Assuming these are globally available elements
+        const historyListContainer = document.getElementById('historyListContainer');
+        const clearHistoryButton = document.getElementById('clearHistoryButton');
+        const historyStatus = document.getElementById('historyStatus');
+        
+        if (!historyListContainer || !clearHistoryButton || !historyStatus) {
+            console.error("Required history modal elements not found.");
+            return;
+        }
+
+        historyListContainer.innerHTML = '';
+        clearHistoryButton.classList.add('hidden');
+        historyStatus.innerHTML = '<span class="text-indigo-600">Loading history...</span>';
+        document.getElementById('historyModal')?.classList.remove('hidden');
+
+        let history = [];
+        let statusText = '';
+        const userEmail = currentUser ? currentUser.email : 'guest';
+
+        if (currentUser) {
+            // Use AUTH_HISTORY_URL (which should point to your Apps Script Auth backend)
+            const fetchResult = await sendAuthRequest('getHistory', { email: userEmail }); 
+            
+            if (fetchResult.success && fetchResult.history) {
+                history = fetchResult.history.map(item => ({
+                    ...item,
+                    timestamp: new Date(item.timestamp).toISOString(),
+                }));
+                statusText = `History for <strong>${currentUser.email}</strong>, retrieved from server.`;
+            } else {
+                history = getHistory(); 
+                statusText = `Could not load server history. Showing local history for <strong>${currentUser.email}</strong>.`;
+            }
+        } else {
+            history = getHistory();
+            statusText = `You are not logged in. Showing <strong>Guest History</strong> (saved locally).`;
+        }
+
+        historyStatus.innerHTML = statusText;
+        
+        originalHistoryData = history; 
+        currentHistoryData = history; 
+
+        // Show/Hide Clear History button
+        clearHistoryButton.classList.toggle('hidden', originalHistoryData.length === 0);
+
+        // Initial render: Default to 'All History' view (Newest first)
+        window.sortHistory('all');  
+    }
+
+    // --- Utility Functions (TTS, Formatting, etc.) ---
+    
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(value) {
+            const context = this;
+
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(context, [value]);
+            }, delay);
+        };
+    }
+
+    window.swapLanguages = function() {
+        const tempLang = langA.value;
+        langA.value = langB.value;
+        langB.value = tempLang;
+
+        const tempText = inputTextA.value;
+        inputTextA.value = inputTextB.value;
+        inputTextB.value = tempText;
+        
+        updateLabels();
+
+        // Re-run translation only if a manual button press is required
+        updateTranslateButtonState();    
+    }
+
+    window.clearText = function(boxId) {
+        isTranslating = true;
+        if (boxId === 'A') {
+            inputTextA.value = '';
+            inputTextB.value = '';
+            inputTextA.focus();
+        } else if (boxId === 'B') {
+            inputTextB.value = '';
+            inputTextA.value = '';
+            inputTextB.focus();
+        }
+
+        definitionContent.innerHTML = 'Definition for your source text will appear here.';
+        similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+        // 🌟 ADDED: Clear image results on clear 🌟
+        imageResults.innerHTML = 'Images related to your source text will appear here after translation.';    
+        speakButtonA.disabled = true;
+        speakButtonB.disabled = true;
+        speakButtonDef.disabled = true;
+        speakButtonSimilarWords.disabled = true;
+        
+        // Hide all stop buttons when clearing text
+        document.getElementById('stopButtonA').disabled = true;
+        document.getElementById('stopButtonA').classList.add('opacity-0');
+        document.getElementById('stopButtonB').disabled = true;
+        document.getElementById('stopButtonB').classList.add('opacity-0');
+        document.getElementById('stopButtonDef').disabled = true;
+        document.getElementById('stopButtonDef').classList.add('opacity-0');
+        document.getElementById('stopButtonSimilarWords').disabled = true;
+        document.getElementById('stopButtonSimilarWords').classList.add('opacity-0');
+
+        clearSources();
+        updateTranslateButtonState();    
+        isTranslating = false;
+    }
+
+    function clearSources() {
+        sourceList.innerHTML = '';
+        sourcesDiv.classList.add('hidden');
+    }
+    
+    function setLoading(isLoading, targetBox) {
+        // NEW: Added translateButton to loading state check
+        translateButton.disabled = isLoading || (inputTextA.value.trim().length === 0 && inputTextB.value.trim().length === 0);
+
+        const loadingHTML = `
+            <div class="loading-container">
+                <svg class="svg-spinner w-8 h-8 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        `;
+        
+        if (targetBox === 'A') {
+            inputTextA.classList.toggle('loading', isLoading);
+        } else if (targetBox === 'B') {
+            inputTextB.classList.toggle('loading', isLoading);
+        } else if (targetBox === 'DEF') {
+            if (isLoading) {
+                definitionContent.innerHTML = loadingHTML;
+                similarWordsContent.innerHTML = loadingHTML;
+                // 🌟 ADDED: Image results loading state
+                imageResults.innerHTML = loadingHTML;
+            } else if (definitionContent.querySelector('.loading-container')) {
+                definitionContent.innerHTML = 'Definition for your source text will appear here.';
+                similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+                // 🌟 ADDED: Image results initial state
+                imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
+            }
+            definitionContent.classList.toggle('opacity-50', isLoading);
+            similarWordsContent.classList.toggle('opacity-50', isLoading);
+            // 🌟 ADDED: Image results opacity control
+            imageResults.classList.toggle('opacity-50', isLoading);
+        }
+    }
+
+   // --- Updated formatSynonyms function for robustness ---
+    function formatSynonyms(synonymsText) {
+        if (!synonymsText || synonymsText.toLowerCase() === 'n/a' || synonymsText.trim() === '') {
+            speakButtonSimilarWords.disabled = true;
+            return '<span class="text-gray-500">No synonyms found.</span>';
+        }
+        speakButtonSimilarWords.disabled = false;
+
+        return synonymsText.split(',')
+            .map(s => s.trim())
+            .filter(s => s.length > 0)
+            .map(s => {
+                // Use 'inline-block' to ensure correct box modeling for wrapping
+                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
+                             ${s}
+                           </span>`;
+            })
+            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
+    }
+
+    function formatDefinition(text) {
+    if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
+    
+    // 1. Convert NEWLINES (\n or \\n) to HTML line breaks (<br>).
+    let formattedText = text.replace(/\\n/g, '<br>');
+    
+    // 2. Convert DOUBLE ASTERISKS (**text**) to HTML strong tags.
+    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // 3. Convert SINGLE ASTERISKS followed by colon (*Text:*) to bold headers (<strong>).
+    formattedText = formattedText.replace(/\*(.*?)\:/g, '<strong>$1:</strong>');
+    
+    // 4. NEW STEP: Remove any remaining single leading asterisks that are NOT followed by a colon.
+    // This is often needed if the API output includes asterisks as bullet points or simple markers.
+    // We target only the asterisk character itself and replace it with nothing.
+    formattedText = formattedText.replace(/\*/g, '');
+    
+    return formattedText;
+}
+    function stripHtml(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || "";
+    }
+
+    // --- TTS CONTROL LOGIC ---
+
+    // New helper to reset the Speak/Stop button states
+    function resetSpeechState(button, stopButton, textAvailable) {
+        // Re-enable Speak button based on text content
+        button.disabled = !textAvailable;  
+        button.classList.remove('loading');
+
+        // Hide and disable Stop button
+        if (stopButton) {
+            stopButton.disabled = true;
+            stopButton.classList.add('opacity-0');
+        }
+    }
+
+    // Global Stop function
+    window.stopSpeech = function() {
+        if (nativeSynth.speaking) {
+            nativeSynth.cancel();
+            // Note: cancel() automatically triggers the utterance's onend event, 
+            // which handles the visual reset via the handleSpeak logic below.
+        }
+        // Fallback reset for immediate visual change
+        document.querySelectorAll('.speak-btn').forEach(btn => btn.classList.remove('loading'));
+        document.querySelectorAll('.stop-btn').forEach(btn => { btn.disabled = true; btn.classList.add('opacity-0'); });
+    };
+
+
+    window.handleSpeakSimilarWord = function(word, buttonElement) {
+        buttonElement.classList.add('loading');
+        buttonElement.disabled = true;
+        handleSpeak(word, null, buttonElement);
+    }
+
+    window.speakAllSimilarWords = function() {
+        const words = similarWordsContent.textContent.trim().replace('Synonyms for your source text will appear here.', '');
+        if (!words) return;
+        handleSpeak(words, 'SimilarWords'); // Use 'SimilarWords' as speakerId to target the right stop button
+    }
+    
+    window.speakDefinition = function() {
+        const textToSpeak = stripHtml(definitionContent.innerHTML);
+        if (!textToSpeak || textToSpeak.includes('Definition for your source text')) return;
+        handleSpeak(textToSpeak, 'Def');
+    }
+
+    window.speakResult = function(boxId) {
+        const textToSpeak = (boxId === 'A' ? inputTextA.value : inputTextB.value).trim();
+        if (!textToSpeak) return;
+        handleSpeak(textToSpeak, boxId);
+    }
+
+    // REPLACED: Original async handleSpeak (Gemini TTS API) with new native version
+    window.handleSpeak = function(textToSpeak, speakerId, buttonElement) {
+        // 1. Check for browser support
+        if (!('speechSynthesis' in window)) {
+            console.error("Browser does not support the Web Speech API.");
+            return;
+        }
+
+        const buttonMap = { 'A': speakButtonA, 'B': speakButtonB, 'Def': speakButtonDef, 'SimilarWords': speakButtonSimilarWords };
+        const button = buttonElement || buttonMap[speakerId];
+        
+        // Find the corresponding STOP button (using ID mapping based on speakerId)
+        const stopButton = document.getElementById(`stopButton${speakerId}`);
+        
+        if (!textToSpeak.trim() || !button) return;
+
+        // 2. Stop any previous speech
+        if (nativeSynth.speaking) {
+            nativeSynth.cancel();
+        }
+        
+        // 3. Setup the Utterance
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        
+        // Find and set the preferred voice based on the currently selected option's value
+        const currentVoiceName = document.getElementById('voiceSelect').value;
+        const voices = nativeSynth.getVoices();
+        
+        // Find the voice object corresponding to the selected name
+        const selectedVoice = voices.find(v => v.name === currentVoiceName);
+        
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+        }  
+        
+        // 4. Set event handlers for button disabling/reenabling
+        
+        // STARTING STATE: Disable Speak, Enable Stop, Show Loading/Pulse
+        button.disabled = true;
+        button.classList.add('loading');
+        if (stopButton) {
+            stopButton.disabled = false;
+            stopButton.classList.remove('opacity-0'); // MAKE STOP BUTTON APPEAR
+        }
+
+        // END/ERROR STATE: Reset buttons
+        const resetHandler = () => {
+             // Pass true if there is text in the box to re-enable the speak button
+             const textAvailable = !!textToSpeak.trim();  
+             resetSpeechState(button, stopButton, textAvailable);
+        };
+
+        utterance.onend = resetHandler;
+        utterance.onerror = resetHandler;
+
+        // 5. Speak the text
+        nativeSynth.speak(utterance);
+    }
+
+
+    // ----------------------------------------------------------------------------------
+    // 🌟 NEW: PEXELS IMAGE SEARCH FUNCTION (MODIFIED TO USE PROXY) 🌟
+    // ----------------------------------------------------------------------------------
+    async function fetchPexelsImages(query) {
+        if (!PROXY_API_URL || PROXY_API_URL === 'YOUR_DEPLOYED_API_PROXY_APPSCRIPT_URL_HERE') {
+            imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Proxy URL is not configured. Cannot fetch images.</p>`;
+            return;
+        }
+        
+        if (query.length < 2) {
+            imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">Enter more text to search for images.</p>`;
+            return;
+        }
+
+        imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Pexels via proxy...</div>';
+
+        // Prepare data to send to the Apps Script proxy
+        const formData = new FormData();
+        formData.append('action', 'pexelsSearch'); // Tell the backend what API to call
+        formData.append('query', query);
+        
+        try {
+            const response = await fetch(PROXY_API_URL, {
+                method: 'POST',
+                body: formData // Send as POST request with FormData
+            });
+            
+            const data = await response.json();
+
+            if (response.status !== 200 || data.error) {
+                imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Image Proxy Error: ${data.error || 'Could not fetch images.'}</p>`;
+                return;
+            }
+
+            // Assume 'data' received from the proxy is the Pexels API result
+            if (data.photos && data.photos.length > 0) {
+                imageResults.innerHTML = ''; // Clear the "Searching..." text
+                
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; 
+
+                data.photos.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.src.small;    
+                    img.alt = photo.alt || 'Pexels Photo';
+                    
+                    img.className = 'w-[100px] h-[100px] object-cover rounded-md shadow-md transition transform hover:scale-105 cursor-pointer';
+                    img.onclick = () => window.open(photo.url, '_blank'); // Open the Pexels link in a new tab
+
+                    imageWrapper.appendChild(img);
+                });
+                imageResults.appendChild(imageWrapper);
+
+            } else {
+                imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">No images found on Pexels for "${query}".</p>`;
+            }
+
+        } catch (error) {
+            console.error('Network or Fetch Error:', error);
+            imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">A network error occurred while connecting to the proxy.</p>';
+        }
+    }
+
+
+    // --- Core Translation Logic (MODIFIED TO USE PROXY) ---
+    async function getTranslationAndDefinition(text, fromLang, toLang) {
+        // Use the dedicated PROXY_API_URL for external API calls
+        if (!PROXY_API_URL || PROXY_API_URL === 'YOUR_DEPLOYED_API_PROXY_APPSCRIPT_URL_HERE') {
+            return { translation: "Error: Proxy URL not configured.", definition: "Error: Proxy URL not configured.", synonyms: 'N/A' };
+        }
+        
+        const systemPrompt = "You are an expert, multilingual translator and dictionary. I will provide text, a source language, and a target language. You MUST provide three distinct pieces of information in this exact format:\n\n1.  The translation: [TRANSLATION]...translated text...[/TRANSLATION]\n\n2.  A concise dictionary definition of the *original* source text (in its *original* language), including part of speech and an example sentence. Use simple markdown like **bold** text and newline characters(\\n): [DEFINITION]...definition text...[/DEFINITION]\n\n3.  A list of similar words (synonyms) for the *original* source text (in its *original* language), separated by commas: [SYNONYMS]...synonym 1, synonym 2, synonym 3...[/SYNONYMS]\n\nIf the text is a full sentence, the definition part can provide a brief grammatical breakdown. If no definition or synonyms are found, use 'N/A' inside the tag.";
+        const userQuery = `Process this text: "${text}". Source: ${fromLang}. Target: ${toLang}.`;
+
+        const payload = {
+            action: "geminiTranslate", // Tell the backend what API to call
+            contents: [{ parts: [{ text: userQuery }] }],
+            tools: [{ "google_search": {} }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+                    
+        try {
+            // Send the request to your Apps Script Proxy URL
+            const response = await fetch(PROXY_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error(`Proxy returned status ${response.status}`);
+
+            const result = await response.json();
+
+            // Check for proxy-side errors
+            if (result.error) {
+                console.error("Proxy Error:", result.error);
+                return { translation: `Proxy Error: ${result.error}`, definition: `Proxy Error: ${result.error}`, synonyms: 'N/A' };
+            }
+            
+            // Assume the result is the standard Gemini API response structure
+            const candidate = result.candidates?.[0];
+
+            clearSources();
+            const groundingMetadata = candidate?.groundingMetadata;
+            if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                const sources = groundingMetadata.groundingAttributions
+                    .map(attr => attr.web)
+                    .filter(web => web?.uri && web?.title);
+
+                if (sources.length > 0) {
+                    sourcesDiv.classList.remove('hidden');
+                    sources.forEach(source => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline transition duration-150 ease-in-out">${source.title}</a>`;
+                        sourceList.appendChild(li);
+                    });
+                }
+            }
+
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                const rawText = candidate.content.parts[0].text;
+                
+                const translationMatch = rawText.match(/\[TRANSLATION\]([\s\S]*?)\[\/TRANSLATION\]/);
+                const definitionMatch = rawText.match(/\[DEFINITION\]([\s\S]*?)\[\/DEFINITION\]/);
+                const synonymsMatch = rawText.match(/\[SYNONYMS\]([\s\S]*?)\[\/SYNONYMS\]/);
+
+                const translation = translationMatch ? translationMatch[1].trim() : "Translation not found.";
+                const definition = definitionMatch ? definitionMatch[1].trim() : "Definition not found.";
+                const synonyms = synonymsMatch ? synonymsMatch[1].trim() : 'N/A';
+
+                return { translation, definition, synonyms };
+            } else {
+                return { translation: "Error: No content.", definition: "Error: No content.", synonyms: 'N/A' };
+            }
+
+        } catch (error) {
+            console.error("Translation error:", error);
+            return { translation: "Error: API failure.", definition: "Error: API failure.", synonyms: 'N/A' };
+        }
+    }
+    
+    // NEW: Function to send translation data to the Apps Script logger
+    async function sendTranslationToLogger(sourceWord, translatedWord, definition, similarWords) {
+        // Use the dedicated logger URL (which should point to your Auth/History backend)
+        if (!TRANSLATION_LOGGER_URL || TRANSLATION_LOGGER_URL.includes("YOUR_TRANSLATION_LOGGER_APPSCRIPT_URL_HERE")) {
+            console.warn("TRANSLATION_LOGGER_URL is not set. Skipping server-side history logging.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("action", "logTranslation"); // New action for logging
+        formData.append("sourceWord", sourceWord);
+        formData.append("translatedWord", translatedWord);
+        formData.append("definition", stripHtml(definition)); // Use plain text definition
+        formData.append("similarWords", similarWords); // Use raw synonym string
+        formData.append("userEmail", currentUser ? currentUser.email : 'Guest'); // Include user email ('Guest' if not logged in)
+        formData.append("sourceLang", langA.value); // Include source lang
+        formData.append("targetLang", langB.value); // Include target lang
+
+
+        try {
+            const response = await fetch(TRANSLATION_LOGGER_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.result !== 'success') {
+                console.error("Server History Log Failed:", result.message);
+            }
+        } catch (error) {
+            console.error("Network error during history logging:", error);
+        }
+    }
+    
+    // NEW: Centralized function to determine which way to translate
+    function getSourceAndTarget() {
+        const textA = inputTextA.value.trim();
+        const textB = inputTextB.value.trim();
+
+        if (textA.length > 0 && textB.length === 0) {
+            return {
+                sourceText: textA,
+                sourceLang: langA.value,
+                targetLang: langB.value,
+                resultBox: 'B',
+                sourceBox: 'A'
+            };
+        } else if (textB.length > 0 && textA.length === 0) {
+            return {
+                sourceText: textB,
+                sourceLang: langB.value,
+                targetLang: langA.value,
+                resultBox: 'A',
+                sourceBox: 'B'
+            };
+        }
+            // If both boxes are filled, default to A->B for the manual button press
+        if (textA.length > 0 && textB.length > 0) {
+            return {
+                sourceText: textA,
+                sourceLang: langA.value,
+                targetLang: langB.value,
+                resultBox: 'B',
+                sourceBox: 'A'
+            };
+        }
+        return null; // Nothing to translate
+    }
+    
+    // ----------------------------------------------------------------------------------
+    // 🌟 INTEGRATED/REPLACED: handleTranslateButtonClick WITH ANIMATION/ENTER LOGIC 🌟
+    // ----------------------------------------------------------------------------------
+    window.handleTranslateButtonClick = function(event) {
+        const translationInfo = getSourceAndTarget();
+        
+        if (!translationInfo || isTranslating) {
+            // If the button is clicked or Enter is pressed when nothing should happen, just return.
+            return;
+        }
+
+        // 1. Start the visual feedback (PULSE ANIMATION)
+        translateButton.classList.add('is-translating');
+        translateButton.disabled = true; // Disable during process
+
+        // The actual API call is handled asynchronously in the translateAtoB/BtoA functions.
+        // We call them with isManual=true to ensure the API call runs.
+        
+        if (translationInfo.sourceBox === 'A') {
+            translateAtoB(translationInfo.sourceText, true);    
+        } else {
+            translateBtoA(translationInfo.sourceText, true);
+        }
+
+        // We will remove the 'is-translating' class inside the translateAtoB/BtoA functions'
+        // final cleanup step, ensuring the animation stops when the API result is received.
+    }
+    
+    // ----------------------------------------------------------------------------------
+    // 🌟 INTEGRATED: checkTranslate FUNCTION FOR ENTER KEY PRESS 🌟
+    // ----------------------------------------------------------------------------------
+    window.checkTranslate = function(event) {
+        // Check for the Enter key (keyCode 13 or key 'Enter')
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            
+            // CHECK FOR MODIFIER KEYS: If Shift OR Control is pressed, allow a newline.
+            if (event.shiftKey || event.ctrlKey) {
+                // Allow the default action (creating a newline) to happen.
+                return;    
+            }
+
+            // If ONLY Enter is pressed (no Shift or Control), prevent default and translate.
+            event.preventDefault();    
+            
+            // Trigger the main handler
+            window.handleTranslateButtonClick();
+        }
+    }
+    // ----------------------------------------------------------------------------------
+    
+    // MODIFIED: translateAtoB and translateBtoA to call fetchPexelsImages
+    async function translateAtoB(text, isManual = false) {    
+        if (isTranslating) return;
+        text = text.trim();
+        
+        speakButtonA.disabled = text.length === 0;
+        updateTranslateButtonState();
+
+        if (!text) {
+            inputTextB.value = '';
+            definitionContent.innerHTML = 'Definition for your source text will appear here.';
+            similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+            // 🌟 ADDED: Clear image results 🌟
+            imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
+            speakButtonB.disabled = true;
+            speakButtonDef.disabled = true;
+            speakButtonSimilarWords.disabled = true;
+            clearSources();
+            
+            // REMOVE ANIMATION if text was cleared during the process
+            translateButton.classList.remove('is-translating');
+            return;
+        }
+
+        // Only proceed with API call if manually triggered
+        if (!isManual) return;    
+
+        isTranslating = true;
+        setLoading(true, 'B');    
+        setLoading(true, 'DEF');    
+
+        const { translation, definition, synonyms } = await getTranslationAndDefinition(text, langA.value, langB.value);
+        
+        setLoading(false, 'B');
+        setLoading(false, 'DEF');
+        
+        if (isManual) { // Ensure we only update if it was the intended manual action
+            inputTextB.value = translation;
+            const formattedDefinition = formatDefinition(definition);
+            const formattedSynonyms = formatSynonyms(synonyms);
+            
+            definitionContent.innerHTML = formattedDefinition;
+            similarWordsContent.innerHTML = formattedSynonyms;    
+            
+            // 🌟 PEXELS IMAGE SEARCH CALL 🌟
+            fetchPexelsImages(text);
+
+            if (translation && translation !== "Translation not found." && translation !== "Error: API failure.") {
+                // LOCAL HISTORY
+                saveToHistory(text, langA.value, translation);
+                // SERVER-SIDE HISTORY LOGGING (NEW)
+                sendTranslationToLogger(text, translation, formattedDefinition, synonyms);
+            }
+            
+            speakButtonB.disabled = translation.length === 0;
+            speakButtonDef.disabled = (definitionContent.textContent || definitionContent.innerText).includes('Definition for your source text');
+            
+            // 🌟 FINAL ANIMATION CLEANUP 🌟
+            translateButton.classList.remove('is-translating');
+        }
+
+        isTranslating = false;
+        updateTranslateButtonState();
+    }
+
+    async function translateBtoA(text, isManual = false) {    
+        if (isTranslating) return;    
+        text = text.trim();
+        
+        speakButtonB.disabled = text.length === 0;
+        updateTranslateButtonState();
+
+        if (!text) {
+            inputTextA.value = '';
+            definitionContent.innerHTML = 'Definition for your source text will appear here.';
+            similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
+            // 🌟 ADDED: Clear image results 🌟
+            imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
+            speakButtonA.disabled = true;
+            speakButtonDef.disabled = true;
+            speakButtonSimilarWords.disabled = true;
+            clearSources();
+            
+            // REMOVE ANIMATION if text was cleared during the process
+            translateButton.classList.remove('is-translating');
+            return;
+        }
+
+            // Only proceed with API call if manually triggered
+        if (!isManual) return;    
+
+        isTranslating = true;
+        setLoading(true, 'A');    
+        setLoading(true, 'DEF');    
+
+        const { translation, definition, synonyms } = await getTranslationAndDefinition(text, langB.value, langA.value);
+        
+        setLoading(false, 'A');
+        setLoading(false, 'DEF');
+
+            if (isManual) { // Ensure we only update if it was the intended manual action
+            inputTextA.value = translation;
+            const formattedDefinition = formatDefinition(definition);
+            const formattedSynonyms = formatSynonyms(synonyms);
+
+            definitionContent.innerHTML = formattedDefinition;
+            similarWordsContent.innerHTML = formattedSynonyms;    
+            
+            // 🌟 PEXELS IMAGE SEARCH CALL 🌟
+            fetchPexelsImages(text);
+
+            if (translation && translation !== "Translation not found." && translation !== "Error: API failure.") {
+                // LOCAL HISTORY
+                saveToHistory(text, langB.value, translation);
+                // SERVER-SIDE HISTORY LOGGING (NEW)
+                sendTranslationToLogger(text, translation, formattedDefinition, synonyms);
+            }
+            
+            speakButtonA.disabled = translation.length === 0;
+            speakButtonDef.disabled = (definitionContent.textContent || definitionContent.innerText).includes('Definition for your source text');    
+            
+            // 🌟 FINAL ANIMATION CLEANUP 🌟
+            translateButton.classList.remove('is-translating');
+        }
+
+        isTranslating = false;
+        updateTranslateButtonState();
+    }
+    // ----------------------------------------------------------------------------------
+
+    // Function to manage the state of the dedicated Translate button
+    function updateTranslateButtonState() {
+        const hasInputA = inputTextA.value.trim().length > 0;
+        const hasInputB = inputTextB.value.trim().length > 0;
+        
+        // The button is enabled if either box has text AND we're not currently translating
+        translateButton.disabled = isTranslating || !(hasInputA || hasInputB);
+        
+        // Highlight the active box
+        if (hasInputA && !hasInputB) {
+            inputTextA.classList.add('border-indigo-500');
+            inputTextB.classList.remove('border-indigo-500');
+        } else if (hasInputB && !hasInputA) {
+            inputTextB.classList.add('border-indigo-500');
+            inputTextA.classList.remove('border-indigo-500');
+        } else {
+            // If both are filled or both are empty, remove highlighting
+            inputTextA.classList.remove('border-indigo-500');
+            inputTextB.classList.remove('border-indigo-500');
+        }
+    }
+
+
+    // --- Event Listeners and Initialization ---
+
+    function initializeListeners() {
+        // Bind input listeners (only update button state, no automatic translation)
+        inputTextA.addEventListener('input', (event) => {    
+            updateTranslateButtonState();    
+            speakButtonA.disabled = event.target.value.trim().length === 0;
+            inputTextB.value = ''; // Clear other box on input
+        });
+        inputTextB.addEventListener('input', (event) => {    
+            updateTranslateButtonState();    
+            speakButtonB.disabled = event.target.value.trim().length === 0;
+            inputTextA.value = ''; // Clear other box on input
+        });
+
+        langA.addEventListener('change', () => {
+            updateLabels();
+            updateTranslateButtonState();
+        });
+        langB.addEventListener('change', () => {
+            updateLabels();
+            updateTranslateButtonState();
+        });
+        
+        // Settings Listeners
+        darkModeToggle.addEventListener('change', (e) => toggleDarkMode(e.target.checked));
+        
+        // UPDATE: Change event updates ttsVoice and saves it
+        voiceSelect.addEventListener('change', (e) => setTTSVoice(e.target.value));    
+        
+        // 🌟 NEW LISTENER: Bind click event to the main handler
+        translateButton.addEventListener('click', window.handleTranslateButtonClick);    
+
+        // 🚀 CRITICAL FIX: Add keyup listeners to trigger checkTranslate on Enter
+        inputTextA.addEventListener('keyup', window.checkTranslate);
+        inputTextB.addEventListener('keyup', window.checkTranslate);
+        // ---------------------------------------------------------------------
+
+        // CONTACT FORM VALIDATION LISTENERS (ADDED HERE)
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.querySelectorAll('input, textarea').forEach(input => {
+                input.addEventListener('input', () => validateField(input));
+                input.addEventListener('blur', () => validateField(input));
+            });
+        }
+        // END CONTACT FORM VALIDATION LISTENERS
+        
+        // Initial setup
+        populateLanguageSelectors();
+        updateAccountStatus();
+        updateTranslateButtonState();
+        
+        // Apply saved settings
+        if (localStorage.getItem('darkMode') === 'true') {
+            toggleDarkMode(true);
+        }
+        if (localStorage.getItem('ttsVoice')) {
+            ttsVoice = localStorage.getItem('ttsVoice');
+            voiceSelect.value = ttsVoice;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeListeners);
+
+
+// --- CONTACT US VALIDATION & SUBMISSION LOGIC ---
+
+// 1. Validation Logic (Unchanged, relies on correct HTML 'name' and .form-group structure)
+function validateField(input) {
+    const errorSpan = input.closest('.form-group')?.querySelector('.error-message');
+    const inputName = input.name;    
+    let errorMessage = '';
+
+    
+            if (input.name === 'name') {
+                if (!input.value.trim()) {
+                    errorMessage = 'Enter your Name.';
+                } else if (!/^[a-zA-Z\s]+$/.test(input.value.trim())) {
+                    errorMessage = 'Please enter a valid name (letters and spaces only).';
+                }
+            } else if (input.name === 'email') {
+                if (!input.value.trim()) {
+                    errorMessage = 'Enter your Email ID.';
+                } else if (!/^\S+@\S+\.\S+$/.test(input.value.trim())) {
+                    errorMessage = 'Please enter a valid email address.';
+                }
+            } else if (input.name === 'phone') {
+                if (!input.value.trim()) {
+                    errorMessage = 'Enter your Phone number.';
+                } else if (input.value.length < 10 || isNaN(input.value) || input.value.length > 15) {    
+                    errorMessage = 'Please enter a valid phone number.';
+                }
+            } else if (input.name === 'message' && !input.value.trim()) {
+                errorMessage = 'Enter your Message here.';
+            }
+
+    if (errorSpan) {
+        if (errorMessage) {
+            input.classList.add('border-red-500'); // Tailwind error style
+            errorSpan.textContent = errorMessage;
+            errorSpan.classList.remove('hidden');
+            return false;
+        } else {
+            input.classList.remove('border-red-500');
+            errorSpan.classList.add('hidden');
+            return true;
+        }
+    }
+    return !errorMessage;    
+}
+
+// 2. Submission Handler (REWRITTEN for Apps Script AJAX POST)
+window.handleContactSubmit = async function(event) {
+    event.preventDefault();
+    const form = document.getElementById('contactForm');
+    const statusDiv = document.getElementById('status');    
+    const submitButton = document.getElementById('contactSubmitButton');
+    const scriptURL = form.action; // Get the Apps Script URL from the form's action attribute
+
+    if (!statusDiv) return;
+
+    let allValid = true;
+    form.querySelectorAll('input, textarea').forEach(input => {
+        // Run validation on all fields
+        if (!validateField(input)) {
+            allValid = false;
+        }
+    });
+
+    if (!allValid) {
+        statusDiv.innerHTML = "Please fix the errors above.";
+        statusDiv.className = 'p-3 rounded-lg text-red-500 bg-red-100 text-sm font-semibold block';
+        statusDiv.classList.remove('hidden');
+        return;
+    }
+
+    statusDiv.innerHTML = "Sending message...";
+    statusDiv.className = 'p-3 rounded-lg text-indigo-700 bg-indigo-100 text-sm font-semibold block';
+    statusDiv.classList.remove('hidden');
+    submitButton.disabled = true;
+
+    // Use FormData to correctly collect and format data for a POST request
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: formData // Sends the form data in the correct format
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // Your Apps Script returns JSON, so we parse it
+        const result = await response.json();
+
+        submitButton.disabled = false;
+        
+        if (result.result === 'success') {
+            statusDiv.innerHTML = "✅ Message sent successfully! We'll be in touch soon.";
+            statusDiv.className = 'p-3 rounded-lg text-green-700 bg-green-100 text-sm font-semibold block';
+            form.reset();
+        } else {
+            // Handle Apps Script logic error (e.g., sheet not found, internal script error)
+            statusDiv.innerHTML = `❌ Error: ${result.message || 'Script submission failed.'}`;
+            statusDiv.className = 'p-3 rounded-lg text-red-500 bg-red-100 text-sm font-semibold block';
+        }
+
+    } catch (error) {
+        console.error('Submission Error:', error);
+        submitButton.disabled = false;
+        statusDiv.innerHTML = `🚫 Network Error: Could not connect to the server.`;
+        statusDiv.className = 'p-3 rounded-lg text-red-500 bg-red-100 text-sm font-semibold block';
+    }
+
+    // Hide status message after a delay
+    setTimeout(() => { statusDiv.classList.add('hidden'); }, 10000);
+}
+
+// Disable right-click
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// Disable common developer shortcuts
+document.addEventListener('keydown', function(e) {
+    // F12
+    if (e.key === 'F12') {
+        e.preventDefault();
+    }
+
+    // Ctrl+Shift+I
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+        e.preventDefault();
+    }
+
+    // Ctrl+Shift+C
+    if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+        e.preventDefault();
+    }
+
+    // Ctrl+Shift+J
+    if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
+        e.preventDefault();
+    }
+
+    // Ctrl+U
+    if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+        e.preventDefault();
+    }
+});
+    document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+});
+
+</script>
+</body>
+</html>
