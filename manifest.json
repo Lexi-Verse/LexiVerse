@@ -1,0 +1,20 @@
+{
+  "name": "LexiVerse Translator",
+  "short_name": "LexiVerse",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "logotranslator.png",
+      "sizes": "409x408",
+      "type": "image/png"
+    },
+    {
+      "src": "logotranslator.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
