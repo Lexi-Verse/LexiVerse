@@ -960,183 +960,18 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
 
 <script type="module">
-    // Global constants
-    const apiKey = "AIzaSyB_FtXg_eei4d5TMwnbr_tj3wQnImoKOpk";
-    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-    // Removed const TTS_API_URL = `...`;
-    
-    // !!! IMPORTANT: REPLACED URLS TO MATCH LOGIC (AUTH/HISTORY is the main one) !!!
-    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbySBTZu6C07EXu-rRdIQalDgKX89e_WBL45F8SvyWc8sdgZCkDwuiyHTkhq0IqQJnvAdw/exec";   
-    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuXWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";   
+    // --- SECURE CONFIGURATION ---
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW
+    const PROXY_URL = "https://script.google.com/macros/s/AKfycbzfP5GLndntXHDLJfEAY0pgfBNmbGqOIttpFlwQvGXVKCQO0y7qrUr1iHLaqdmwislZTQ/exec"; 
 
-    // 🌟 PEXELS API CONFIGURATION 🌟
-    // 🛑 ACTION REQUIRED: REPLACE 'YOUR_PEXELS_API_KEY_HERE' WITH YOUR ACTUAL KEY 🛑
-    const PEXELS_API_KEY = 'Xr6Q356j546ODjGgS5JlsqD0tOGu03N4ClFTFirZUfezTAxsyVSA6hUZ';    
-    const PEXELS_URL = 'https://api.pexels.com/v1/search';
-
+    // AUTH & LOGGING URLS (KEPT UNCHANGED)
+    const AUTH_HISTORY_URL = "https://script.google.com/macros/s/AKfycbySBTZu6C07EXu-rRdIQalDgKX89e_WBL45F8SvyWc8sdgZCkDwuiyHTkhq0IqQJnvAdw/exec";    
+    const TRANSLATION_LOGGER_URL = "https://script.google.com/macros/s/AKfycbzT63NZk9nuXWTYR7B78hpKflG1wgLVeFrPM5AD6b9KfGgepgVutmdMy3PdPMB-5BkD/exec";    
 
     // Language data (unchanged)
     const languages = [
-{ name: "Abkhaz", value: "Abkhaz" },
-{ name: "Acehnese", value: "Acehnese" },
-{ name: "Acholi", value: "Acholi" },
-{ name: "Afar", value: "Afar" },
-{ name: "Afrikaans", value: "Afrikaans" },
-{ name: "Albanian", value: "Albanian" },
-{ name: "Alur", value: "Alur" },
-{ name: "Amharic", value: "Amharic" },
-{ name: "Arabic", value: "Arabic" },
-{ name: "Armenian", value: "Armenian" },
-{ name: "Assamese", value: "Assamese" },
-{ name: "Avar", value: "Avar" },
-{ name: "Awadhi", value: "Awadhi" },
-{ name: "Aymara", value: "Aymara" },
-{ name: "Azerbaijani", value: "Azerbaijani" },
-{ name: "Balinese", value: "Balinese" },
-{ name: "Baluchi", value: "Baluchi" },
-{ name: "Bambara", value: "Bambara" },
-{ name: "Baoulé", value: "Baoulé" },
-{ name: "Bashkir", value: "Bashkir" },
-{ name: "Basque", value: "Basque" },
-{ name: "Batak Karo", value: "Batak Karo" },
-{ name: "Batak Simalungun", value: "Batak Simalungun" },
-{ name: "Batak Toba", value: "Batak Toba" },
-{ name: "Belarusian", value: "Belarusian" },
-{ name: "Bemba", value: "Bemba" },
-{ name: "Bengali", value: "Bengali" },
-{ name: "Betawi", value: "Betawi" },
-{ name: "Bhojpuri", value: "Bhojpuri" },
-{ name: "Bikol", value: "Bikol" },
-{ name: "Bosnian", value: "Bosnian" },
-{ name: "Breton", value: "Breton" },
-{ name: "Bulgarian", value: "Bulgarian" },
-{ name: "Buryat", value: "Buryat" },
-{ name: "Cantonese", value: "Cantonese" },
-{ name: "Catalan", value: "Catalan" },
-{ name: "Cebuano", value: "Cebuano" },
-{ name: "Chamorro", value: "Chamorro" },
-{ name: "Chechen", value: "Chechen" },
-{ name: "Chewa", value: "Chewa" },
-{ name: "Chinese (Simplified)", value: "Chinese (Simplified)" },
-{ name: "Chinese (Traditional)", value: "Chinese (Traditional)" },
-{ name: "Chuukese", value: "Chuukese" },
-{ name: "Chuvash", value: "Chuvash" },
-{ name: "Corsican", value: "Corsican" },
-{ name: "Crimean Tatar (Cyrillic)", value: "Crimean Tatar (Cyrillic)" },
-{ name: "Crimean Tatar (Latin)", value: "Crimean Tatar (Latin)" },
-{ name: "Croatian", value: "Croatian" },
-{ name: "Czech", value: "Czech" },
-{ name: "Danish", value: "Danish" },
-{ name: "Dari", value: "Dari" },
-{ name: "Dhivehi", value: "Dhivehi" },
-{ name: "Dinka", value: "Dinka" },
-{ name: "Dogri", value: "Dogri" },
-{ name: "Dombe", value: "Dombe" },
-{ name: "Dutch", value: "Dutch" },
-{ name: "Dyula", value: "Dyula" },
-{ name: "Dzongkha", value: "Dzongkha" },
-{ name: "English", value: "English" },
-{ name: "Esperanto", value: "Esperanto" },
-{ name: "Estonian", value: "Estonian" },
-{ name: "Ewe", value: "Ewe" },
-{ name: "Faroese", value: "Faroese" },
-{ name: "Fijian", value: "Fijian" },
-{ name: "Filipino", value: "Filipino" },
-{ name: "Finnish", value: "Finnish" },
-{ name: "Fon", value: "Fon" },
-{ name: "French", value: "French" },
-{ name: "French (Canada)", value: "French (Canada)" },
-{ name: "Frisian", value: "Frisian" },
-{ name: "Friulian", value: "Friulian" },
-{ name: "Fulani", value: "Fulani" },
-{ name: "Ga", value: "Ga" },
-{ name: "Galician", value: "Galician" },
-{ name: "Georgian", value: "Georgian" },
-{ name: "German", value: "German" },
-{ name: "Greek", value: "Greek" },
-{ name: "Guarani", value: "Guarani" },
-{ name: "Gujarati", value: "Gujarati" },
-{ name: "Haitian Creole", value: "Haitian Creole" },
-{ name: "Hakha Chin", value: "Hakha Chin" },
-{ name: "Hausa", value: "Hausa" },
-{ name: "Hawaiian", value: "Hawaiian" },
-{ name: "Hebrew", value: "Hebrew" },
-{ name: "Hiligaynon", value: "Hiligaynon" },
-{ name: "Hindi", value: "Hindi" },
-{ name: "Hmong", value: "Hmong" },
-{ name: "Hungarian", value: "Hungarian" },
-{ name: "Hunsrik", value: "Hunsrik" },
-{ name: "Iban", value: "Iban" },
-{ name: "Icelandic", value: "Icelandic" },
-{ name: "Igbo", value: "Igbo" },
-{ name: "Ilocano", value: "Ilocano" },
-{ name: "Indonesian", value: "Indonesian" },
-{ name: "Inuktut (Latin)", value: "Inuktut (Latin)" },
-{ name: "Inuktut (Syllabics)", value: "Inuktut (Syllabics)" },
-{ name: "Irish", value: "Irish" },
-{ name: "Italian", value: "Italian" },
-{ name: "Japanese", value: "Japanese" },
-{ name: "Javanese", value: "Javanese" },
-{ name: "Kannada", value: "Kannada" },
-{ name: "Kazakh", value: "Kazakh" },
-{ name: "Khmer", value: "Khmer" },
-{ name: "Kinyarwanda", value: "Kinyarwanda" },
-{ name: "Konkani", value: "Konkani" },
-{ name: "Korean", value: "Korean" },
-{ name: "Kurdish (Kurmanji)", value: "Kurdish (Kurmanji)" },
-{ name: "Kurdish (Sorani)", value: "Kurdish (Sorani)" },
-{ name: "Lao", value: "Lao" },
-{ name: "Latvian", value: "Latvian" },
-{ name: "Lithuanian", value: "Lithuanian" },
-{ name: "Lombard", value: "Lombard" },
-{ name: "Malay", value: "Malay" },
-{ name: "Malayalam", value: "Malayalam" },
-{ name: "Maltese", value: "Maltese" },
-{ name: "Maori", value: "Maori" },
-{ name: "Marathi", value: "Marathi" },
-{ name: "Mongolian", value: "Mongolian" },
-{ name: "Nepali", value: "Nepali" },
-{ name: "Norwegian", value: "Norwegian" },
-{ name: "Odia (Oriya)", value: "Odia (Oriya)" },
-{ name: "Pashto", value: "Pashto" },
-{ name: "Persian", value: "Persian" },
-{ name: "Polish", value: "Polish" },
-{ name: "Portuguese", value: "Portuguese" },
-{ name: "Punjabi (Gurmukhi)", value: "Punjabi (Gurmukhi)" },
-{ name: "Punjabi (Shahmukhi)", value: "Punjabi (Shahmukhi)" },
-{ name: "Romanian", value: "Romanian" },
-{ name: "Russian", value: "Russian" },
-{ name: "Serbian", value: "Serbian" },
-{ name: "Sinhala", value: "Sinhala" },
-{ name: "Slovak", value: "Slovak" },
-{ name: "Slovenian", value: "Slovenian" },
-{ name: "Somali", value: "Somali" },
-{ name: "Spanish", value: "Spanish" },
-{ name: "Sundanese", value: "Sundanese" },
-{ name: "Swahili", value: "Swahili" },
-{ name: "Swedish", value: "Swedish" },
-{ name: "Tagalog (Filipino)", value: "Tagalog (Filipino)" },
-{ name: "Tamil", value: "Tamil" },
-{ name: "Tatar", value: "Tatar" },
-{ name: "Telugu", value: "Telugu" },
-{ name: "Thai", value: "Thai" },
-{ name: "Tibetan", value: "Tibetan" },
-{ name: "Tigrinya", value: "Tigrinya" },
-{ name: "Tswana", value: "Tswana" },
-{ name: "Turkish", value: "Turkish" },
-{ name: "Turkmen", value: "Turkmen" },
-{ name: "Ukrainian", value: "Ukrainian" },
-{ name: "Urdu", value: "Urdu" },
-{ name: "Uyghur", value: "Uyghur" },
-{ name: "Uzbek", value: "Uzbek" },
-{ name: "Vietnamese", value: "Vietnamese" },
-{ name: "Welsh", value: "Welsh" },
-{ name: "Xhosa", value: "Xhosa" },
-{ name: "Yiddish", value: "Yiddish" },
-{ name: "Yoruba", value: "Yoruba" },
-{ name: "Zulu", value: "Zulu" }
-];
-
+        { name: "Abkhaz", value: "Abkhaz" }, { name: "Acehnese", value: "Acehnese" }, { name: "Acholi", value: "Acholi" }, { name: "Afar", value: "Afar" }, { name: "Afrikaans", value: "Afrikaans" }, { name: "Albanian", value: "Albanian" }, { name: "Alur", value: "Alur" }, { name: "Amharic", value: "Amharic" }, { name: "Arabic", value: "Arabic" }, { name: "Armenian", value: "Armenian" }, { name: "Assamese", value: "Assamese" }, { name: "Avar", value: "Avar" }, { name: "Awadhi", value: "Awadhi" }, { name: "Aymara", value: "Aymara" }, { name: "Azerbaijani", value: "Azerbaijani" }, { name: "Balinese", value: "Balinese" }, { name: "Baluchi", value: "Baluchi" }, { name: "Bambara", value: "Bambara" }, { name: "Baoulé", value: "Baoulé" }, { name: "Bashkir", value: "Bashkir" }, { name: "Basque", value: "Basque" }, { name: "Batak Karo", value: "Batak Karo" }, { name: "Batak Simalungun", value: "Batak Simalungun" }, { name: "Batak Toba", value: "Batak Toba" }, { name: "Belarusian", value: "Belarusian" }, { name: "Bemba", value: "Bemba" }, { name: "Bengali", value: "Bengali" }, { name: "Betawi", value: "Betawi" }, { name: "Bhojpuri", value: "Bhojpuri" }, { name: "Bikol", value: "Bikol" }, { name: "Bosnian", value: "Bosnian" }, { name: "Breton", value: "Breton" }, { name: "Bulgarian", value: "Bulgarian" }, { name: "Buryat", value: "Buryat" }, { name: "Cantonese", value: "Cantonese" }, { name: "Catalan", value: "Catalan" }, { name: "Cebuano", value: "Cebuano" }, { name: "Chamorro", value: "Chamorro" }, { name: "Chechen", value: "Chechen" }, { name: "Chewa", value: "Chewa" }, { name: "Chinese (Simplified)", value: "Chinese (Simplified)" }, { name: "Chinese (Traditional)", value: "Chinese (Traditional)" }, { name: "Chuukese", value: "Chuukese" }, { name: "Chuvash", value: "Chuvash" }, { name: "Corsican", value: "Corsican" }, { name: "Crimean Tatar (Cyrillic)", value: "Crimean Tatar (Cyrillic)" }, { name: "Crimean Tatar (Latin)", value: "Crimean Tatar (Latin)" }, { name: "Croatian", value: "Croatian" }, { name: "Czech", value: "Czech" }, { name: "Danish", value: "Danish" }, { name: "Dari", value: "Dari" }, { name: "Dhivehi", value: "Dhivehi" }, { name: "Dinka", value: "Dinka" }, { name: "Dogri", value: "Dogri" }, { name: "Dombe", value: "Dombe" }, { name: "Dutch", value: "Dutch" }, { name: "Dyula", value: "Dyula" }, { name: "Dzongkha", value: "Dzongkha" }, { name: "English", value: "English" }, { name: "Esperanto", value: "Esperanto" }, { name: "Estonian", value: "Estonian" }, { name: "Ewe", value: "Ewe" }, { name: "Faroese", value: "Faroese" }, { name: "Fijian", value: "Fijian" }, { name: "Filipino", value: "Filipino" }, { name: "Finnish", value: "Finnish" }, { name: "Fon", value: "Fon" }, { name: "French", value: "French" }, { name: "French (Canada)", value: "French (Canada)" }, { name: "Frisian", value: "Frisian" }, { name: "Friulian", value: "Friulian" }, { name: "Fulani", value: "Fulani" }, { name: "Ga", value: "Ga" }, { name: "Galician", value: "Galician" }, { name: "Georgian", value: "Georgian" }, { name: "German", value: "German" }, { name: "Greek", value: "Greek" }, { name: "Guarani", value: "Guarani" }, { name: "Gujarati", value: "Gujarati" }, { name: "Haitian Creole", value: "Haitian Creole" }, { name: "Hakha Chin", value: "Hakha Chin" }, { name: "Hausa", value: "Hausa" }, { name: "Hawaiian", value: "Hawaiian" }, { name: "Hebrew", value: "Hebrew" }, { name: "Hiligaynon", value: "Hiligaynon" }, { name: "Hindi", value: "Hindi" }, { name: "Hmong", value: "Hmong" }, { name: "Hungarian", value: "Hungarian" }, { name: "Hunsrik", value: "Hunsrik" }, { name: "Iban", value: "Iban" }, { name: "Icelandic", value: "Icelandic" }, { name: "Igbo", value: "Igbo" }, { name: "Ilocano", value: "Ilocano" }, { name: "Indonesian", value: "Indonesian" }, { name: "Inuktut (Latin)", value: "Inuktut (Latin)" }, { name: "Inuktut (Syllabics)", value: "Inuktut (Syllabics)" }, { name: "Irish", value: "Irish" }, { name: "Italian", value: "Italian" }, { name: "Japanese", value: "Japanese" }, { name: "Javanese", value: "Javanese" }, { name: "Kannada", value: "Kannada" }, { name: "Kazakh", value: "Kazakh" }, { name: "Khmer", value: "Khmer" }, { name: "Kinyarwanda", value: "Kinyarwanda" }, { name: "Konkani", value: "Konkani" }, { name: "Korean", value: "Korean" }, { name: "Kurdish (Kurmanji)", value: "Kurdish (Kurmanji)" }, { name: "Kurdish (Sorani)", value: "Kurdish (Sorani)" }, { name: "Lao", value: "Lao" }, { name: "Latvian", value: "Latvian" }, { name: "Lithuanian", value: "Lithuanian" }, { name: "Lombard", value: "Lombard" }, { name: "Malay", value: "Malay" }, { name: "Malayalam", value: "Malayalam" }, { name: "Maltese", value: "Maltese" }, { name: "Maori", value: "Maori" }, { name: "Marathi", value: "Marathi" }, { name: "Mongolian", value: "Mongolian" }, { name: "Nepali", value: "Nepali" }, { name: "Norwegian", value: "Norwegian" }, { name: "Odia (Oriya)", value: "Odia (Oriya)" }, { name: "Pashto", value: "Pashto" }, { name: "Persian", value: "Persian" }, { name: "Polish", value: "Polish" }, { name: "Portuguese", value: "Portuguese" }, { name: "Punjabi (Gurmukhi)", value: "Punjabi (Gurmukhi)" }, { name: "Punjabi (Shahmukhi)", value: "Punjabi (Shahmukhi)" }, { name: "Romanian", value: "Romanian" }, { name: "Russian", value: "Russian" }, { name: "Serbian", value: "Serbian" }, { name: "Sinhala", value: "Sinhala" }, { name: "Slovak", value: "Slovak" }, { name: "Slovenian", value: "Slovenian" }, { name: "Somali", value: "Somali" }, { name: "Spanish", value: "Spanish" }, { name: "Sundanese", value: "Sundanese" }, { name: "Swahili", value: "Swahili" }, { name: "Swedish", value: "Swedish" }, { name: "Tagalog (Filipino)", value: "Tagalog (Filipino)" }, { name: "Tamil", value: "Tamil" }, { name: "Tatar", value: "Tatar" }, { name: "Telugu", value: "Telugu" }, { name: "Thai", value: "Thai" }, { name: "Tibetan", value: "Tibetan" }, { name: "Tigrinya", value: "Tigrinya" }, { name: "Tswana", value: "Tswana" }, { name: "Turkish", value: "Turkish" }, { name: "Turkmen", value: "Turkmen" }, { name: "Ukrainian", value: "Ukrainian" }, { name: "Urdu", value: "Urdu" }, { name: "Uyghur", value: "Uyghur" }, { name: "Uzbek", value: "Uzbek" }, { name: "Vietnamese", value: "Vietnamese" }, { name: "Welsh", value: "Welsh" }, { name: "Xhosa", value: "Xhosa" }, { name: "Yiddish", value: "Yiddish" }, { name: "Yoruba", value: "Yoruba" }, { name: "Zulu", value: "Zulu" }
+    ];
 
     // DOM elements
     const body = document.body;
@@ -1148,7 +983,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     const labelB = document.getElementById('labelB');
     const definitionContent = document.getElementById('definitionContent');
     const similarWordsContent = document.getElementById('similarWordsContent');
-    // 🌟 ADDED: New DOM element for image results
     const imageResults = document.getElementById('imageResults');    
     const authContainer = document.getElementById('authContainer');
     const authMessage = document.getElementById('authMessage');
@@ -1167,7 +1001,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     const sidebar = document.getElementById('sidebar');
     const sidebarBackdrop = document.getElementById('sidebar-backdrop');
     const translateButton = document.getElementById('translateButton');
-
 
     // State variables
     let audioPlayer = null;    
@@ -1222,7 +1055,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }, 300);
     }
     
-    // --- NEW: Function to load all available browser voices into the select menu ---
+    // --- Function to load all available browser voices into the select menu ---
     function loadAvailableVoices() {
         const voiceSelect = document.getElementById('voiceSelect');
         
@@ -1262,7 +1095,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     }
     // Call once immediately in case voices are already loaded
     loadAvailableVoices();
-    // --- END: loadAvailableVoices ---
 
 
     // --- Core Fix: Language Selector Population and Update ---
@@ -1313,7 +1145,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     }
 
 
-    // --- Auth & Modal Functions (FIXED GLOBAL ACCESS) ---
+    // --- Auth & Modal Functions ---
     
     // NEW: Function to close modal if backdrop (but not content) is clicked
     window.closeModalOnBackdrop = function(event, modalId) {
@@ -1322,7 +1154,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }
     }
 
-    // FIX 1: Made globally accessible via window
     window.renderAuthView = function(view) {
         authMessage.textContent = '';
         
@@ -1406,35 +1237,26 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     }
 
     window.openAccountModal = function() {
-        // Render the view *before* opening the modal
         window.renderAuthView(currentUser ? 'status' : 'login');    
         document.getElementById('accountModal').classList.remove('hidden');
     }
 
-    // FIX 3: Ensures closeModal is always available for inline HTML buttons
     window.closeModal = function(modalId) {
         document.getElementById(modalId).classList.add('hidden');
-        // Re-render auth view in case user just signed up/in/out, preparing for next open
         window.renderAuthView(currentUser ? 'status' : 'login');    
     }
     
     function updateAccountStatus() {
       if (currentUser) {
-          // 1. Determine the display name: Use the full name if available,  
-          //    otherwise fall back to the part of the email before '@'.
           const displayName = currentUser.name  
-                                 ? currentUser.name.split(' ')[0] // Display only the first name (optional)
-                                 : currentUser.email.split('@')[0];
+                                     ? currentUser.name.split(' ')[0] 
+                                     : currentUser.email.split('@')[0];
           
-          // 2. Update the account status element
           accountStatus.textContent = `Logged in (${displayName})`;
-          
-          // 3. Apply success styling
           accountStatus.classList.add('text-green-600');
           accountStatus.classList.remove('text-gray-600');
           
       } else {
-          // User is logged out (Original logic)
           accountStatus.textContent = 'Account';
           accountStatus.classList.remove('text-green-600');
           accountStatus.classList.add('text-gray-600');
@@ -1444,7 +1266,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     // --- Auth Logic (Updated to use server-side endpoints for logging) ---
 
     async function sendAuthRequest(action, data) {
-        // The AUTH_HISTORY_URL handles login, signup, and getHistory actions
         if (!AUTH_HISTORY_URL || AUTH_HISTORY_URL.includes("YOUR_AUTH_HISTORY_APPSCRIPT_URL_HERE")) {
             authMessage.textContent = "Error: AUTH_HISTORY_URL is not configured.";
             return { success: false };
@@ -1501,12 +1322,11 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             updateAccountStatus();
             closeModal('accountModal');
-            // Use custom toast on success
             showCustomToast(`Welcome, ${name}! You are now logged in.`, 'success');    
             
         } else {
             const errorMessage = result.message || "Sign up failed.";
-            authMessage.textContent = errorMessage; // Keep error in modal
+            authMessage.textContent = errorMessage; 
             showCustomToast("Signup Failed: " + errorMessage, 'error', 5000);    
         }
     }
@@ -1523,12 +1343,11 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             updateAccountStatus();
             closeModal('accountModal');
-            // Use custom toast on success
             showCustomToast(`Welcome back, ${result.user.name || 'User'}!`, 'success');
 
         } else {
             const errorMessage = result.message || "Login failed. Check your email and password.";
-            authMessage.textContent = errorMessage; // Keep error in modal
+            authMessage.textContent = errorMessage;
             showCustomToast("Login Failed. Check credentials.", 'error', 5000);
         }
     }
@@ -1538,18 +1357,17 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         localStorage.removeItem('currentUser');
         updateAccountStatus();
         closeModal('accountModal');
-        // Use custom toast on success
         showCustomToast("You have been logged out.", 'logout');
     }
+
     // --- Custom Toast Notification Handler ---
 
     function showCustomToast(message, type, duration = 4000) {
         const toast = document.getElementById('statusToast');
         const toastMessage = document.getElementById('toastMessage');
         const toastIcon = document.getElementById('toastIcon');
-        if (!toast || !toastMessage || !toastIcon) return; // Safety check
+        if (!toast || !toastMessage || !toastIcon) return; 
 
-        // 1. Reset all animation/type classes
         toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-2xl z-[1000] min-w-[300px] text-center opacity-0 transition-all duration-300 pointer-events-none';
         toastIcon.innerHTML = '';
         
@@ -1558,10 +1376,10 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
         if (type === 'success') {
             typeClass = 'toast-success';
-            iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; // Checkmark
+            iconHtml = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'; 
         } else if (type === 'logout') {
             typeClass = 'toast-logout';
-            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>'; // Door Exit
+            iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>';
         } else if (type === 'error') {
             typeClass = 'toast-error';
             iconHtml = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
@@ -1570,20 +1388,16 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         toastMessage.textContent = message;
         toastIcon.innerHTML = iconHtml;
         
-        // 2. Apply new type classes and trigger the visible animation
         toast.classList.add(typeClass, 'toast-visible');
 
-        // 3. Hide after duration
         setTimeout(() => {
-            // Reverse the animation (by removing the visible class)
             toast.classList.remove('toast-visible');    
             toast.classList.add('opacity-0');
             
-            // Ensure it's fully off-screen/non-interactive after transition
             setTimeout(() => {
                 toast.classList.remove(typeClass);
                 toast.classList.add('pointer-events-none');
-            }, 500); // Wait for the transition duration
+            }, 500); 
         }, duration);
     }
 
@@ -1596,10 +1410,8 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             const history = JSON.parse(localStorage.getItem(historyKey)) || [];
              return history.map(item => ({
                 ...item,
-                // Add default values for fields not saved by old localStorage logic
                 definition: item.definition || 'No definition logged.',
                 similarWords: item.similarWords || 'No similar words logged.',
-                // Ensure timestamp is an ISO 8601 string for reliable sorting/filtering
                 timestamp: new Date(item.timestamp).toISOString(), 
             }));
         } catch (e) {
@@ -1607,16 +1419,13 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             return [];
         }
     }
-
-    // Old saveToHistory kept for local history  
+ 
     function saveToHistory(sourceText, targetText, translation) {
         if (sourceText.length === 0 || translation.length === 0) return;
 
-        // Assuming langA and langB are globally defined select elements
         const sourceLangText = langA.options[langA.selectedIndex].text;
         const targetLangText = langB.options[langB.selectedIndex].text;
 
-        // Fetch existing history and map timestamps back to local string for storage compatibility
         const history = getHistory().map(item => ({
             ...item,    
             timestamp: new Date(item.timestamp).toLocaleString()
@@ -1627,7 +1436,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             target: translation,
             sourceLang: sourceLangText,
             targetLang: targetLangText,
-            timestamp: new Date().toLocaleString(), // Use local string for storage
+            timestamp: new Date().toLocaleString(), 
             definition: 'No definition logged.', 
             similarWords: 'No similar words logged.' 
         };
@@ -1646,41 +1455,32 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }
     }
 
-    // NEW: Function to open the custom confirmation modal
     window.openClearHistoryConfirm = function() {
         document.getElementById('clearHistoryConfirmModal')?.classList.remove('hidden');
     }
 
-    // ✅ FIXED: Function executed after user confirms deletion (Clears Local Storage only)  
     window.clearHistoryConfirmed = function() {
-        // 1. Close the confirmation modal (Assuming closeModal function is globally available)
         if (typeof closeModal === 'function') {
             closeModal('clearHistoryConfirmModal');
         } else {
             document.getElementById('clearHistoryConfirmModal')?.classList.add('hidden');
         }
 
-        // 2. Determine the history key (using the global currentUser object)
         const historyKey = currentUser ? `lexiverseHistory_${currentUser.email}` : 'lexiverseHistory_guest';
         
-        // 3. Clear Local Storage
         localStorage.removeItem(historyKey);
         
-        // 4. Clear the client-side data
         currentHistoryData = [];
         originalHistoryData = [];
 
-        // 5. Hide the Clear History button in the history modal
         const clearHistoryButton = document.getElementById('clearHistoryButton');
         if (clearHistoryButton) {
             clearHistoryButton.classList.add('hidden');
         }
 
-        // 6. Re-render history list to show it's empty
         openHistoryModal(); 
     }
 
-    // --- FIX 2 & 3: Read More Toggle Functionality for all fields ---
     window.toggleReadMore = function(toggleId) {
         const hiddenContent = document.getElementById(`hidden-content-${toggleId}`);
         const toggleButton = document.getElementById(`read-more-btn-${toggleId}`);
@@ -1700,30 +1500,15 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }
     }
 
-    // --- Filtering/Sorting Helpers ---
-
-    /**
-     * Calculates if a given date is older than 2 days (i.e., 3 or more days ago).
-     * @param {string} isoTimestamp - The ISO 8601 timestamp string from the history item.
-     * @returns {boolean} True if the item is 3 or more days old.
-     */
     function isOlderThanTwoDays(isoTimestamp) {
         const entryDate = new Date(isoTimestamp);
         const now = new Date();
-        
-        // Convert 2 days to milliseconds  
         const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-        
-        // Calculate difference (entryDate will be smaller/older, so diff is positive)
         const diffTime = now.getTime() - entryDate.getTime();
-
-        // If the difference is greater than or equal to 2 days
         return diffTime >= twoDaysInMs;
     }
 
-    // --- HISTORY RENDERING FUNCTION ---
     function renderHistoryList(historyArray) {
-        // Assuming historyListContainer is available globally
         const historyListContainer = document.getElementById('historyListContainer');
         if (!historyListContainer) return;
 
@@ -1738,7 +1523,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             const entryId = `hist-${index}`;
             const MAX_LENGTH = 200;
             
-            // --- Unified Truncation/Render Helper ---
             const renderFieldWithReadMore = (field, label, buttonPrefix, initialContainerClass = '') => {
                 const fullText = item[field] || 'No ' + field.toLowerCase().replace(/words$/, ' word') + ' logged.';
                 const needsReadMore = fullText.length > MAX_LENGTH && !fullText.includes('No ' + field.toLowerCase().replace(/words$/, ' word'));
@@ -1766,11 +1550,9 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                 `;
             };
 
-            // --- Construct the History Entry ---
             const entryDiv = document.createElement('div');
             entryDiv.className = 'p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition duration-150 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600';
             
-            // Display timestamp in local format
             const displayTimestamp = new Date(item.timestamp).toLocaleString(); 
 
             const sourceBaseHtml = renderFieldWithReadMore('source', 'Source', 'source-', 'font-bold text-gray-800 dark:text-gray-100');
@@ -1803,9 +1585,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         });
     }
 
-    /**
-     * Creates the buttons container and injects the sorting and clear buttons.
-     */
     function setupHistoryButtons() {
         let buttonContainer = document.getElementById('historySortButtons');
         if (buttonContainer) {
@@ -1839,7 +1618,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         buttonContainer.appendChild(clearBtn);
 
 
-        // Inject the container right before historyStatus
         const historyStatus = document.getElementById('historyStatus');
         if (historyStatus) {
             historyStatus.parentNode.insertBefore(buttonContainer, historyStatus);
@@ -1847,11 +1625,9 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     }
 
 
-    // Client-side sorting/filtering function
     window.sortHistory = function(sortType) {
         const historySortButtons = document.getElementById('historySortButtons');
         if (historySortButtons) {
-            // Remove active class from all sorting buttons
             historySortButtons.querySelectorAll('button').forEach(btn => {
                 if (!btn.id.includes('clear')) {
                     btn.classList.remove('bg-indigo-600', 'text-white');
@@ -1864,30 +1640,23 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         let buttonId;
 
         if (sortType === 'newest') {
-            // Filter: Keep entries NOT older than 2 days (i.e., today or yesterday)
             filteredHistory = originalHistoryData
                 .filter(item => !isOlderThanTwoDays(item.timestamp))
-                // Sort: Show newest first
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
             buttonId = 'sort-newest';
 
         } else if (sortType === 'older') {
-            // Filter: Keep entries that ARE older than 2 days (i.e., 3 or more days old)
             filteredHistory = originalHistoryData
                 .filter(item => isOlderThanTwoDays(item.timestamp))
-                // Sort: Show newest first, even within the 'older' group
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
             buttonId = 'sort-older';
             
-        } else { // 'all' or default
-            // Filter: Show all entries
+        } else { 
             filteredHistory = [...originalHistoryData];
-            // Sort: Show newest first (default order)
             filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             buttonId = 'sort-all';
         }
         
-        // Add active class to the current button
         const activeBtn = document.getElementById(buttonId);
         if (activeBtn) {
             activeBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-indigo-100');
@@ -1898,13 +1667,9 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         renderHistoryList(currentHistoryData); 
     }
 
-
-    // --- HISTORY RETRIEVAL FUNCTION ---
     window.openHistoryModal = async function() {
-        // 1. Setup/Inject Buttons
         setupHistoryButtons();
         
-        // Assuming these are globally available elements
         const historyListContainer = document.getElementById('historyListContainer');
         const clearHistoryButton = document.getElementById('clearHistoryButton');
         const historyStatus = document.getElementById('historyStatus');
@@ -1946,10 +1711,8 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         originalHistoryData = history; 
         currentHistoryData = history; 
 
-        // Show/Hide Clear History button
         clearHistoryButton.classList.toggle('hidden', originalHistoryData.length === 0);
 
-        // Initial render: Default to 'All History' view (Newest first)
         window.sortHistory('all'); 
     }
 
@@ -1977,8 +1740,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         inputTextB.value = tempText;
         
         updateLabels();
-
-        // Re-run translation only if a manual button press is required
         updateTranslateButtonState();   
     }
 
@@ -1996,14 +1757,12 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
         definitionContent.innerHTML = 'Definition for your source text will appear here.';
         similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-        // 🌟 ADDED: Clear image results on clear 🌟
         imageResults.innerHTML = 'Images related to your source text will appear here after translation.';    
         speakButtonA.disabled = true;
         speakButtonB.disabled = true;
         speakButtonDef.disabled = true;
         speakButtonSimilarWords.disabled = true;
         
-        // Hide all stop buttons when clearing text
         document.getElementById('stopButtonA').disabled = true;
         document.getElementById('stopButtonA').classList.add('opacity-0');
         document.getElementById('stopButtonB').disabled = true;
@@ -2024,7 +1783,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     }
     
     function setLoading(isLoading, targetBox) {
-        // NEW: Added translateButton to loading state check
         translateButton.disabled = isLoading || (inputTextA.value.trim().length === 0 && inputTextB.value.trim().length === 0);
 
         const loadingHTML = `
@@ -2044,22 +1802,18 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             if (isLoading) {
                 definitionContent.innerHTML = loadingHTML;
                 similarWordsContent.innerHTML = loadingHTML;
-                // 🌟 ADDED: Image results loading state
                 imageResults.innerHTML = loadingHTML;
             } else if (definitionContent.querySelector('.loading-container')) {
                 definitionContent.innerHTML = 'Definition for your source text will appear here.';
                 similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-                // 🌟 ADDED: Image results initial state
                 imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
             }
             definitionContent.classList.toggle('opacity-50', isLoading);
             similarWordsContent.classList.toggle('opacity-50', isLoading);
-            // 🌟 ADDED: Image results opacity control
             imageResults.classList.toggle('opacity-50', isLoading);
         }
     }
 
-   // --- Updated formatSynonyms function for robustness ---
     function formatSynonyms(synonymsText) {
         if (!synonymsText || synonymsText.toLowerCase() === 'n/a' || synonymsText.trim() === '') {
             speakButtonSimilarWords.disabled = true;
@@ -2068,36 +1822,25 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         speakButtonSimilarWords.disabled = false;
 
         return synonymsText.split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0)
-            .map(s => {
-                // Use 'inline-block' to ensure correct box modeling for wrapping
-                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
-                             ${s}
+            .map(s => s.trim())
+            .filter(s => s.length > 0)
+            .map(s => {
+                return `<span class="inline-block bg-green-100 text-green-800 text-sm font-medium m-1 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 transition duration-150 ease-in-out">
+                            ${s}
                          </span>`;
-            })
-            .join(''); // <--- Changed to join with NO delimiter to avoid external spacing issues
-    }
+            })
+            .join(''); 
+    }
 
     function formatDefinition(text) {
-    if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
+        if (!text || text.toLowerCase() === 'n/a') return "No definition found.";
+        let formattedText = text.replace(/\\n/g, '<br>');
+        formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        formattedText = formattedText.replace(/\*(.*?)\:/g, '<strong>$1:</strong>');
+        formattedText = formattedText.replace(/\*/g, '');
+        return formattedText;
+    }
     
-    // 1. Convert NEWLINES (\n or \\n) to HTML line breaks (<br>).
-    let formattedText = text.replace(/\\n/g, '<br>');
-    
-    // 2. Convert DOUBLE ASTERISKS (**text**) to HTML strong tags.
-    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // 3. Convert SINGLE ASTERISKS followed by colon (*Text:*) to bold headers (<strong>).
-    formattedText = formattedText.replace(/\*(.*?)\:/g, '<strong>$1:</strong>');
-    
-    // 4. NEW STEP: Remove any remaining single leading asterisks that are NOT followed by a colon.
-    // This is often needed if the API output includes asterisks as bullet points or simple markers.
-    // We target only the asterisk character itself and replace it with nothing.
-    formattedText = formattedText.replace(/\*/g, '');
-    
-    return formattedText;
-}
     function stripHtml(html) {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
@@ -2105,31 +1848,23 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
     // --- TTS CONTROL LOGIC ---
 
-    // New helper to reset the Speak/Stop button states
     function resetSpeechState(button, stopButton, textAvailable) {
-        // Re-enable Speak button based on text content
         button.disabled = !textAvailable; 
         button.classList.remove('loading');
 
-        // Hide and disable Stop button
         if (stopButton) {
             stopButton.disabled = true;
             stopButton.classList.add('opacity-0');
         }
     }
 
-    // Global Stop function
     window.stopSpeech = function() {
         if (nativeSynth.speaking) {
             nativeSynth.cancel();
-            // Note: cancel() automatically triggers the utterance's onend event, 
-            // which handles the visual reset via the handleSpeak logic below.
         }
-        // Fallback reset for immediate visual change
         document.querySelectorAll('.speak-btn').forEach(btn => btn.classList.remove('loading'));
         document.querySelectorAll('.stop-btn').forEach(btn => { btn.disabled = true; btn.classList.add('opacity-0'); });
     };
-
 
     window.handleSpeakSimilarWord = function(word, buttonElement) {
         buttonElement.classList.add('loading');
@@ -2140,7 +1875,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     window.speakAllSimilarWords = function() {
         const words = similarWordsContent.textContent.trim().replace('Synonyms for your source text will appear here.', '');
         if (!words) return;
-        handleSpeak(words, 'SimilarWords'); // Use 'SimilarWords' as speakerId to target the right stop button
+        handleSpeak(words, 'SimilarWords'); 
     }
     
     window.speakDefinition = function() {
@@ -2155,9 +1890,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         handleSpeak(textToSpeak, boxId);
     }
 
-    // REPLACED: Original async handleSpeak (Gemini TTS API) with new native version
     window.handleSpeak = function(textToSpeak, speakerId, buttonElement) {
-        // 1. Check for browser support
         if (!('speechSynthesis' in window)) {
             console.error("Browser does not support the Web Speech API.");
             return;
@@ -2166,43 +1899,33 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         const buttonMap = { 'A': speakButtonA, 'B': speakButtonB, 'Def': speakButtonDef, 'SimilarWords': speakButtonSimilarWords };
         const button = buttonElement || buttonMap[speakerId];
         
-        // Find the corresponding STOP button (using ID mapping based on speakerId)
         const stopButton = document.getElementById(`stopButton${speakerId}`);
         
         if (!textToSpeak.trim() || !button) return;
 
-        // 2. Stop any previous speech
         if (nativeSynth.speaking) {
             nativeSynth.cancel();
         }
         
-        // 3. Setup the Utterance
         const utterance = new SpeechSynthesisUtterance(textToSpeak);
         
-        // Find and set the preferred voice based on the currently selected option's value
         const currentVoiceName = document.getElementById('voiceSelect').value;
         const voices = nativeSynth.getVoices();
         
-        // Find the voice object corresponding to the selected name
         const selectedVoice = voices.find(v => v.name === currentVoiceName);
         
         if (selectedVoice) {
             utterance.voice = selectedVoice;
         }  
         
-        // 4. Set event handlers for button disabling/reenabling
-        
-        // STARTING STATE: Disable Speak, Enable Stop, Show Loading/Pulse
         button.disabled = true;
         button.classList.add('loading');
         if (stopButton) {
             stopButton.disabled = false;
-            stopButton.classList.remove('opacity-0'); // MAKE STOP BUTTON APPEAR
+            stopButton.classList.remove('opacity-0'); 
         }
 
-        // END/ERROR STATE: Reset buttons
         const resetHandler = () => {
-             // Pass true if there is text in the box to re-enable the speak button
              const textAvailable = !!textToSpeak.trim(); 
              resetSpeechState(button, stopButton, textAvailable);
         };
@@ -2210,145 +1933,116 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         utterance.onend = resetHandler;
         utterance.onerror = resetHandler;
 
-        // 5. Speak the text
         nativeSynth.speak(utterance);
     }
 
 
-    // ----------------------------------------------------------------------------------
-    // 🌟 NEW: PEXELS IMAGE SEARCH FUNCTION 🌟
-    // ----------------------------------------------------------------------------------
+    // --- PEXELS IMAGE SEARCH (SECURE PROXY VERSION) ---
     async function fetchPexelsImages(query) {
-        if (!PEXELS_API_KEY || PEXELS_API_KEY === 'YOUR_PEXELS_API_KEY_HERE') {
-            imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">Pexels API Key is not configured.</p>`;
-            return;
-        }
-        
         if (query.length < 2) {
             imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">Enter more text to search for images.</p>`;
             return;
         }
 
-        imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Pexels...</div>';
-
-        const url = new URL(PEXELS_URL);
-        url.searchParams.append('query', query);
-        url.searchParams.append('per_page', 8);    
-        url.searchParams.append('orientation', 'square');    
+        imageResults.innerHTML = '<div class="flex items-center text-indigo-600 dark:text-indigo-400"><svg class="svg-spinner w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching Images...</div>';
 
         try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': PEXELS_API_KEY,
-                    'Content-Type': 'application/json'
-                }
+            const response = await fetch(PROXY_URL, {
+                method: 'POST',
+                // Using text/plain prevents OPTIONS preflight issues with GAS
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                body: JSON.stringify({
+                    action: 'images',
+                    query: query
+                })
             });
-            
+
             const data = await response.json();
 
-            if (response.status !== 200) {
-                imageResults.innerHTML = `<p style="color: red;" class="dark:text-red-400">API Error: Could not fetch images (Status: ${response.status}).</p>`;
-                return;
-            }
-
             if (data.photos && data.photos.length > 0) {
-                imageResults.innerHTML = ''; // Clear the "Searching..." text
+                imageResults.innerHTML = ''; 
                 
-                // Add a wrapper for better grid/flex layout (assuming your CSS handles this for the imageResults div)
                 const imageWrapper = document.createElement('div');
-                imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; // Adjust classes as needed for your layout
+                imageWrapper.className = 'flex flex-wrap gap-2 justify-start'; 
 
                 data.photos.forEach(photo => {
                     const img = document.createElement('img');
-                    // Use 'small' source for a good balance of size/speed
                     img.src = photo.src.small;    
                     img.alt = photo.alt || 'Pexels Photo';
-                    
-                    // Basic styling for images
                     img.className = 'w-[100px] h-[100px] object-cover rounded-md shadow-md transition transform hover:scale-105 cursor-pointer';
-                    img.onclick = () => window.open(photo.url, '_blank'); // Open the Pexels link in a new tab
-
+                    img.onclick = () => window.open(photo.url, '_blank'); 
                     imageWrapper.appendChild(img);
                 });
                  imageResults.appendChild(imageWrapper);
 
             } else {
-                imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">No images found on Pexels for "${query}".</p>`;
+                imageResults.innerHTML = `<p class="text-gray-500 dark:text-gray-400">No images found.</p>`;
             }
 
         } catch (error) {
-            console.error('Network or Fetch Error:', error);
-            imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">A network error occurred while connecting to Pexels.</p>';
+            console.error('Proxy Error:', error);
+            imageResults.innerHTML = '<p style="color: red;" class="dark:text-red-400">Error loading images.</p>';
         }
     }
 
 
-    // --- Core Translation Logic ---
+    // --- TRANSLATION LOGIC (SECURE PROXY VERSION) ---
     async function getTranslationAndDefinition(text, fromLang, toLang) {
-                const systemPrompt = "You are an expert, multilingual translator and dictionary. I will provide text, a source language, and a target language. You MUST provide three distinct pieces of information in this exact format:\n\n1.  The translation: [TRANSLATION]...translated text...[/TRANSLATION]\n\n2.  A concise dictionary definition of the *original* source text (in its *original* language), including part of speech and an example sentence. Use simple markdown like **bold** text and newline characters(\\n): [DEFINITION]...definition text...[/DEFINITION]\n\n3.  A list of similar words (synonyms) for the *original* source text (in its *original* language), separated by commas: [SYNONYMS]...synonym 1, synonym 2, synonym 3...[/SYNONYMS]\n\nIf the text is a full sentence, the definition part can provide a brief grammatical breakdown. If no definition or synonyms are found, use 'N/A' inside the tag.";
-                const userQuery = `Process this text: "${text}". Source: ${fromLang}. Target: ${toLang}.`;
+        try {
+            const response = await fetch(PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'translate',
+                    text: text,
+                    sourceLang: fromLang,
+                    targetLang: toLang
+                })
+            });
 
-                const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+
+            clearSources();
+            const groundingMetadata = candidate?.groundingMetadata;
+            if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                const sources = groundingMetadata.groundingAttributions
+                    .map(attr => attr.web)
+                    .filter(web => web?.uri && web?.title);
+
+                if (sources.length > 0) {
+                    sourcesDiv.classList.remove('hidden');
+                    sources.forEach(source => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline transition duration-150 ease-in-out">${source.title}</a>`;
+                        sourceList.appendChild(li);
+                    });
+                }
+            }
+
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                const rawText = candidate.content.parts[0].text;
+                
+                const translationMatch = rawText.match(/\[TRANSLATION\]([\s\S]*?)\[\/TRANSLATION\]/);
+                const definitionMatch = rawText.match(/\[DEFINITION\]([\s\S]*?)\[\/DEFINITION\]/);
+                const synonymsMatch = rawText.match(/\[SYNONYMS\]([\s\S]*?)\[\/SYNONYMS\]/);
+
+                return { 
+                    translation: translationMatch ? translationMatch[1].trim() : "Translation not found.", 
+                    definition: definitionMatch ? definitionMatch[1].trim() : "Definition not found.", 
+                    synonyms: synonymsMatch ? synonymsMatch[1].trim() : 'N/A' 
                 };
-            
-                try {
-                const response = await fetch(GEMINI_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+            } else {
+                return { translation: "Error: No content.", definition: "Error: No content.", synonyms: 'N/A' };
+            }
 
-                if (!response.ok) throw new Error(`API returned status ${response.status}`);
-
-                const result = await response.json();
-                const candidate = result.candidates?.[0];
-
-                clearSources();
-                const groundingMetadata = candidate?.groundingMetadata;
-                if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                    const sources = groundingMetadata.groundingAttributions
-                        .map(attr => attr.web)
-                        .filter(web => web?.uri && web?.title);
-
-                    if (sources.length > 0) {
-                        sourcesDiv.classList.remove('hidden');
-                        sources.forEach(source => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline transition duration-150 ease-in-out">${source.title}</a>`;
-                            sourceList.appendChild(li);
-                        });
-                    }
-                }
-
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    const rawText = candidate.content.parts[0].text;
-                    
-                    const translationMatch = rawText.match(/\[TRANSLATION\]([\s\S]*?)\[\/TRANSLATION\]/);
-                    const definitionMatch = rawText.match(/\[DEFINITION\]([\s\S]*?)\[\/DEFINITION\]/);
-                    const synonymsMatch = rawText.match(/\[SYNONYMS\]([\s\S]*?)\[\/SYNONYMS\]/);
-
-                    const translation = translationMatch ? translationMatch[1].trim() : "Translation not found.";
-                    const definition = definitionMatch ? definitionMatch[1].trim() : "Definition not found.";
-                    const synonyms = synonymsMatch ? synonymsMatch[1].trim() : 'N/A';
-
-                    return { translation, definition, synonyms };
-                } else {
-                    return { translation: "Error: No content.", definition: "Error: No content.", synonyms: 'N/A' };
-                }
-
-                } catch (error) {
-                    console.error("Translation error:", error);
-                    return { translation: "Error: API failure.", definition: "Error: API failure.", synonyms: 'N/A' };
-                }
+        } catch (error) {
+            console.error("Translation error:", error);
+            return { translation: "Error: API failure.", definition: "Error: API failure.", synonyms: 'N/A' };
+        }
     }
     
-    // NEW: Function to send translation data to the Apps Script logger
     async function sendTranslationToLogger(sourceWord, translatedWord, definition, similarWords) {
-        // Uses the dedicated logger URL
         if (!TRANSLATION_LOGGER_URL || TRANSLATION_LOGGER_URL.includes("YOUR_TRANSLATION_LOGGER_APPSCRIPT_URL_HERE")) {
             console.warn("TRANSLATION_LOGGER_URL is not set. Skipping server-side history logging.");
             return;
@@ -2357,11 +2051,11 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         const formData = new FormData();
         formData.append("sourceWord", sourceWord);
         formData.append("translatedWord", translatedWord);
-        formData.append("definition", stripHtml(definition)); // Use plain text definition
-        formData.append("similarWords", similarWords); // Use raw synonym string
-        formData.append("userEmail", currentUser ? currentUser.email : 'Guest'); // Include user email ('Guest' if not logged in)
-        formData.append("sourceLang", langA.value); // Include source lang
-        formData.append("targetLang", langB.value); // Include target lang
+        formData.append("definition", stripHtml(definition)); 
+        formData.append("similarWords", similarWords); 
+        formData.append("userEmail", currentUser ? currentUser.email : 'Guest'); 
+        formData.append("sourceLang", langA.value); 
+        formData.append("targetLang", langB.value); 
 
 
         try {
@@ -2379,92 +2073,48 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         }
     }
     
-    // NEW: Centralized function to determine which way to translate
     function getSourceAndTarget() {
         const textA = inputTextA.value.trim();
         const textB = inputTextB.value.trim();
 
         if (textA.length > 0 && textB.length === 0) {
-            return {
-                sourceText: textA,
-                sourceLang: langA.value,
-                targetLang: langB.value,
-                resultBox: 'B',
-                sourceBox: 'A'
-            };
+            return { sourceText: textA, sourceLang: langA.value, targetLang: langB.value, resultBox: 'B', sourceBox: 'A' };
         } else if (textB.length > 0 && textA.length === 0) {
-            return {
-                sourceText: textB,
-                sourceLang: langB.value,
-                targetLang: langA.value,
-                resultBox: 'A',
-                sourceBox: 'B'
-            };
+            return { sourceText: textB, sourceLang: langB.value, targetLang: langA.value, resultBox: 'A', sourceBox: 'B' };
         }
-            // If both boxes are filled, default to A->B for the manual button press
         if (textA.length > 0 && textB.length > 0) {
-            return {
-                sourceText: textA,
-                sourceLang: langA.value,
-                targetLang: langB.value,
-                resultBox: 'B',
-                sourceBox: 'A'
-            };
+            return { sourceText: textA, sourceLang: langA.value, targetLang: langB.value, resultBox: 'B', sourceBox: 'A' };
         }
-        return null; // Nothing to translate
+        return null; 
     }
     
-    // ----------------------------------------------------------------------------------
-    // 🌟 INTEGRATED/REPLACED: handleTranslateButtonClick WITH ANIMATION/ENTER LOGIC 🌟
-    // ----------------------------------------------------------------------------------
     window.handleTranslateButtonClick = function(event) {
         const translationInfo = getSourceAndTarget();
         
         if (!translationInfo || isTranslating) {
-            // If the button is clicked or Enter is pressed when nothing should happen, just return.
             return;
         }
 
-        // 1. Start the visual feedback (PULSE ANIMATION)
         translateButton.classList.add('is-translating');
-        translateButton.disabled = true; // Disable during process
+        translateButton.disabled = true; 
 
-        // The actual API call is handled asynchronously in the translateAtoB/BtoA functions.
-        // We call them with isManual=true to ensure the API call runs.
-        
         if (translationInfo.sourceBox === 'A') {
             translateAtoB(translationInfo.sourceText, true);    
         } else {
             translateBtoA(translationInfo.sourceText, true);
         }
-
-        // We will remove the 'is-translating' class inside the translateAtoB/BtoA functions'
-        // final cleanup step, ensuring the animation stops when the API result is received.
     }
     
-    // ----------------------------------------------------------------------------------
-    // 🌟 INTEGRATED: checkTranslate FUNCTION FOR ENTER KEY PRESS 🌟
-    // ----------------------------------------------------------------------------------
     window.checkTranslate = function(event) {
-        // Check for the Enter key (keyCode 13 or key 'Enter')
         if (event.key === 'Enter' || event.keyCode === 13) {
-            
-            // CHECK FOR MODIFIER KEYS: If Shift OR Control is pressed, allow a newline.
             if (event.shiftKey || event.ctrlKey) {
-                // Allow the default action (creating a newline) to happen.
                 return;    
             }
-
-            // If ONLY Enter is pressed (no Shift or Control), prevent default and translate.
             event.preventDefault();    
-            
-            // Trigger the main handler
             window.handleTranslateButtonClick();
         }
     }
-    // ----------------------------------------------------------------------------------
     
-    // MODIFIED: translateAtoB and translateBtoA to call fetchPexelsImages
     async function translateAtoB(text, isManual = false) {    
         if (isTranslating) return;
         text = text.trim();
@@ -2476,19 +2126,16 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             inputTextB.value = '';
             definitionContent.innerHTML = 'Definition for your source text will appear here.';
             similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-            // 🌟 ADDED: Clear image results 🌟
             imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
             speakButtonB.disabled = true;
             speakButtonDef.disabled = true;
             speakButtonSimilarWords.disabled = true;
             clearSources();
             
-            // REMOVE ANIMATION if text was cleared during the process
             translateButton.classList.remove('is-translating');
             return;
         }
 
-        // Only proceed with API call if manually triggered
         if (!isManual) return;    
 
         isTranslating = true;
@@ -2500,7 +2147,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         setLoading(false, 'B');
         setLoading(false, 'DEF');
         
-        if (isManual) { // Ensure we only update if it was the intended manual action
+        if (isManual) { 
             inputTextB.value = translation;
             const formattedDefinition = formatDefinition(definition);
             const formattedSynonyms = formatSynonyms(synonyms);
@@ -2508,20 +2155,16 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             definitionContent.innerHTML = formattedDefinition;
             similarWordsContent.innerHTML = formattedSynonyms;    
             
-            // 🌟 PEXELS IMAGE SEARCH CALL 🌟
             fetchPexelsImages(text);
 
             if (translation && translation !== "Translation not found." && translation !== "Error: API failure.") {
-                // LOCAL HISTORY
                 saveToHistory(text, langA.value, translation);
-                // SERVER-SIDE HISTORY LOGGING (NEW)
                 sendTranslationToLogger(text, translation, formattedDefinition, synonyms);
             }
             
             speakButtonB.disabled = translation.length === 0;
             speakButtonDef.disabled = (definitionContent.textContent || definitionContent.innerText).includes('Definition for your source text');
             
-            // 🌟 FINAL ANIMATION CLEANUP 🌟
             translateButton.classList.remove('is-translating');
         }
 
@@ -2540,19 +2183,16 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             inputTextA.value = '';
             definitionContent.innerHTML = 'Definition for your source text will appear here.';
             similarWordsContent.innerHTML = 'Synonyms for your source text will appear here.';
-            // 🌟 ADDED: Clear image results 🌟
             imageResults.innerHTML = 'Images related to your source text will appear here after translation.';
             speakButtonA.disabled = true;
             speakButtonDef.disabled = true;
             speakButtonSimilarWords.disabled = true;
             clearSources();
             
-            // REMOVE ANIMATION if text was cleared during the process
             translateButton.classList.remove('is-translating');
             return;
         }
 
-            // Only proceed with API call if manually triggered
         if (!isManual) return;    
 
         isTranslating = true;
@@ -2564,7 +2204,7 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
         setLoading(false, 'A');
         setLoading(false, 'DEF');
 
-            if (isManual) { // Ensure we only update if it was the intended manual action
+            if (isManual) { 
             inputTextA.value = translation;
             const formattedDefinition = formatDefinition(definition);
             const formattedSynonyms = formatSynonyms(synonyms);
@@ -2572,37 +2212,29 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             definitionContent.innerHTML = formattedDefinition;
             similarWordsContent.innerHTML = formattedSynonyms;    
             
-            // 🌟 PEXELS IMAGE SEARCH CALL 🌟
             fetchPexelsImages(text);
 
             if (translation && translation !== "Translation not found." && translation !== "Error: API failure.") {
-                // LOCAL HISTORY
                 saveToHistory(text, langB.value, translation);
-                // SERVER-SIDE HISTORY LOGGING (NEW)
                 sendTranslationToLogger(text, translation, formattedDefinition, synonyms);
             }
             
             speakButtonA.disabled = translation.length === 0;
             speakButtonDef.disabled = (definitionContent.textContent || definitionContent.innerText).includes('Definition for your source text');    
             
-            // 🌟 FINAL ANIMATION CLEANUP 🌟
             translateButton.classList.remove('is-translating');
         }
 
         isTranslating = false;
         updateTranslateButtonState();
     }
-    // ----------------------------------------------------------------------------------
 
-    // Function to manage the state of the dedicated Translate button
     function updateTranslateButtonState() {
         const hasInputA = inputTextA.value.trim().length > 0;
         const hasInputB = inputTextB.value.trim().length > 0;
         
-        // The button is enabled if either box has text AND we're not currently translating
         translateButton.disabled = isTranslating || !(hasInputA || hasInputB);
         
-        // Highlight the active box
         if (hasInputA && !hasInputB) {
             inputTextA.classList.add('border-indigo-500');
             inputTextB.classList.remove('border-indigo-500');
@@ -2610,7 +2242,6 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             inputTextB.classList.add('border-indigo-500');
             inputTextA.classList.remove('border-indigo-500');
         } else {
-            // If both are filled or both are empty, remove highlighting
             inputTextA.classList.remove('border-indigo-500');
             inputTextB.classList.remove('border-indigo-500');
         }
@@ -2620,16 +2251,15 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
     // --- Event Listeners and Initialization ---
 
     function initializeListeners() {
-        // Bind input listeners (only update button state, no automatic translation)
         inputTextA.addEventListener('input', (event) => {    
             updateTranslateButtonState();    
             speakButtonA.disabled = event.target.value.trim().length === 0;
-            inputTextB.value = ''; // Clear other box on input
+            inputTextB.value = ''; 
         });
         inputTextB.addEventListener('input', (event) => {    
             updateTranslateButtonState();    
             speakButtonB.disabled = event.target.value.trim().length === 0;
-            inputTextA.value = ''; // Clear other box on input
+            inputTextA.value = ''; 
         });
 
         langA.addEventListener('change', () => {
@@ -2641,21 +2271,15 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
             updateTranslateButtonState();
         });
         
-        // Settings Listeners
         darkModeToggle.addEventListener('change', (e) => toggleDarkMode(e.target.checked));
         
-        // UPDATE: Change event updates ttsVoice and saves it
         voiceSelect.addEventListener('change', (e) => setTTSVoice(e.target.value));    
         
-        // 🌟 NEW LISTENER: Bind click event to the main handler
         translateButton.addEventListener('click', window.handleTranslateButtonClick);    
 
-        // 🚀 CRITICAL FIX: Add keyup listeners to trigger checkTranslate on Enter
         inputTextA.addEventListener('keyup', window.checkTranslate);
         inputTextB.addEventListener('keyup', window.checkTranslate);
-        // ---------------------------------------------------------------------
 
-        // CONTACT FORM VALIDATION LISTENERS (ADDED HERE)
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
             contactForm.querySelectorAll('input, textarea').forEach(input => {
@@ -2663,14 +2287,11 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
                 input.addEventListener('blur', () => validateField(input));
             });
         }
-        // END CONTACT FORM VALIDATION LISTENERS
         
-        // Initial setup
         populateLanguageSelectors();
         updateAccountStatus();
         updateTranslateButtonState();
         
-        // Apply saved settings
         if (localStorage.getItem('darkMode') === 'true') {
             toggleDarkMode(true);
         }
@@ -2685,13 +2306,10 @@ class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indi
 
 // --- CONTACT US VALIDATION & SUBMISSION LOGIC ---
 
-// 1. Validation Logic (Unchanged, relies on correct HTML 'name' and .form-group structure)
 function validateField(input) {
     const errorSpan = input.closest('.form-group')?.querySelector('.error-message');
-    const inputName = input.name;    
     let errorMessage = '';
 
-    
             if (input.name === 'name') {
                 if (!input.value.trim()) {
                     errorMessage = 'Enter your Name.';
@@ -2716,7 +2334,7 @@ function validateField(input) {
 
     if (errorSpan) {
         if (errorMessage) {
-            input.classList.add('border-red-500'); // Tailwind error style
+            input.classList.add('border-red-500'); 
             errorSpan.textContent = errorMessage;
             errorSpan.classList.remove('hidden');
             return false;
@@ -2729,19 +2347,17 @@ function validateField(input) {
     return !errorMessage;    
 }
 
-// 2. Submission Handler (REWRITTEN for Apps Script AJAX POST)
 window.handleContactSubmit = async function(event) {
     event.preventDefault();
     const form = document.getElementById('contactForm');
     const statusDiv = document.getElementById('status');    
     const submitButton = document.getElementById('contactSubmitButton');
-    const scriptURL = form.action; // Get the Apps Script URL from the form's action attribute
+    const scriptURL = form.action; 
 
     if (!statusDiv) return;
 
     let allValid = true;
     form.querySelectorAll('input, textarea').forEach(input => {
-        // Run validation on all fields
         if (!validateField(input)) {
             allValid = false;
         }
@@ -2759,20 +2375,18 @@ window.handleContactSubmit = async function(event) {
     statusDiv.classList.remove('hidden');
     submitButton.disabled = true;
 
-    // Use FormData to correctly collect and format data for a POST request
     const formData = new FormData(form);
 
     try {
         const response = await fetch(scriptURL, {
             method: 'POST',
-            body: formData // Sends the form data in the correct format
+            body: formData 
         });
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        // Your Apps Script returns JSON, so we parse it
         const result = await response.json();
 
         submitButton.disabled = false;
@@ -2782,7 +2396,6 @@ window.handleContactSubmit = async function(event) {
             statusDiv.className = 'p-3 rounded-lg text-green-700 bg-green-100 text-sm font-semibold block';
             form.reset();
         } else {
-            // Handle Apps Script logic error (e.g., sheet not found, internal script error)
             statusDiv.innerHTML = `❌ Error: ${result.message || 'Script submission failed.'}`;
             statusDiv.className = 'p-3 rounded-lg text-red-500 bg-red-100 text-sm font-semibold block';
         }
@@ -2794,42 +2407,20 @@ window.handleContactSubmit = async function(event) {
         statusDiv.className = 'p-3 rounded-lg text-red-500 bg-red-100 text-sm font-semibold block';
     }
 
-    // Hide status message after a delay
     setTimeout(() => { statusDiv.classList.add('hidden'); }, 10000);
 }
 
 
- // Disable right-click
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
 });
 
-// Disable common developer shortcuts
 document.addEventListener('keydown', function(e) {
-    // F12
-    if (e.key === 'F12') {
-        e.preventDefault();
-    }
-
-    // Ctrl+Shift+I
-    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
-        e.preventDefault();
-    }
-
-    // Ctrl+Shift+C
-    if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
-        e.preventDefault();
-    }
-
-    // Ctrl+Shift+J
-    if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
-        e.preventDefault();
-    }
-
-    // Ctrl+U
-    if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
-        e.preventDefault();
-    }
+    if (e.key === 'F12') { e.preventDefault(); }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) { e.preventDefault(); }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) { e.preventDefault(); }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) { e.preventDefault(); }
+    if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) { e.preventDefault(); }
 });
     document.addEventListener('dragstart', function(e) {
     e.preventDefault();
@@ -2847,4 +2438,3 @@ document.addEventListener('keydown', function(e) {
 
 </body>
 </html>
-
